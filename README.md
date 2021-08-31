@@ -1,1 +1,3 @@
 # spondere
+
+O presente repositorio esta em desenvolvimento ...

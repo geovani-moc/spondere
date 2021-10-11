@@ -1,0 +1,77 @@
+from util.image import loadUserDataset, printFeature
+import numpy as np
+from settings import EIGENFACES_NUMBER_COMPONENTS
+import os
+import cv2 as cv
+from recognition.findFace import findFace
+
+def train(path, userID, numberComponents = EIGENFACES_NUMBER_COMPONENTS, printDebug = False):
+    if os.path.exists(path+"/"+userID+'/data.txt'):
+        features = np.loadtxt(path+"/"+userID+'/data.txt', float)   
+        return features, None 
+    
+    images, error = extractFace(path, userID)
+
+    if error is not None:
+        return None, error
+    
+    if images[0] is None:
+        return None, "Erro no treinamento, imagens nulas."
+
+    data = covarianceMatrix(images)
+    features, _ = cv.PCACompute(data, mean=None, maxComponents=numberComponents) 
+
+    if features.ndim == 2:
+        features = features[0] 
+    
+    if printDebug:
+        printFeature(features, images[0].shape, 'Treino: '+userID)
+    
+    dataFeatures = np.array(features, float)
+    np.savetxt(path+"/"+userID+'/data.txt', dataFeatures, fmt='%1.5f')
+
+    return features, None
+
+def updateTrain(path, userID, numberComponents = EIGENFACES_NUMBER_COMPONENTS):
+    images, error = extractFace(path, userID)
+
+    if error is not None:
+        return error
+    
+    if images[0] is None:
+        return None, "Erro no treinamento, imagens nulas."
+
+    data = covarianceMatrix(images)
+    features, _ = cv.PCACompute(data, mean=None, maxComponents=numberComponents) 
+    
+    dataFeatures = np.array(features, int)
+    np.savetxt(path+"/"+userID+'/data.txt', dataFeatures)
+
+    return  None
+
+def extractFace(path, userID):
+    images = loadUserDataset(path, userID)
+    faces = []
+
+    for image in images:
+        face, error = findFace(image)
+        if error is None:
+            faces.append(face)
+    
+    if len(faces) < 3:
+        return None, "quantidade pequena de imagens no dataset"
+
+    return faces, None
+
+def covarianceMatrix(images):
+    numberImages = len(images)
+    shape = images[0].shape
+
+    data = np.zeros((numberImages, shape[0]* shape[1]), dtype = np.float32)
+
+    for number in range(0, numberImages):
+        image = images[number].flatten()
+        data[number,:] = image
+
+    return data
+

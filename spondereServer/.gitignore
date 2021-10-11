@@ -140,3 +140,4 @@ cython_debug/
 # Arquivos personalizados
 spondere/
 .vscode/
+recognition/dataset/*

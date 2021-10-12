@@ -1,7 +1,6 @@
 # Projeto spondere-Server
 
-# Iniciar servidor:
-    -uvicorn main:app --reload
+# Iniciar servidor (uvicorn main:app --reload):
     
     python main.py
 

@@ -18,8 +18,8 @@ def train(path, userID, numberComponents = EIGENFACES_NUMBER_COMPONENTS, printDe
     if images[0] is None:
         return None, "Erro no treinamento, imagens nulas."
 
-    data = covarianceMatrix(images)
-    features, _ = cv.PCACompute(data, mean=None, maxComponents=numberComponents) 
+    #data = covarianceMatrix(images)
+    #features, _ = cv.PCACompute(data, mean=None, maxComponents=numberComponents) 
 
     if features.ndim == 2:
         features = features[0] 
@@ -32,32 +32,19 @@ def train(path, userID, numberComponents = EIGENFACES_NUMBER_COMPONENTS, printDe
 
     return features, None
 
-def updateTrainUser(path, userID, numberComponents = EIGENFACES_NUMBER_COMPONENTS):
+def updateTrain(path, userID, numberComponents = EIGENFACES_NUMBER_COMPONENTS):
     images, error = extractFace(path, userID)
 
     if error is not None:
         return error
     
     if images[0] is None:
-        return "Erro no treinamento, imagens nulas."
+        return None, "Erro no treinamento, imagens nulas."
 
-    data = covarianceMatrix(images)
-    features, _ = cv.PCACompute(data, mean=None, maxComponents=numberComponents) 
+    #data = covarianceMatrix(images)
+    #features, _ = cv.PCACompute(data, mean=None, maxComponents=numberComponents) 
     
     dataFeatures = np.array(features, int)
     np.savetxt(path+"/"+userID+'/data.txt', dataFeatures)
 
     return  None
-
-def covarianceMatrix(images):
-    numberImages = len(images)
-    shape = images[0].shape
-
-    data = np.zeros((numberImages, shape[0]* shape[1]), dtype = np.float32)
-
-    for number in range(0, numberImages):
-        image = images[number].flatten()
-        data[number,:] = image
-
-    return data
-

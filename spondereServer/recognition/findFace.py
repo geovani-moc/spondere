@@ -1,6 +1,7 @@
 import os
 import cv2 as cv
 from settings import FACE_DIM, faceCascade, eyeCascade
+from util.image import loadUserDataset
 
 
 def findFace(image):
@@ -65,3 +66,17 @@ def storeDataset(data, destiny, label):
                 pass
         
         cv.imwrite(path, image)
+
+def extractFace(path, userID):
+    images = loadUserDataset(path, userID)
+    faces = []
+
+    for image in images:
+        face, error = findFace(image)
+        if error is None:
+            faces.append(face)
+    
+    if len(faces) < 3:
+        return None, "quantidade pequena de imagens no dataset"
+
+    return faces, None

@@ -32,14 +32,14 @@ def train(path, userID, numberComponents = EIGENFACES_NUMBER_COMPONENTS, printDe
 
     return features, None
 
-def updateTrainUser(path, userID, numberComponents = EIGENFACES_NUMBER_COMPONENTS):
+def updateTrain(path, userID, numberComponents = EIGENFACES_NUMBER_COMPONENTS):
     images, error = extractFace(path, userID)
 
     if error is not None:
         return error
     
     if images[0] is None:
-        return "Erro no treinamento, imagens nulas."
+        return None, "Erro no treinamento, imagens nulas."
 
     data = covarianceMatrix(images)
     features, _ = cv.PCACompute(data, mean=None, maxComponents=numberComponents) 
@@ -48,6 +48,7 @@ def updateTrainUser(path, userID, numberComponents = EIGENFACES_NUMBER_COMPONENT
     np.savetxt(path+"/"+userID+'/data.txt', dataFeatures)
 
     return  None
+
 
 def covarianceMatrix(images):
     numberImages = len(images)

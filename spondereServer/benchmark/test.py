@@ -132,3 +132,8 @@ def updateAllUserDataTrain(path= PATH_IMAGES):
         return errors
     
     return None
+
+
+
+if __name__ == '__main__':
+    pass

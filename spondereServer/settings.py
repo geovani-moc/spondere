@@ -9,7 +9,7 @@ THRESHOLD = 2200
 
 faceCascade = cv.CascadeClassifier('static/xml/haarcascade_frontalface_default.xml')
 eyeCascade = cv.CascadeClassifier('static/xml/haarcascade_eye.xml')
-pathSMVTrain = 'static/xml/svm_train.xml'
+PATH_CLASSIFIER_TRAIN ='static/xml/face_classifier.xml'
 
 USER_TYPE_PROFESSOR = 1
 USER_TYPE_STUDENT = 2

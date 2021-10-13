@@ -1,4 +1,8 @@
-from settings import EIGENFACES_NUMBER_COMPONENTS, THRESHOLD, pathSMVTrain, PATH_IMAGES, pathDataTrain
+from settings import (
+    EIGENFACES_NUMBER_COMPONENTS,
+    PATH_DATA_TRAIN, 
+    PATH_IMAGES, 
+    PATH_CLASSIFIER_TRAIN)
 import cv2 as cv
 from recognition.findFace import findFace
 import numpy as np
@@ -17,11 +21,11 @@ def verifyFace(features, labels, image, numberComponents = EIGENFACES_NUMBER_COM
     # mean, eigenfaces = cv.PCACompute(data, mean=None, maxComponents= numberComponents)
     mean, _ = cv.PCACompute(data, mean=None, maxComponents= numberComponents)
 
-    if not os.path.exists(pathSMVTrain):
+    if not os.path.exists(PATH_CLASSIFIER_TRAIN):
         createSVMTrain(features, labels)
 
     svm = cv.SVM()
-    svm.load(pathSMVTrain)
+    svm.load(PATH_CLASSIFIER_TRAIN)
     result = svm.predict(mean, dtype = int)
 
     return result, None
@@ -34,7 +38,7 @@ def createSVMTrain(data, labels):
     svm.setTermCriteria((cv.TERM_CRITERIA_MAX_ITER, 100, 1e-6))
     data = np.matrix(data, dtype = np.float32)
     svm.train(data, cv.ml.ROW_SAMPLE, labels)
-    svm.save(pathSMVTrain)
+    svm.save(PATH_CLASSIFIER_TRAIN)
  
 def createDataFeatures(path = PATH_IMAGES):
     fullPath = './'+path+'/'
@@ -57,8 +61,8 @@ def createDataFeatures(path = PATH_IMAGES):
     
     dataFeatures = np.array(dataFeatures, float)
 
-    np.savetxt(pathDataTrain+"/feature.txt", dataFeatures, fmt='%1.5f')
-    np.savetxt(pathDataTrain+"/labels.txt", labels, delimiter=" ", fmt='%s')
+    np.savetxt(PATH_DATA_TRAIN + "/feature.txt", dataFeatures, fmt='%1.5f')
+    np.savetxt(PATH_DATA_TRAIN + "/labels.txt", labels, delimiter=" ", fmt='%s')
     
     if len(errors) == 0:
         return None
@@ -68,13 +72,13 @@ def createDataFeatures(path = PATH_IMAGES):
 def faceRecognition(image, features = None, labels = None):
     if (labels is None or
         features is None):
-        if (not os.path.exists(pathDataTrain+'/labels.txt') and 
-            not os.path.exists(pathDataTrain+'/feature.txt')):
+        if (not os.path.exists(PATH_DATA_TRAIN + '/labels.txt') and 
+            not os.path.exists(PATH_DATA_TRAIN + '/feature.txt')):
             error = createDataFeatures(PATH_IMAGES)
             if error is not None: return None, error
 
-        features = np.loadtxt(pathDataTrain+"/feature.txt", float)
-        labels = np.loadtxt(pathDataTrain+"/labels.txt", str)
+        features = np.loadtxt(PATH_DATA_TRAIN + "/feature.txt", float)
+        labels = np.loadtxt(PATH_DATA_TRAIN + "/labels.txt", str)
     
     result, error = verifyFace(features, labels, image, EIGENFACES_NUMBER_COMPONENTS)
 

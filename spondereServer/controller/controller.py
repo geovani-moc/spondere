@@ -63,6 +63,11 @@ async def robotsTxt():
     content = 'User-agent: * Disallow: /'
     return HTMLResponse(content=content)
 
+@app.get('/')
+async def homePage():
+    content = 'sponde API'
+    return HTMLResponse(content = content)
+
 def tokenResponse(token: str):
     return {
         "access_token": token

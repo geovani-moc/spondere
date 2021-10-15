@@ -5,12 +5,12 @@ from pydantic.main import BaseModel
 class User(BaseModel):
     userName:str = None
     code: str = None
-    faceFeatures: Optional[List[int]] = None
+    #faceFeatures: Optional[List[int]] = None
     password: str = None
     status: int = None
     email: Optional[str] = None
-    fullName: Optional[str] = None
-    disabled: Optional[bool] = None
+    fullName: str = None
+    disabled: bool = None
 
     class Config:
         schema_extra = {
@@ -18,7 +18,7 @@ class User(BaseModel):
                 "userName" : "usuario 1",
                 "code": "8aa100",
                 "email": "user@user.com",
-                "password": "$2b$12$EixZaYVK1fsbw1ZfbX3OXePaWxn96p36WQoeG6Lruj3vjPGga31lW",
+                "password": "356a192b7913b04c54574d18c28d46e6395428ab",
                 "status": 1,
                 "fullName": "Alcarmo da silva alves",
                 "disabled": False

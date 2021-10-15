@@ -138,6 +138,8 @@ dmypy.json
 cython_debug/
 
 # Arquivos personalizados
+config.ini
+keep.txt
 spondere/
 .vscode/
 recognition/dataset/*

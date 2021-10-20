@@ -13,6 +13,7 @@ import time
 from fastapi import Request, HTTPException
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from entity.discipline import Discipline
+from persistence.database import getConnection
 
 fake_users_db = {
     "johndoe": {
@@ -104,8 +105,11 @@ def verifyPassword(plain_password, hashed_password):
 #     return pwd_context.hash(password)
 
 def checkUser(data: User):
-    #carregar os usuarios do banco de dados
-    users = []
+    connection = getConnection()
+    cur = connection.cursor()
+    sql_query = 'select username, password from users where username = %s'
+    cur.execute(sql_query, (User.userName, ))
+    
     for user in users:
         if user.userName == data.userName and verifyPassword(user.password, data.password):
             return True

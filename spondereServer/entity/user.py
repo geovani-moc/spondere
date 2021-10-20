@@ -5,7 +5,6 @@ from pydantic.main import BaseModel
 class User(BaseModel):
     userName:str = None
     code: str = None
-    #faceFeatures: Optional[List[int]] = None
     password: str = None
     status: int = None
     email: Optional[str] = None

@@ -1,0 +1,9 @@
+drop table if exists "users" cascade;
+drop table if exists "biometrics" cascade;
+drop table if exists "discipline" cascade;
+drop table if exists "academicclass" cascade;
+drop table if exists "groups" cascade;
+drop table if exists "frequency" cascade;
+drop table if exists "period" cascade;
+drop table if exists "group_students" cascade;
+drop table if exists "group_professors" cascade;

@@ -11,10 +11,6 @@ from controller.security import signJWT, JWTBearer
 
 app = FastAPI()
 
-#antigo metodo de autenticação
-#from fastapi.security import OAuth2PasswordBearer
-#oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
-
 
 @app.get('/robots.txt')
 async def robotsTxt():
@@ -23,7 +19,7 @@ async def robotsTxt():
 
 @app.get('/')
 async def homePage():
-    content = 'sponde API'
+    content = 'sponde API<br> docs<br> redoc'
     return HTMLResponse(content = content)
 
 
@@ -35,12 +31,11 @@ async def createUser(user:User = Body(...)):
 
 
 @app.post("/user/login", tags=["user"])
-async def user_login(user: User = Body(...)):
-    if checkUser(user):
-        return signJWT(user.userName)
-    return {
-        "error": "Usuário ou senha inválidos."
-    }
+async def user_login(userName:str, password:str):
+    if checkUser(userName, password):
+        return signJWT(userName)
+
+    return {"error": "Usuário ou senha inválidos."}
 
 
 @app.post("/v1/checar_biometria", dependencies=[Depends(JWTBearer())], tags=["disciplines"])

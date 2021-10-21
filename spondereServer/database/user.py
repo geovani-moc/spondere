@@ -1,7 +1,5 @@
-from logging import error
-from time import process_time
-
-from passlib.utils import repeat_string
+from calendar import TUESDAY
+from os import truncate
 from entity.user import User
 from database.database import postgresSQL
 from passlib.context import CryptContext
@@ -26,28 +24,29 @@ def delete(code: str):
 # def getPassword_hash(password):
 #     return pwd_context.hash(password)
 
-def checkUser(data: User):
-    if data.userName is None or data.password is None:
+def checkUser(userName: str, password:str):
+    if userName is None or password is None:
         return False
 
-    user:User
-    sql_query = 'select username, password from users where username = %s'
+    user = User()
+    sql_query = "select username, \"password\" from users where username = %s;"
 
     try:
         connection = postgresSQL.getconn()
 
         if(connection):
+            user.userName = "teste"
             cur = connection.cursor()
-            cur.execute(sql_query, (data.userName, ))
-            user.userName, user.password = cur.fetchone()
+            cur.execute(sql_query, (userName, ))
+            (user.userName, user.password) = cur.fetchone()
 
             postgresSQL.putconn(connection)
 
     except (Exception, DatabaseError) as error:
         print("Erro de conexão com o banco de dados: ", error)
     
-    if user.userName == data.userName and verifyPassword(user.password, data.password):
-        return True
+    if user.userName == userName and verifyPassword(password, user.password):
+       return True
 
     return False
 

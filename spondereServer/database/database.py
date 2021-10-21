@@ -49,3 +49,13 @@ def newConnection():
         return ("Erro ao tentar se conectar ao BD postgresSQL.")
     
     return None
+
+if __name__ == "__main__":
+    if postgresSQL:
+        conn = postgresSQL.getconn()
+        cur = conn.cursor()
+        cur.execute("select username, \"password\" from users;")
+        userName, password = cur.fetchone()
+        postgresSQL.putconn(conn)
+
+        print(userName, password)

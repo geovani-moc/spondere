@@ -6,7 +6,7 @@ from fastapi import Request, HTTPException
 
 SECRET_KEY = "002ba35be5e3daadcc1c97d634d5a496bf9524d9d7757eca3f3699f7b0f6b834"
 ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_MINUTES = 30
+ACCESS_TOKEN_EXPIRE_SECONDS = 1800
 
 class JWTBearer(HTTPBearer):
     def __init__(self, auto_error: bool = True):
@@ -43,7 +43,7 @@ def tokenResponse(token: str):
 def signJWT(user_id:str )->Dict[str, str]:
     accessInfo = {
         "user_id": user_id,
-        "expires": time.time() + ACCESS_TOKEN_EXPIRE_MINUTES
+        "expires": time.time() + ACCESS_TOKEN_EXPIRE_SECONDS
     }
     token = jwt.encode(accessInfo, SECRET_KEY, algorithm=ALGORITHM)
 
@@ -52,6 +52,20 @@ def signJWT(user_id:str )->Dict[str, str]:
 def decodeJWT(token: str) -> dict:
     try:
         decodedToken = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-        return decodedToken if decodedToken["expires"] >= time.time() else None
+
+        if decodedToken["expires"] >= time.time():
+            print(time.time())
+            return decodedToken
+        #return decodedToken if decodedToken["expires"] >= time.time() else None
     except:
         return {}
+    return None
+
+
+if __name__ == "__main__":
+    token = signJWT("geovani")
+    #print(token["access_token"])
+    #token["access_token"] = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiZ2VvdmFuaSIsImV4cGlyZXMiOjE2MzQ4MjE1MTQuMzYxNjA0Mn0.Guf_R-QbrOszc3GjZj13Eb1tkMf-Nufc0401jd5mzRE"
+
+    teste = JWTBearer()
+    teste.verify_jwt(token['access_token'])

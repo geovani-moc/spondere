@@ -50,10 +50,9 @@ async def checkBiometry(user: User, image: UploadFile = File(...)):
 
     return {"Face": 'face pertence ao usuário.'}
 
-@app.post("/disciplinas", dependencies=[Depends(JWTBearer())], tags=["disciplines"])
+@app.post("/disciplinas", dependencies=[Depends(JWTBearer())])
 async def add_post(discipline: Discipline) -> dict:
-    discipline.code = len(disciplines) + 1
-    disciplines.append(discipline.dict())
+       
     return {
         "data": "post added."
     }

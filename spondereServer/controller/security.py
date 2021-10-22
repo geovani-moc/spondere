@@ -13,15 +13,22 @@ class JWTBearer(HTTPBearer):
         super(JWTBearer, self).__init__(auto_error=auto_error)
 
     async def __call__(self, request: Request):
-        credentials: HTTPAuthorizationCredentials = await super(JWTBearer, self).__call__(request)
+        credentials: HTTPAuthorizationCredentials = \
+            await super(JWTBearer, self).__call__(request)
+            
         if credentials:
             if not credentials.scheme == "Bearer":
-                raise HTTPException(status_code=403, detail="Esquema de autenticação invalida.")
+                raise HTTPException(status_code=403,
+                detail="Esquema de autenticação invalida.")
+
             if not self.verify_jwt(credentials.credentials):
-                raise HTTPException(status_code=403, detail="Token invalido ou expirado.")
+                raise HTTPException(status_code=403, 
+                detail="Token invalido ou expirado.")
+
             return credentials.credentials
         else:
-            raise HTTPException(status_code=403, detail="Codigo de validação inválido.")
+            raise HTTPException(status_code=403, 
+            detail="Codigo de validação inválido.")
 
     def verify_jwt(self, jwtoken: str) -> bool:
         isTokenValid: bool = False
@@ -30,8 +37,10 @@ class JWTBearer(HTTPBearer):
             accessInfo = decodeJWT(jwtoken)
         except:
             accessInfo = None
+
         if accessInfo:
             isTokenValid = True
+
         return isTokenValid
 
 
@@ -54,11 +63,11 @@ def decodeJWT(token: str) -> dict:
         decodedToken = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
 
         if decodedToken["expires"] >= time.time():
-            print(time.time())
             return decodedToken
-        #return decodedToken if decodedToken["expires"] >= time.time() else None
+
     except:
         return {}
+
     return None
 
 

@@ -23,14 +23,14 @@ async def homePage():
     return HTMLResponse(content = content)
 
 
-@app.post("/user/signup", tags=["user"])
+@app.post("/user/signup", tags=["Autenticação"])
 async def createUser(user:User = Body(...)):
     #users.append(user) 
     #verificar onde é necessario salvar os dados do usuario
     return signJWT(user.userName)
 
 
-@app.post("/user/login", tags=["user"])
+@app.post("/user/login", tags=["Autenticação"])
 async def user_login(userName:str, password:str):
     if checkUser(userName, password):
         return signJWT(userName)
@@ -38,7 +38,7 @@ async def user_login(userName:str, password:str):
     return {"error": "Usuário ou senha inválidos."}
 
 
-@app.post("/v1/checar_biometria", dependencies=[Depends(JWTBearer())], tags=["disciplines"])
+@app.post("/v1/checar_biometria", dependencies=[Depends(JWTBearer())], tags=["Biometria"])
 async def checkBiometry(user: User, image: UploadFile = File(...)):
     trainedFeature, error = biometrics.read(user.code)
     if error is not None:
@@ -50,7 +50,7 @@ async def checkBiometry(user: User, image: UploadFile = File(...)):
 
     return {"Face": 'face pertence ao usuário.'}
 
-@app.post("/disciplinas", dependencies=[Depends(JWTBearer())])
+@app.post("/disciplinas", dependencies=[Depends(JWTBearer())], tags=["Disciplina"])
 async def add_post(discipline: Discipline) -> dict:
        
     return {

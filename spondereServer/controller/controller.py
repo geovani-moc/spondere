@@ -1,10 +1,11 @@
 from fastapi import File, UploadFile, Depends
 from fastapi.responses import HTMLResponse
+from starlette.requests import Request
 from recognition.faceRecognition import verifyFace
 from settings import EIGENFACES_NUMBER_COMPONENTS
 from database import biometrics
 from database.user import checkUser
-from entity.user import User
+from entity.user import User, UserCredential
 from fastapi import FastAPI, Body
 from entity.discipline import Discipline
 from controller.security import signJWT, JWTBearer
@@ -17,23 +18,31 @@ async def robotsTxt():
     content = 'User-agent: * Disallow: /'
     return HTMLResponse(content=content)
 
+@app.on_event("shutdown")
+async def shutdown_event():
+    print("Aplicação encerrada.")
+
+
 @app.get('/')
 async def homePage():
-    content = 'sponde API<br> docs<br> redoc'
+    content = 'sponde API<br>\
+        docs<br>\
+        redoc'
     return HTMLResponse(content = content)
 
 
 @app.post("/user/signup", tags=["Autenticação"])
 async def createUser(user:User = Body(...)):
     #users.append(user) 
-    #verificar onde é necessario salvar os dados do usuario
+    #verificar onde é nescessario salvar os dados do usuario
     return signJWT(user.userName)
 
 
 @app.post("/user/login", tags=["Autenticação"])
-async def user_login(userName:str, password:str):
-    if checkUser(userName, password):
-        return signJWT(userName)
+async def userLogin(user: UserCredential):
+
+    if checkUser(user.userName, user.password):
+        return signJWT(user.userName)
 
     return {"error": "Usuário ou senha inválidos."}
 

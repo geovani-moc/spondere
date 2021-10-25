@@ -143,3 +143,6 @@ keep.txt
 spondere/
 .vscode/
 recognition/dataset/*
+
+#certificados para uso de https localmente.
+*.pem 

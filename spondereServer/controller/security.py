@@ -46,7 +46,7 @@ class JWTBearer(HTTPBearer):
 
 def tokenResponse(token: str):
     return {
-        "access_token": token
+        "token": token
     }
 
 def signJWT(user_id:str )->Dict[str, str]:
@@ -73,8 +73,8 @@ def decodeJWT(token: str) -> dict:
 
 if __name__ == "__main__":
     token = signJWT("geovani")
-    #print(token["access_token"])
-    #token["access_token"] = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiZ2VvdmFuaSIsImV4cGlyZXMiOjE2MzQ4MjE1MTQuMzYxNjA0Mn0.Guf_R-QbrOszc3GjZj13Eb1tkMf-Nufc0401jd5mzRE"
+    #print(token["token"])
+    #token["token"] = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiZ2VvdmFuaSIsImV4cGlyZXMiOjE2MzQ4MjE1MTQuMzYxNjA0Mn0.Guf_R-QbrOszc3GjZj13Eb1tkMf-Nufc0401jd5mzRE"
 
     teste = JWTBearer()
-    teste.verify_jwt(token['access_token'])
+    teste.verify_jwt(token['token'])

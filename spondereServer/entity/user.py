@@ -23,3 +23,15 @@ class User(BaseModel):
                 "disabled": False
             }
         }
+
+class UserCredential(BaseModel):
+    userName:str = None
+    password: str = None
+
+    class Config:
+        schema_extra = {
+            "example": {
+                "userName" : "usuario 1",
+                "password": "abc"
+            }
+        }

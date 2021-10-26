@@ -31,20 +31,20 @@ async def homePage():
     return HTMLResponse(content = content)
 
 
-@app.post("/user/signup", tags=["Autenticação"])
+@app.post("/user/signup", tags=["Usuário"])
 async def createUser(user:User = Body(...)):
     #users.append(user) 
     #verificar onde é nescessario salvar os dados do usuario
     return signJWT(user.userName)
 
 
-@app.post("/user/login", tags=["Autenticação"])
+@app.post("/login", tags=["Autenticação"])
 async def userLogin(user: UserCredential):
 
     if checkUser(user.userName, user.password):
         return signJWT(user.userName)
 
-    return {"error": "Usuário ou senha inválidos."}
+    return {"invalid_access": "Usuário ou senha inválidos."}
 
 
 @app.post("/v1/checar_biometria", dependencies=[Depends(JWTBearer())], tags=["Biometria"])

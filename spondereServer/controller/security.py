@@ -49,9 +49,9 @@ def tokenResponse(token: str):
         "token": token
     }
 
-def signJWT(user_id:str )->Dict[str, str]:
+def signJWT(userName:str )->Dict[str, str]:
     accessInfo = {
-        "user_id": user_id,
+        "userName": userName,
         "expires": time.time() + ACCESS_TOKEN_EXPIRE_SECONDS
     }
     token = jwt.encode(accessInfo, SECRET_KEY, algorithm=ALGORITHM)

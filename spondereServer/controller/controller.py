@@ -51,7 +51,7 @@ async def userLogin(user: UserCredential):
 async def checkBiometry(user: User, image: UploadFile = File(...)):
     trainedFeature, error = biometrics.read(user.code)
     if error is not None:
-        return{"Error": error}
+        return{"error": error}
 
     result, error = verifyFace(trainedFeature, image, EIGENFACES_NUMBER_COMPONENTS)
     if error is not None:

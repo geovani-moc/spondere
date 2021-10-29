@@ -1,14 +1,19 @@
-from fastapi import File, UploadFile, Depends
+from fastapi import (
+    File, 
+    UploadFile, 
+    Depends,
+    FastAPI,
+    Body
+    ) 
 from fastapi.responses import HTMLResponse
-from starlette.requests import Request
-from recognition.faceRecognition import verifyFace
-from settings import EIGENFACES_NUMBER_COMPONENTS
-from database import biometrics
+from recognition.faceRecognition import faceRecognition
 from database.user import checkUser
 from entity.user import User, UserCredential
-from fastapi import FastAPI, Body
 from entity.discipline import Discipline
 from controller.security import signJWT, JWTBearer
+from util.image import checkUploadedImage
+import cv2 as cv
+import numpy as np
 
 app = FastAPI()
 
@@ -47,17 +52,29 @@ async def userLogin(user: UserCredential):
     return {"invalid_access": "Usuário ou senha inválidos."}
 
 
+#@app.post("/v1/checar_biometria", tags=["Biometria"])
 @app.post("/v1/checar_biometria", dependencies=[Depends(JWTBearer())], tags=["Biometria"])
-async def checkBiometry(user: User, image: UploadFile = File(...)):
-    trainedFeature, error = biometrics.read(user.code)
-    if error is not None:
-        return{"error": error}
+async def checkBiometry(file: UploadFile = File(...)):
+    contents = await file.read()
+    image = checkUploadedImage(contents)
 
-    result, error = verifyFace(trainedFeature, image, EIGENFACES_NUMBER_COMPONENTS)
+    result, error = faceRecognition(1, image)
+    #result, error = faceRecognition(user.code, image)
     if error is not None:
-        return{"Error": error}
+        return {
+            "recognition": False,
+            "error": error
+        }   
 
-    return {"Face": 'face pertence ao usuário.'}
+    if not result:
+        return{
+            "recognition": result,
+            "error":"Face não definida."
+        }
+
+    return {
+        "recognition": result,
+        "error": None}
 
 @app.post("/disciplinas", dependencies=[Depends(JWTBearer())], tags=["Disciplina"])
 async def add_post(discipline: Discipline) -> dict:

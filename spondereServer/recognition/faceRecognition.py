@@ -1,15 +1,8 @@
-from settings import (
-    EIGENFACES_NUMBER_COMPONENTS,
-    PATH_DATA_TRAIN, 
-    PATH_IMAGES, 
-    PATH_CLASSIFIER_TRAIN)
-import cv2 as cv
 from recognition.findFace import findFace
-import numpy as np
-import os
-from recognition.featureExtraction import covarianceMatrix, train
+import cv2 as cv
 
-def verifyFace(features, labels, image, numberComponents = EIGENFACES_NUMBER_COMPONENTS):
+
+def verifyFace(features, labels, image, label):
     image = cv.equalizeHist(image)
     face, error = findFace(image)
     if error is not None:
@@ -17,100 +10,28 @@ def verifyFace(features, labels, image, numberComponents = EIGENFACES_NUMBER_COM
 
     images = []
     images.append(face)
-    data = covarianceMatrix(images)
-    # mean, eigenfaces = cv.PCACompute(data, mean=None, maxComponents= numberComponents)
-    mean, _ = cv.PCACompute(data, mean=None, maxComponents= numberComponents)
 
-    if not os.path.exists(PATH_CLASSIFIER_TRAIN):
-        createSVMTrain(features, labels)
-
-    svm = cv.SVM()
-    svm.load(PATH_CLASSIFIER_TRAIN)
-    result = svm.predict(mean, dtype = int)
-
+    result = True
     return result, None
-#tem que arrumar o SVM
 
-def createSVMTrain(data, labels):
-    svm = cv.ml.SVM_create()
-    svm.setType(cv.ml.SVM_C_SVC)
-    svm.setKernel(cv.ml.SVM_LINEAR)
-    svm.setTermCriteria((cv.TERM_CRITERIA_MAX_ITER, 100, 1e-6))
-    data = np.matrix(data, dtype = np.float32)
-    svm.train(data, cv.ml.ROW_SAMPLE, labels)
-    svm.save(PATH_CLASSIFIER_TRAIN)
- 
-def createDataFeatures(path = PATH_IMAGES):
-    fullPath = './'+path+'/'
-    directories = os.listdir(fullPath)
 
-    labels=[]
-    dataFeatures=[]
-    errors = []
+def faceRecognition(label, image):
+    features, labels = loadFeatures()
+    if len(features) < 1:
+        return None, "Problemas com a base de treinamento, não foi possivel carregar."
 
-    for directory in directories:
-        if os.path.isdir(fullPath + directory):
-
-            feature, error = train(path, directory)
-
-            if error is None:
-                labels.append(directory)
-                dataFeatures.append(feature)
-            else:
-                errors.append(error)
+    if len(image.shape) > 2:
+        image = cv.cvtColor(image, cv.COLOR_RGB2GRAY)
     
-    dataFeatures = np.array(dataFeatures, float)
-
-    np.savetxt(PATH_DATA_TRAIN + "/feature.txt", dataFeatures, fmt='%1.5f')
-    np.savetxt(PATH_DATA_TRAIN + "/labels.txt", labels, delimiter=" ", fmt='%s')
-    
-    if len(errors) == 0:
-        return None
-
-    return errors
-
-def faceRecognition(image, features = None, labels = None):
-    if (labels is None or
-        features is None):
-        if (not os.path.exists(PATH_DATA_TRAIN + '/labels.txt') and 
-            not os.path.exists(PATH_DATA_TRAIN + '/feature.txt')):
-            error = createDataFeatures(PATH_IMAGES)
-            if error is not None: return None, error
-
-        features = np.loadtxt(PATH_DATA_TRAIN + "/feature.txt", float)
-        labels = np.loadtxt(PATH_DATA_TRAIN + "/labels.txt", str)
-    
-    result, error = verifyFace(features, labels, image, EIGENFACES_NUMBER_COMPONENTS)
+    result, error = verifyFace(features, labels, image, label)
 
     if error is not None:
         return None, error
 
     return result, None
+
+def loadFeatures():
+    return ["features"], ["labels"]
     
 if __name__ == '__main__':
-    error = createDataFeatures()
-    if error is not None:
-        raise Exception(error)
-    else:print('Ok')
-
-
-            
-
-# def verifyFaceOLD(trainFeature, image, numberComponents = EIGENFACES_NUMBER_COMPONENTS):
-#     image = cv.equalizeHist(image)
-#     face, error = findFace(image)
-#     if error is not None:
-#         return None, "error em localizar a face"
-    
-#     images = []
-#     images.append(face)
-#     data = covarianceMatrix(images)
-#     feature, _ = cv.PCACompute(data, mean=None, maxComponents= numberComponents)
-    
-#     #printFeature(feature, image.shape)
-#     euclidianDistance = cv.norm(trainFeature - feature, cv.NORM_L2)
-
-#     if euclidianDistance > THRESHOLD:
-#         return False, None
-
-#     return True, None
+    print("no tests")

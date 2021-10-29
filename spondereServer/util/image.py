@@ -18,6 +18,14 @@ def saveBinaryImagesInDataset(images, pathDataset, userCode):
 
     return None
 
+def checkUploadedImage(file):
+    try:
+        decode_img = cv.imdecode(np.frombuffer(file, np.uint8), -1)
+    except:
+        return None
+    else:
+        return decode_img
+
 def loadImages(path):
     images = []
     pathImages = glob.glob(path+'/*.jpg')

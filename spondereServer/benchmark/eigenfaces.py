@@ -5,7 +5,8 @@ import os
 import cv2 as cv
 from recognition.findFace import extractFace
 
-def train(path, userID, numberComponents = EIGENFACES_NUMBER_COMPONENTS, printDebug = False):
+def train(path, userID):
+    numberComponents = EIGENFACES_NUMBER_COMPONENTS
     if os.path.exists(path+"/"+userID+'/data.txt'):
         features = np.loadtxt(path+"/"+userID+'/data.txt', float)   
         return features, None 
@@ -24,8 +25,7 @@ def train(path, userID, numberComponents = EIGENFACES_NUMBER_COMPONENTS, printDe
     if features.ndim == 2:
         features = features[0] 
     
-    if printDebug:
-        printFeature(features, images[0].shape, 'Treino: '+userID)
+    printFeature(features, images[0].shape, 'Treino: '+userID)
     
     dataFeatures = np.array(features, float)
     np.savetxt(path+"/"+userID+'/data.txt', dataFeatures, fmt='%1.5f')

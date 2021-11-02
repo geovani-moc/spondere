@@ -12,11 +12,8 @@ from entity.user import User, UserCredential
 from entity.discipline import Discipline
 from controller.security import signJWT, JWTBearer
 from util.image import checkUploadedImage
-import cv2 as cv
-import numpy as np
 
 app = FastAPI()
-
 
 @app.get('/robots.txt')
 async def robotsTxt():
@@ -52,13 +49,26 @@ async def userLogin(user: UserCredential):
     return {"invalid_access": "Usuário ou senha inválidos."}
 
 
-#@app.post("/v1/checar_biometria", tags=["Biometria"])
-@app.post("/v1/checar_biometria", dependencies=[Depends(JWTBearer())], tags=["Biometria"])
+@app.post("/v1/checar_biometria", tags=["Biometria"])
+#@app.post("/v1/checar_biometria", dependencies=[Depends(JWTBearer())], tags=["Biometria"])
 async def checkBiometry(file: UploadFile = File(...)):
     contents = await file.read()
     image = checkUploadedImage(contents)
 
-    result, error = faceRecognition(1, image)
+    result:bool
+    error:str
+
+    if image is None:
+        error = "Sem imagem"
+        result = False
+        return {
+            "recognition": result,
+            "error": error
+        }
+    else:
+        error = None
+        result = True
+
     #result, error = faceRecognition(user.code, image)
     if error is not None:
         return {

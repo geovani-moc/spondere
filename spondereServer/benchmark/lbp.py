@@ -1,11 +1,10 @@
 from util.image import printFeature
 import numpy as np
-from settings import EIGENFACES_NUMBER_COMPONENTS
 import os
 import cv2 as cv
 from recognition.findFace import extractFace
 
-def train(path, userID, numberComponents = EIGENFACES_NUMBER_COMPONENTS, printDebug = False):
+def train(path, userID, printDebug = False):
     if os.path.exists(path+"/"+userID+'/data.txt'):
         features = np.loadtxt(path+"/"+userID+'/data.txt', float)   
         return features, None 
@@ -32,7 +31,7 @@ def train(path, userID, numberComponents = EIGENFACES_NUMBER_COMPONENTS, printDe
 
     return features, None
 
-def updateTrain(path, userID, numberComponents = EIGENFACES_NUMBER_COMPONENTS):
+def updateTrain(path, userID):
     images, error = extractFace(path, userID)
 
     if error is not None:

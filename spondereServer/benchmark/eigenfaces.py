@@ -1,53 +1,39 @@
 from util.image import printFeature
 import numpy as np
-from settings import EIGENFACES_NUMBER_COMPONENTS
+from settings import (
+    EIGENFACES_NUMBER_COMPONENTS,
+    MIN_SIZE_DATASET)
 import os
 import cv2 as cv
 from recognition.findFace import extractFace
 
 def train(path, userID):
-    numberComponents = EIGENFACES_NUMBER_COMPONENTS
-    if os.path.exists(path+"/"+userID+'/data.txt'):
-        features = np.loadtxt(path+"/"+userID+'/data.txt', float)   
+
+    if os.path.exists(path+"/"+userID+'/eigen.txt'):
+        features = np.loadtxt(path+"/"+userID+'/eigen.txt', float)   
         return features, None 
     
+    return updateTrain(path, userID)
+
+def updateTrain(path, userID):
     images, error = extractFace(path, userID)
 
     if error is not None:
         return None, error
     
-    if images[0] is None:
-        return None, "Erro no treinamento, imagens nulas."
+    if len(images) < MIN_SIZE_DATASET:
+        return None, "O usuario não tem imagens sufucientes com a face detectavel."
 
     data = covarianceMatrix(images)
-    features, _ = cv.PCACompute(data, mean=None, maxComponents=numberComponents) 
+    features, _ = cv.PCACompute(data, mean=None, maxComponents=EIGENFACES_NUMBER_COMPONENTS) 
 
     if features.ndim == 2:
         features = features[0] 
-    
-    printFeature(features, images[0].shape, 'Treino: '+userID)
-    
+        
     dataFeatures = np.array(features, float)
-    np.savetxt(path+"/"+userID+'/data.txt', dataFeatures, fmt='%1.5f')
+    np.savetxt(path+"/"+userID+'/eigen.txt', dataFeatures, fmt='%1.5f')
 
     return features, None
-
-def updateTrain(path, userID, numberComponents = EIGENFACES_NUMBER_COMPONENTS):
-    images, error = extractFace(path, userID)
-
-    if error is not None:
-        return error
-    
-    if images[0] is None:
-        return None, "Erro no treinamento, imagens nulas."
-
-    data = covarianceMatrix(images)
-    features, _ = cv.PCACompute(data, mean=None, maxComponents=numberComponents) 
-    
-    dataFeatures = np.array(features, int)
-    np.savetxt(path+"/"+userID+'/data.txt', dataFeatures)
-
-    return  None
 
 
 def covarianceMatrix(images):

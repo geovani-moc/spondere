@@ -2,54 +2,46 @@ from cv2 import imread
 import numpy as np
 import os
 from recognition.findFace import extractFace
+from skimage.transform import resize
 from skimage.io import imread
 from skimage.feature import hog
+from skimage.color import rgb2gray
+from settings import MIN_SIZE_DATASET
+
 
 def extractFeature(image):
-    fd, hog_image = hog(image, orientations=9, pixels_per_cell=(5, 5),
-                	cells_per_block=(2, 2), visualize=True, multichannel=True)
-
-    fd, hog_image = hog(image, orientations=9, pixels_per_cell=(5, 5),
-                	cells_per_block=(2, 2), visualize=True, multichannel=True)
+    hog_image = hog(image, orientations=9, pixels_per_cell=(10, 10), cells_per_block=(1, 1))
     
     return hog_image
 
 def train(path, userID):
     if os.path.exists(path+"/"+userID+'/hog.txt'):
         features = np.loadtxt(path+"/"+userID+'/hog.txt', float)   
-        return features, None 
-    
-    images, error = extractFace(path, userID)
+        return features, None
 
-    if error is not None:
-        return None, error
-    
-    if images[0] is None:
-        return None, "Erro no treinamento, imagens nulas."
-
-    
-    dataFeatures = np.array(features, float)
-    np.savetxt(path+"/"+userID+'/hog.txt', dataFeatures, fmt='%1.5f')
-
-    return features, None
+    return updateTrain(path, userID)
 
 def updateTrain(path, userID):
     images, error = extractFace(path, userID)
 
     if error is not None:
-        return error
+        return None, error
     
-    if images[0] is None:
-        return None, "Erro no treinamento, imagens nulas."
+    if len(images) < MIN_SIZE_DATASET:
+        return None, "O usuario não tem imagens sufucientes com a face detectavel."
 
-    #data = covarianceMatrix(images)
-    #features, _ = cv.PCACompute(data, mean=None, maxComponents=numberComponents) 
+    features = []
+    for image in images:
+        feature = extractFeature(image)
+        features.append(feature)
     
-    dataFeatures = np.array(features, int)
-    np.savetxt(path+"/"+userID+'/data.txt', dataFeatures)
+    dataFeatures = np.array(features, float)
+    np.savetxt(path+"/"+userID+'/hog.txt', dataFeatures)
 
-    return  None
+    return  dataFeatures, None
 
 if __name__ == "__main__":
-    image = imread("/static/image/eu.jpg")
+    image = imread('./static/image/eu.jpg')
+    image = resize(image, (50, 50))
+    image = rgb2gray(image)
     extractFeature(image)

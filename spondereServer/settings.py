@@ -4,7 +4,7 @@ FACE_DIM = 50
 PATH_IMAGES = 'recognition/dataset'
 PATH_DATA_TRAIN = 'static/train'
 EIGENFACES_NUMBER_COMPONENTS = 50
-MIN_SIZE_DATASET = 5
+MIN_SIZE_DATASET = 3
 THRESHOLD = 2200
 
 faceCascade = cv.CascadeClassifier('static/xml/haarcascade_frontalface_default.xml')

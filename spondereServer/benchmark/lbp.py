@@ -1,49 +1,34 @@
-from util.image import printFeature
 import numpy as np
 import os
-import cv2 as cv
 from recognition.findFace import extractFace
+from settings import MIN_SIZE_DATASET
+from skimage.feature import local_binary_pattern
 
-def train(path, userID, printDebug = False):
-    if os.path.exists(path+"/"+userID+'/data.txt'):
-        features = np.loadtxt(path+"/"+userID+'/data.txt', float)   
+def train(path, userID):
+    if os.path.exists(path+"/"+userID+'/lbp.txt'):
+        features = np.loadtxt(path+"/"+userID+'/lbp.txt', float)   
         return features, None 
     
-    images, error = extractFace(path, userID)
-
-    if error is not None:
-        return None, error
-    
-    if images[0] is None:
-        return None, "Erro no treinamento, imagens nulas."
-
-    #data = covarianceMatrix(images)
-    #features, _ = cv.PCACompute(data, mean=None, maxComponents=numberComponents) 
-
-    if features.ndim == 2:
-        features = features[0] 
-    
-    if printDebug:
-        printFeature(features, images[0].shape, 'Treino: '+userID)
-    
-    dataFeatures = np.array(features, float)
-    np.savetxt(path+"/"+userID+'/data.txt', dataFeatures, fmt='%1.5f')
-
-    return features, None
+    return updateTrain(path, userID)
 
 def updateTrain(path, userID):
     images, error = extractFace(path, userID)
 
-    if error is not None:
-        return error
-    
-    if images[0] is None:
-        return None, "Erro no treinamento, imagens nulas."
+    if error is not None:return None, error
+    if len(images) < MIN_SIZE_DATASET:
+        return None, "O usuario não tem imagens sufucientes com a face detectavel."
 
-    #data = covarianceMatrix(images)
-    #features, _ = cv.PCACompute(data, mean=None, maxComponents=numberComponents) 
+    features = []
+    for image in images:
+        feature = extractFeature(image)
+        features.append(feature)
     
-    dataFeatures = np.array(features, int)
-    np.savetxt(path+"/"+userID+'/data.txt', dataFeatures)
+    dataFeatures = np.array(features, float)
+    np.savetxt(path+"/"+userID+'/lbp.txt', dataFeatures)
 
-    return  None
+    return  dataFeatures, None
+
+def extractFeature(image):
+    lbp = local_binary_pattern(image, 8,1.0,method='default')
+
+    return None

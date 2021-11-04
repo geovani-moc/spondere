@@ -5,17 +5,17 @@ from settings import (
 )
 import os
 import numpy as np
+from util.recognition import loadFullTrain
+from benchmark.features import (
+    extractFeatureLBP,
+    extractFeatureHOG,
+    extractFeatureEigenFaces
+)
 
 
-def verifyFace(trainFeatures, labels, featuresTest, k = 1):
-    #knn = cv.ml_KNearest()
-    knn = cv.ml.KNearest_create()
-    knn.train(trainFeatures, labels)
-    ret, results, neighbours, dist = knn.findNearest(featuresTest, k)
-
-    print ("results: ", results,"\n")
-    print ("neighbours: ", neighbours,"\n")
-    print ("distances: ", dist)
+def verifyFace(featuresTest, userID, featureMethod):
+    features = loadFullTrain("knn", featureMethod)
+    #implementaçao do KNN
 
 
 if __name__ == '__main__':

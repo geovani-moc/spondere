@@ -1,21 +1,32 @@
-import cv2 as cv
 from settings import (
-    PATH_DATA_TRAIN,
-    PATH_IMAGES
+    PATH_DATA_TRAIN
 )
 import os
 import numpy as np
-from util.recognition import loadFullTrain
-from benchmark.features import (
-    extractFeatureLBP,
-    extractFeatureHOG,
-    extractFeatureEigenFaces
-)
+from util.recognition import loadFullLabels, loadFullTrain
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.preprocessing import LabelEncoder
 
+NUMBER_NEIGHBORS = 5
 
+# a entrada que representa as caracteristicas da face deve ser um vetor unidimensional
 def verifyFace(featuresTest, userID, featureMethod):
+    #otmizar na versão final, deixar tudo em memoria
     features = loadFullTrain("knn", featureMethod)
-    #implementaçao do KNN
+    labels = loadFullLabels()
+
+    labelEncoder = LabelEncoder()
+    labels = labelEncoder.fit_transform(labels)
+
+    model = KNeighborsClassifier(n_neighbors= NUMBER_NEIGHBORS, n_jobs=-1)
+    model.fit(features, labels)
+
+    result = model.predict(featuresTest)
+    label = labelEncoder.inverse_transform(result)
+
+    if label == userID: return True
+
+    return False
 
 
 if __name__ == '__main__':

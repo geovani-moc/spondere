@@ -1,3 +1,4 @@
+from typing import List
 from settings import(
     PATH_DATA_TRAIN,
     PATH_IMAGES,
@@ -20,7 +21,7 @@ def loadFullTrain(trainName, method):
         if os.path.isdir(os.path.join(PATH_IMAGES, directorie)):
             feature, error = train(PATH_IMAGES, directorie, method, trainName)
             if error is not None:
-                errors.append(error)
+                errors += error
             features.append(feature)
                 
     return features, errors
@@ -42,19 +43,21 @@ def loadFullLabels():
 def updateTrain(path, userID, methodExtractFeature, name):
     images, error = extractFace(path, userID)
 
-    if error is not None:return None, error
+    if error is not None: return None, [error]
     if len(images) < MIN_SIZE_DATASET:
-        return None, "O usuario não tem imagens sufucientes com a face detectavel."
+        return None, ["O usuario não tem imagens sufucientes com a face detectavel."]
 
+    errors = []
     features = []
     for image in images:
-        feature = methodExtractFeature(image)
+        feature, error = methodExtractFeature(image)
+        if error is not None: errors.append(error)
         features.append(feature)
     
     dataFeatures = np.array(features, float)
     np.savetxt(path+"/"+userID+'/' + name + '.txt', dataFeatures)
 
-    return  dataFeatures, None
+    return  dataFeatures, errors
 
 def train(path, userID, method, name="eigen"):
 

@@ -1,5 +1,46 @@
-def test():
-    return 0.0
+from settings import(
+    PATH_IMAGES
+)
+import os
+
+from util.image import loadImages
+
+
+def test(classifier, extractMethod) -> float:
+    count:int = 0
+    hits:int = 0 
+
+    directories = os.listdir(PATH_IMAGES)
+
+    for directorie in directories:
+        if os.path.isdir(os.path.join(PATH_IMAGES, directorie)):
+            if (os.path.exists(os.path.join(PATH_IMAGES, directorie, 'false')) and 
+                os.path.exists(os.path.join(PATH_IMAGES, directorie, 'true'))):
+                
+                tempCount, tempHits = testImages(directorie, classifier, extractMethod, 'false')
+                count = count + tempCount
+                hits = hits + tempHits
+
+                tempCount, tempHits = testImages(directorie, classifier, extractMethod, 'true')
+                count += tempCount
+                hits += tempHits
+    
+    if count == 0: return 0
+
+    return (hits/count)
+
+def testImages(userID, classifier, extractMethod, folder):
+    path = os.path.join(PATH_IMAGES, userID, folder)
+    images = loadImages(path)
+
+    hits = 0
+    count = 0
+    for image in images:
+        if classifier(image, userID, extractMethod): hits += 1
+        count += 1
+    
+    return count, hits
+
 
 if __name__ == '__main__':
 

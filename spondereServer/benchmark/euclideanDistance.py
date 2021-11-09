@@ -3,12 +3,16 @@ from util.recognition import(
     loadFullLabels,
     loadFullTrain
 )
+from sys import stderr
 
-def verifyFace(featuresTest, userID, featureMethod):
-    features, error = loadFullTrain("euclidean_distance", featureMethod)
+def verifyFace(image, userID, featureMethod):
+    featuresTest, error = featureMethod(image)
+    if error is not None: return None, error
+
+    features, errors = loadFullTrain("euclidean_distance", featureMethod)
+    if len(errors) > 0: print(errors, file=stderr)
     labels = loadFullLabels()
 
-    if error is not None: return False, error
     if len(labels) != len(features): return False, "caracteristicas e rotulos não coincidem"
     if len(features) == 0: return False, None
 

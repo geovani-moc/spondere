@@ -1,5 +1,6 @@
 from settings import (
-    PATH_DATA_TRAIN
+    PATH_DATA_TRAIN,
+    NUMBER_NEIGHBORS
 )
 import os
 import numpy as np
@@ -7,7 +8,6 @@ from util.recognition import loadFullLabels, loadFullTrain
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.preprocessing import LabelEncoder
 
-NUMBER_NEIGHBORS = 5
 
 # a entrada que representa as caracteristicas da face deve ser um vetor unidimensional
 def verifyFace(featuresTest, userID, featureMethod):

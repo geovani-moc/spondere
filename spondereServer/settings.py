@@ -7,6 +7,8 @@ EIGENFACES_NUMBER_COMPONENTS = 50
 MIN_SIZE_DATASET = 3
 THRESHOLD = 2200
 
+NUMBER_NEIGHBORS = 5
+
 faceCascade = cv.CascadeClassifier('static/xml/haarcascade_frontalface_default.xml')
 eyeCascade = cv.CascadeClassifier('static/xml/haarcascade_eye.xml')
 PATH_CLASSIFIER_TRAIN ='static/xml/face_classifier.xml'

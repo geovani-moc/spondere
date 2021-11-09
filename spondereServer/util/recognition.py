@@ -18,7 +18,7 @@ def loadFullTrain(trainName, method):
     directories = os.listdir(PATH_IMAGES)
     for directorie in directories:
         if os.path.isdir(os.path.join(PATH_IMAGES, directorie)):
-            feature, error = train(PATH_IMAGES, directorie, method)
+            feature, error = train(PATH_IMAGES, directorie, method, trainName)
             if error is not None:
                 errors.append(error)
             features.append(feature)
@@ -39,7 +39,7 @@ def loadFullLabels():
     
     return labels
 
-def updateTrain(path, userID, methodExtractFeature):
+def updateTrain(path, userID, methodExtractFeature, name):
     images, error = extractFace(path, userID)
 
     if error is not None:return None, error
@@ -52,14 +52,14 @@ def updateTrain(path, userID, methodExtractFeature):
         features.append(feature)
     
     dataFeatures = np.array(features, float)
-    np.savetxt(path+"/"+userID+'/lbp.txt', dataFeatures)
+    np.savetxt(path+"/"+userID+'/' + name + '.txt', dataFeatures)
 
     return  dataFeatures, None
 
-def train(path, userID, method):
+def train(path, userID, method, name="eigen"):
 
-    if os.path.exists(path+"/"+userID+'/eigen.txt'):
-        features = np.loadtxt(path+"/"+userID+'/eigen.txt', float)   
+    if os.path.exists(path+"/"+userID+'/' + name + '.txt'):
+        features = np.loadtxt(path+"/"+userID+'/' + name + '.txt', float)   
         return features, None 
 
-    return updateTrain(path, userID, method)
+    return updateTrain(path, userID, method, name)

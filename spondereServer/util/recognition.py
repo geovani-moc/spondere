@@ -1,4 +1,3 @@
-from typing import List
 from settings import(
     PATH_DATA_TRAIN,
     PATH_IMAGES,
@@ -11,7 +10,7 @@ from recognition.findFace import extractFace
 def loadFullTrain(trainName, method):
     path = PATH_DATA_TRAIN
     if os.path.exists(path + trainName + ".txt"):
-        features = np.loadtxt(path + trainName + ".txt", float)
+        features = np.load(path + trainName + ".txt")
         return features, None
     features = []
     errors = []  
@@ -29,7 +28,7 @@ def loadFullTrain(trainName, method):
 def loadFullLabels():
     path = PATH_DATA_TRAIN
     if os.path.exists(path + '/labels.txt'):
-        labels = np.loadtxt(path+"/labels.txt", str)
+        labels = np.load(path+"/labels.txt")
         return labels
     
     labels = []
@@ -52,17 +51,26 @@ def updateTrain(path, userID, methodExtractFeature, name):
     for image in images:
         feature, error = methodExtractFeature(image)
         if error is not None: errors.append(error)
-        features.append(feature)
+        features.append(np.array(feature, float))
     
-    dataFeatures = np.array(features, float)
-    np.savetxt(path+"/"+userID+'/' + name + '.txt', dataFeatures)
+    dataFeatures = np.array(features, dtype=object)
+
+    np.save(path + '/' + userID + '/' + name + '.txt', dataFeatures)
 
     return  dataFeatures, errors
 
 def train(path, userID, method, name="eigen"):
 
     if os.path.exists(path+"/"+userID+'/' + name + '.txt'):
-        features = np.loadtxt(path+"/"+userID+'/' + name + '.txt', float)   
+        features = np.load(path+"/"+userID+'/' + name + '.txt')   
         return features, None 
 
     return updateTrain(path, userID, method, name)
+
+def deleteTrain(name):
+    dirs = os.listdir(PATH_IMAGES)
+    for dir in dirs:
+        if os.path.isdir(os.path.join(PATH_IMAGES, dir)):
+            if os.path.exists(os.path.join(PATH_IMAGES, dir, name+'.txt')):
+                os.remove(os.path.join(PATH_IMAGES, dir, name+'.txt'))
+

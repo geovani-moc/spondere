@@ -42,8 +42,8 @@ if __name__ == '__main__':
 
     if (os.path.exists(PATH_DATA_TRAIN + '/labels.txt') and 
             not os.path.exists(PATH_DATA_TRAIN + '/feature.txt')):
-        features = np.loadtxt(PATH_DATA_TRAIN + "/feature.txt", float)
-        labels = np.loadtxt(PATH_DATA_TRAIN + "/labels.txt", str)
+        features = np.load(PATH_DATA_TRAIN + "/feature.txt")
+        labels = np.load(PATH_DATA_TRAIN + "/labels.txt")
 
         #fazer a estraçao de caracteristidas de uma imagem para testar
         featuresTest = []

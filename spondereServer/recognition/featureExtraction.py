@@ -7,7 +7,7 @@ from recognition.findFace import extractFace
 
 def train(path, userID, numberComponents = EIGENFACES_NUMBER_COMPONENTS, printDebug = False):
     if os.path.exists(path+"/"+userID+'/data.txt'):
-        features = np.loadtxt(path+"/"+userID+'/data.txt', float)   
+        features = np.load(path+"/"+userID+'/data.txt')   
         return features, None 
     
     images, error = extractFace(path, userID)
@@ -28,7 +28,7 @@ def train(path, userID, numberComponents = EIGENFACES_NUMBER_COMPONENTS, printDe
         printFeature(features, images[0].shape, 'Treino: '+userID)
     
     dataFeatures = np.array(features, float)
-    np.savetxt(path+"/"+userID+'/data.txt', dataFeatures, fmt='%1.5f')
+    np.save(path+"/"+userID+'/data.txt', dataFeatures, fmt='%1.5f')
 
     return features, None
 
@@ -45,7 +45,7 @@ def updateTrainUser(path, userID, numberComponents = EIGENFACES_NUMBER_COMPONENT
     features, _ = cv.PCACompute(data, mean=None, maxComponents=numberComponents) 
     
     dataFeatures = np.array(features, int)
-    np.savetxt(path+"/"+userID+'/data.txt', dataFeatures)
+    np.save(path+"/"+userID+'/data.txt', dataFeatures)
 
     return  None
 

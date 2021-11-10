@@ -2,6 +2,12 @@ from settings import(
     PATH_IMAGES
 )
 import os
+from benchmark import (
+    knn, 
+    svm, 
+    euclideanDistance,
+    features
+)
 
 from util.image import loadImages
 
@@ -44,17 +50,25 @@ def testImages(userID, classifier, extractMethod, folder):
 
 if __name__ == '__main__':
 
-    euclidianDistance_eigen = test()
-    euclidianDistance_lbp = test()
-    euclidianDistance_hog = test()
+    KNN = knn.verifyFace
+    SVM = svm.verifyFace
+    euclidean = euclideanDistance.verifyFace
 
-    knn_lbp = test()
-    knn_eigen = test()
-    knn_hog = test()
+    hog = features.extractFeatureHOG
+    lbp = features.extractFeatureLBP
+    eigen = features.extractFeatureEigenFaces
 
-    svm_lbp = test()
-    svm_eigen = test()
-    svm_hog = test()
+    euclidianDistance_eigen = test(euclidean, eigen)
+    euclidianDistance_lbp = test(euclidean, lbp)
+    euclidianDistance_hog = test(euclidean, lbp)
+
+    knn_lbp = test(KNN, lbp)
+    knn_eigen = test(KNN, eigen)
+    knn_hog = test(KNN, hog)
+
+    svm_lbp = test(SVM, lbp)
+    svm_eigen = test(SVM, eigen)
+    svm_hog = test(SVM, hog)
 
     print("Distancia euclidiana:")
     print(" |->Eigenfaces: ", euclidianDistance_eigen)

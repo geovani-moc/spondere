@@ -21,7 +21,7 @@ def extractFeatureEigenFaces(image):
     image, error = findFace(image)
     if error is not None: return None, error
 
-    data = covarianceMatrix(image)
+    data = covarianceMatrix([image])
     feature, _ = cv.PCACompute(data, mean=None, maxComponents=EIGENFACES_NUMBER_COMPONENTS) 
 
     if feature.ndim == 2:
@@ -47,9 +47,3 @@ def covarianceMatrix(images):
         data[number,:] = image
 
     return data
-
-if __name__ == "__main__":
-    image = imread('./static/image/eu.jpg')
-    image = resize(image, (50, 50))
-    image = rgb2gray(image)
-    extractFeatureHOG(image)

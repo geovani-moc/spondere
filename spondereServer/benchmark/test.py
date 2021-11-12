@@ -1,3 +1,4 @@
+from recognition.findFace import extractFace
 from settings import(
     PATH_IMAGES
 )
@@ -25,7 +26,7 @@ def test(classifier, name, extractMethod) -> float:
                 
                 tempCount, tempHits = testImages(directorie, classifier, name, extractMethod, 'false')
                 count = count + tempCount
-                hits = hits + tempHits
+                hits = hits + (tempCount - tempHits)
 
                 tempCount, tempHits = testImages(directorie, classifier, name, extractMethod, 'true')
                 count += tempCount
@@ -36,13 +37,14 @@ def test(classifier, name, extractMethod) -> float:
     return (hits/count)
 
 def testImages(userID, classifier, name, extractMethod, folder):
-    path = os.path.join(PATH_IMAGES, userID, folder)
-    images = loadImages(path)
+    #path = os.path.join(PATH_IMAGES, userID, folder)
+    images, error = extractFace(PATH_IMAGES, os.path.join(userID, folder))
 
     hits:float = 0
     count:float = 0
     for image in images:
-        if classifier(image, userID, name, extractMethod): hits += 1
+        result, error = classifier(image, userID, name, extractMethod)
+        if result: hits += 1
         count += 1
     
     return count, hits
@@ -58,27 +60,27 @@ if __name__ == '__main__':
     lbp = features.extractFeatureLBP
     eigen = features.extractFeatureEigenFaces
 
-    euclidianDistance_eigen = test(euclidean, 'eigen', eigen)
-    euclidianDistance_lbp = test(euclidean, 'lbp', lbp)
+    # euclidianDistance_eigen = test(euclidean, 'eigen', eigen)
+    # euclidianDistance_lbp = test(euclidean, 'lbp', lbp)
     euclidianDistance_hog = test(euclidean, 'hog', hog)
     print("Distancia euclidiana:")
-    print(" |->Eigenfaces: ", euclidianDistance_eigen)
-    print(" |->LBP: ", euclidianDistance_lbp)
+    # print(" |->Eigenfaces: ", euclidianDistance_eigen)
+    # print(" |->LBP: ", euclidianDistance_lbp)
     print(" |->HOG: ", euclidianDistance_hog)
 
-    knn_lbp = test(KNN, 'lbp', lbp)
-    knn_eigen = test(KNN, 'eigen', eigen)
-    knn_hog = test(KNN, 'hog', hog)
-    print("KNN:")
-    print(" |->Eigenfaces: ", knn_eigen)
-    print(" |->LBP: ", knn_lbp)
-    print(" |->HOG: ", knn_hog)
+    # knn_lbp = test(KNN, 'lbp', lbp)
+    # knn_eigen = test(KNN, 'eigen', eigen)
+    # knn_hog = test(KNN, 'hog', hog)
+    # print("KNN:")
+    # print(" |->Eigenfaces: ", knn_eigen)
+    # print(" |->LBP: ", knn_lbp)
+    # print(" |->HOG: ", knn_hog)
 
-    svm_lbp = test(SVM, 'lbp', lbp)
-    svm_eigen = test(SVM, 'eigen', eigen)
-    svm_hog = test(SVM, 'hog', hog)
-    print("SVM(linear):")
-    print(" |->Eigenfaces: ", svm_eigen)
-    print(" |->LBP: ", svm_lbp)
-    print(" |->HOG: ", svm_hog)
+    # svm_lbp = test(SVM, 'lbp', lbp)
+    # svm_eigen = test(SVM, 'eigen', eigen)
+    # svm_hog = test(SVM, 'hog', hog)
+    # print("SVM(linear):")
+    # print(" |->Eigenfaces: ", svm_eigen)
+    # print(" |->LBP: ", svm_lbp)
+    # print(" |->HOG: ", svm_hog)
 

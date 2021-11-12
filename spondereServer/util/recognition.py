@@ -63,7 +63,7 @@ def updateTrain(path, userID, methodExtractFeature, name):
         feature, error = methodExtractFeature(image)
         if error is not None: errors.append(error)
         
-        if not np.isnan(np.sum(feature)):
+        if feature is not None or len(features) > 1:
             features.append(np.array(feature, dtype=float))
     
     if len(features) < MIN_SIZE_DATASET:
@@ -81,8 +81,8 @@ def normalizeFeatures(features):
         return features[0:NUMBER_FEATURES_DATASET]
 
     if len(features) < NUMBER_FEATURES_DATASET:
-        for i in range(len(features)-1, NUMBER_FEATURES_DATASET):
-            features = np.concatenate((feature, [features[0]])) #checar se fetures tem size = numeber features dataset
+        for i in range(len(features), NUMBER_FEATURES_DATASET):
+            features = np.concatenate((features, [features[0]])) #checar se fetures tem size = numeber features dataset
 
     return features
 

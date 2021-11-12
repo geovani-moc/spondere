@@ -7,29 +7,23 @@ from recognition.findFace import findFace
 from settings import EIGENFACES_NUMBER_COMPONENTS
 
 def extractFeatureLBP(image):
-    image, error = findFace(image)
-    if error is not None: return None, error
-
     lbp = local_binary_pattern(image, 8,1.0,method='default')
+    lbp = lbp.flatten()
     return lbp, None
 
 #fazer a extração de todas ou de uma por vez?(image ou images)
 def extractFeatureEigenFaces(image):
-    image, error = findFace(image)
-    if error is not None: return None, error
-
+    #nao está com bom resultado
     data = covarianceMatrix([image])
     feature, _ = cv.PCACompute(data, mean=None, maxComponents=EIGENFACES_NUMBER_COMPONENTS) 
 
+    #2d para 1d
     if feature.ndim == 2:
         feature = feature[0]
 
-    return feature, error
+    return feature, None
 
 def extractFeatureHOG(image):
-    image, error = findFace(image)
-    if error is not None: return None, error
-
     hog_image = hog(image, orientations=9, pixels_per_cell=(10, 10), cells_per_block=(1, 1))
     return hog_image, None
 

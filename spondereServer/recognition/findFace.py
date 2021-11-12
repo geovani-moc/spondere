@@ -1,6 +1,6 @@
 import os
 import cv2 as cv
-from settings import FACE_DIM, faceCascade, eyeCascade
+from settings import FACE_DIM, MIN_SIZE_DATASET, faceCascade, eyeCascade
 from util.image import loadUserDataset
 
 
@@ -76,7 +76,7 @@ def extractFace(path, userID):
         if error is None:
             faces.append(face)
     
-    if len(faces) < 3:
+    if len(faces) < MIN_SIZE_DATASET:
         return None, "quantidade pequena de imagens no dataset"
 
     return faces, None

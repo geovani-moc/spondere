@@ -5,9 +5,11 @@ from util.recognition import(
 )
 from sys import stderr
 
+#image deve ser uma imagem de uma face
 def verifyFace(image, userID, name, featureMethod):
+    
     featuresTest, error = featureMethod(image)
-    if error is not None: return None, error
+    if featuresTest is None: return None, "Erro na geração de caracteristicas. " + name
 
     features, errors = loadFullTrain(name, featureMethod)
     #if len(errors) > 0: print(errors, file=stderr)#imagens com face nao localizadas
@@ -19,7 +21,7 @@ def verifyFace(image, userID, name, featureMethod):
     bestLabel:str = labels[0]
     bestFeature:float =  euclidianDistance(features[0], featuresTest)
 
-    count = 1
+    count = 0
     for feature in features:
         distance = euclidianDistance(feature, featuresTest)
         if bestFeature > distance:

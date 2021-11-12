@@ -11,7 +11,7 @@ def findFace(image):
     if len(facesPositions) > 0:
         column, row, width, height = facesPositions[0]
     else:
-        return None, "Erro ao localizar face, não existe faces na imagem."
+        return None, 'Erro ao localizar face, não existe faces na imagem. \n'
 
     #face(column, row, width, height)
     #localiza a maior regiao area que é cnsiderada uma face

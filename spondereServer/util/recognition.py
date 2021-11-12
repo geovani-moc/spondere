@@ -1,7 +1,10 @@
+from skimage import feature
+from database import user
 from settings import(
     PATH_DATA_TRAIN,
     PATH_IMAGES,
-    MIN_SIZE_DATASET
+    MIN_SIZE_DATASET, 
+    NUMBER_FEATURES_DATASET
 )
 import os
 import numpy as np
@@ -9,8 +12,8 @@ from recognition.findFace import extractFace
 
 def loadFullTrain(trainName, method):
     path = PATH_DATA_TRAIN
-    if os.path.exists(path + trainName + ".txt"):
-        features = np.load(path + trainName + ".txt")
+    if os.path.exists(os.path.join(path, trainName+'.npy')):
+        features = np.load(os.path.join(path, trainName + '.npy'))
         return features, None
     features = []
     errors = []  
@@ -18,24 +21,32 @@ def loadFullTrain(trainName, method):
     directories = os.listdir(PATH_IMAGES)
     for directorie in directories:
         if os.path.isdir(os.path.join(PATH_IMAGES, directorie)):
-            feature, error = train(PATH_IMAGES, directorie, method, trainName)
+            featuresUser, error = train(PATH_IMAGES, directorie, method, trainName)
             if error is not None:
                 errors += error
-            features.append(feature)
+            if featuresUser is not None:
+                features.append(featuresUser)
+
+    if(not os.path.exists(path)):
+        os.mkdir(path)
+    
+    features = np.array(features, dtype=float)
+    np.save(os.path.join(path, trainName+'.npy'), features)
                 
     return features, errors
 
-def loadFullLabels():
+def loadFullLabels(name):
     path = PATH_DATA_TRAIN
-    if os.path.exists(path + '/labels.txt'):
-        labels = np.load(path+"/labels.txt")
+    if os.path.exists(path + '/labels.npy'):
+        labels = np.load(path+"/labels.npy")
         return labels
     
     labels = []
     directories = os.listdir(PATH_IMAGES)
     for directorie in directories:
         if os.path.isdir(os.path.join(PATH_IMAGES, directorie)):
-            labels.append(directorie)
+            if os.path.exists(os.path.join(PATH_IMAGES, directorie, name+'.npy')):
+                labels.append(directorie)
     
     return labels
 
@@ -51,18 +62,34 @@ def updateTrain(path, userID, methodExtractFeature, name):
     for image in images:
         feature, error = methodExtractFeature(image)
         if error is not None: errors.append(error)
-        features.append(np.array(feature, float))
+        
+        if not np.isnan(np.sum(feature)):
+            features.append(np.array(feature, dtype=float))
     
-    dataFeatures = np.array(features, dtype=object)
+    if len(features) < MIN_SIZE_DATASET:
+        return None, "quantidade de caracteristicas insuficiente:" + userID
 
-    np.save(path + '/' + userID + '/' + name + '.txt', dataFeatures)
+    features = normalizeFeatures(features)
+    features = np.array(features, dtype=float)
 
-    return  dataFeatures, errors
+    np.save(path + '/' + userID + '/' + name + '.npy', features)
+
+    return  features, errors
+
+def normalizeFeatures(features):
+    if len(features) > NUMBER_FEATURES_DATASET:
+        return features[0:NUMBER_FEATURES_DATASET]
+
+    if len(features) < NUMBER_FEATURES_DATASET:
+        for i in range(len(features)-1, NUMBER_FEATURES_DATASET):
+            features = np.concatenate((feature, [features[0]])) #checar se fetures tem size = numeber features dataset
+
+    return features
 
 def train(path, userID, method, name="eigen"):
 
-    if os.path.exists(path+"/"+userID+'/' + name + '.txt'):
-        features = np.load(path+"/"+userID+'/' + name + '.txt')   
+    if os.path.exists(path+"/"+userID+'/' + name + '.npy'):
+        features = np.load(path+"/"+userID+'/' + name + '.npy')   
         return features, None 
 
     return updateTrain(path, userID, method, name)
@@ -71,6 +98,9 @@ def deleteTrain(name):
     dirs = os.listdir(PATH_IMAGES)
     for dir in dirs:
         if os.path.isdir(os.path.join(PATH_IMAGES, dir)):
-            if os.path.exists(os.path.join(PATH_IMAGES, dir, name+'.txt')):
-                os.remove(os.path.join(PATH_IMAGES, dir, name+'.txt'))
+            if os.path.exists(os.path.join(PATH_IMAGES, dir, name+'.npy')):
+                os.remove(os.path.join(PATH_IMAGES, dir, name+'.npy'))
 
+def deleteFullTrain(name):
+    if os.path.exists(os.path.join(PATH_DATA_TRAIN, name + '.npy')):
+        os.remove(os.path.join(PATH_DATA_TRAIN, name + '.npy'))

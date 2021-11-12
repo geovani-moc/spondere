@@ -12,9 +12,9 @@ from benchmark import (
 from util.image import loadImages
 
 
-def test(classifier, extractMethod) -> float:
-    count:int = 0
-    hits:int = 0 
+def test(classifier, name, extractMethod) -> float:
+    count:float = 0
+    hits:float = 0 
 
     directories = os.listdir(PATH_IMAGES)
 
@@ -23,11 +23,11 @@ def test(classifier, extractMethod) -> float:
             if (os.path.exists(os.path.join(PATH_IMAGES, directorie, 'false')) and 
                 os.path.exists(os.path.join(PATH_IMAGES, directorie, 'true'))):
                 
-                tempCount, tempHits = testImages(directorie, classifier, extractMethod, 'false')
+                tempCount, tempHits = testImages(directorie, classifier, name, extractMethod, 'false')
                 count = count + tempCount
                 hits = hits + tempHits
 
-                tempCount, tempHits = testImages(directorie, classifier, extractMethod, 'true')
+                tempCount, tempHits = testImages(directorie, classifier, name, extractMethod, 'true')
                 count += tempCount
                 hits += tempHits
     
@@ -35,14 +35,14 @@ def test(classifier, extractMethod) -> float:
 
     return (hits/count)
 
-def testImages(userID, classifier, extractMethod, folder):
+def testImages(userID, classifier, name, extractMethod, folder):
     path = os.path.join(PATH_IMAGES, userID, folder)
     images = loadImages(path)
 
-    hits = 0
-    count = 0
+    hits:float = 0
+    count:float = 0
     for image in images:
-        if classifier(image, userID, extractMethod): hits += 1
+        if classifier(image, userID, name, extractMethod): hits += 1
         count += 1
     
     return count, hits
@@ -58,28 +58,25 @@ if __name__ == '__main__':
     lbp = features.extractFeatureLBP
     eigen = features.extractFeatureEigenFaces
 
-    euclidianDistance_eigen = test(euclidean, eigen)
-    euclidianDistance_lbp = test(euclidean, lbp)
-    euclidianDistance_hog = test(euclidean, lbp)
-
-    knn_lbp = test(KNN, lbp)
-    knn_eigen = test(KNN, eigen)
-    knn_hog = test(KNN, hog)
-
-    svm_lbp = test(SVM, lbp)
-    svm_eigen = test(SVM, eigen)
-    svm_hog = test(SVM, hog)
-
+    euclidianDistance_eigen = test(euclidean, 'eigen', eigen)
+    euclidianDistance_lbp = test(euclidean, 'lbp', lbp)
+    euclidianDistance_hog = test(euclidean, 'hog', hog)
     print("Distancia euclidiana:")
     print(" |->Eigenfaces: ", euclidianDistance_eigen)
     print(" |->LBP: ", euclidianDistance_lbp)
     print(" |->HOG: ", euclidianDistance_hog)
 
+    knn_lbp = test(KNN, 'lbp', lbp)
+    knn_eigen = test(KNN, 'eigen', eigen)
+    knn_hog = test(KNN, 'hog', hog)
     print("KNN:")
     print(" |->Eigenfaces: ", knn_eigen)
     print(" |->LBP: ", knn_lbp)
     print(" |->HOG: ", knn_hog)
 
+    svm_lbp = test(SVM, 'lbp', lbp)
+    svm_eigen = test(SVM, 'eigen', eigen)
+    svm_hog = test(SVM, 'hog', hog)
     print("SVM(linear):")
     print(" |->Eigenfaces: ", svm_eigen)
     print(" |->LBP: ", svm_lbp)

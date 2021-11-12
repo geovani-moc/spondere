@@ -6,8 +6,8 @@ import cv2 as cv
 from recognition.findFace import extractFace
 
 def train(path, userID, numberComponents = EIGENFACES_NUMBER_COMPONENTS, printDebug = False):
-    if os.path.exists(path+"/"+userID+'/data.txt'):
-        features = np.load(path+"/"+userID+'/data.txt')   
+    if os.path.exists(path+"/"+userID+'/data.npy'):
+        features = np.load(path+"/"+userID+'/data.npy')   
         return features, None 
     
     images, error = extractFace(path, userID)
@@ -27,8 +27,8 @@ def train(path, userID, numberComponents = EIGENFACES_NUMBER_COMPONENTS, printDe
     if printDebug:
         printFeature(features, images[0].shape, 'Treino: '+userID)
     
-    dataFeatures = np.array(features, float)
-    np.save(path+"/"+userID+'/data.txt', dataFeatures, fmt='%1.5f')
+    dataFeatures = np.array(features, dtype=float)
+    np.save(path+"/"+userID+'/data.npy', dataFeatures, fmt='%1.5f')
 
     return features, None
 
@@ -44,8 +44,8 @@ def updateTrainUser(path, userID, numberComponents = EIGENFACES_NUMBER_COMPONENT
     data = covarianceMatrix(images)
     features, _ = cv.PCACompute(data, mean=None, maxComponents=numberComponents) 
     
-    dataFeatures = np.array(features, int)
-    np.save(path+"/"+userID+'/data.txt', dataFeatures)
+    dataFeatures = np.array(features, dtype=int)
+    np.save(path+"/"+userID+'/data.npy', dataFeatures)
 
     return  None
 

@@ -10,7 +10,7 @@ def verifyFace(image, userID, name, featureMethod, kernel='linear'):
 
     features, errors = loadFullTrain(name, featureMethod)
     #if len(errors) > 0: print(errors, file=stderr)
-    labelsUser = loadFullLabels()
+    labelsUser = loadFullLabels(name)
 
     if len(labelsUser) != len(features): return False, "caracteristicas e rotulos não coincidem"
     if len(features) == 0: return False, None

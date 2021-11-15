@@ -30,14 +30,12 @@ def verifyFace(image, userID, name, featureMethod):
     featuresLettering, labels = lettering(features, labelsUser)
 
     model = KNeighborsClassifier(n_neighbors= NUMBER_NEIGHBORS, n_jobs=-1)
-    model.fit(featuresLettering, labels)#Exception has occurred: ValueError       
-    #(note: full exception trace is shown but execution is paused at: <module>)
-    #Expected 2D array, got 1D array instead:
+    model.fit(featuresLettering, labels)
 
-    result = model.predict(featuresTest)
+    result = model.predict([featuresTest])
     label = labelEncoder.inverse_transform(result)
 
-    if label == userID: return True, None
+    if label[0] == userID: return True, None
 
     return False, None
 

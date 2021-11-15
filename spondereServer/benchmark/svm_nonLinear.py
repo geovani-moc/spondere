@@ -1,15 +1,13 @@
 from sklearn import svm
 from util.recognition import loadFullLabels, loadFullTrain
 from sklearn.preprocessing import LabelEncoder
-from sys import stderr
 
-def verifyFace(image, userID, name, featureMethod, kernel='linear'):
+def verifyFace(image, userID, name, featureMethod):
 
     featuresTest, error = featureMethod(image)
     if error is not None: return None, error
 
     features, errors = loadFullTrain(name, featureMethod)
-    #if len(errors) > 0: print(errors, file=stderr)
     labelsUser = loadFullLabels(name)
 
     if len(labelsUser) != len(features): return False, "caracteristicas e rotulos não coincidem"
@@ -20,7 +18,7 @@ def verifyFace(image, userID, name, featureMethod, kernel='linear'):
 
     featuresLettering, labels = lettering(features, labelsUser)
 
-    model = svm.SVC(kernel=kernel)
+    model = svm.NuSVC(gamma="auto")
     model.fit(featuresLettering, labels)
 
     result = model.predict([featuresTest])

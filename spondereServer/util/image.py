@@ -56,7 +56,7 @@ def loadUserDataset(path, userID):
     return images
 
 def printFeature(pcaImage, imageSize, name = 'Teste'):
-    image = pcaImage.reshape(imageSize)
+    image = pcaImage.reshape(imageSize, imageSize)
     norm_image = cv.normalize(image, None, alpha = 0, beta = 255, norm_type = cv.NORM_MINMAX, dtype = cv.CV_32F)
     norm_image = norm_image.astype(np.uint8)
     cv.imshow(name, norm_image)

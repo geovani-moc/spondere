@@ -4,22 +4,22 @@ from skimage.feature import hog
 import numpy as np
 import cv2 as cv
 from recognition.findFace import findFace
-from settings import EIGENFACES_NUMBER_COMPONENTS
+from settings import EIGENFACES_NUMBER_COMPONENTS, FACE_DIM
+from util.image import printFeature
+from sklearn.decomposition import PCA
 
 def extractFeatureLBP(image):
     lbp = local_binary_pattern(image, 8,1.0,method='default')
     lbp = lbp.flatten()
     return lbp, None
 
-#fazer a extração de todas ou de uma por vez?(image ou images)
 def extractFeatureEigenFaces(image):
-    #nao está com bom resultado
+    #nao está ocorrendo vaiação porque data tem somente uma imagem
     data = covarianceMatrix([image])
     feature, _ = cv.PCACompute(data, mean=None, maxComponents=EIGENFACES_NUMBER_COMPONENTS) 
 
-    #2d para 1d
     if feature.ndim == 2:
-        feature = feature[0]
+       feature = feature[0]
 
     return feature, None
 

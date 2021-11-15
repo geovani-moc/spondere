@@ -7,7 +7,8 @@ from benchmark import (
     knn, 
     svm, 
     euclideanDistance,
-    features
+    features,
+    svm_nonLinear
 )
 
 from util.image import loadImages
@@ -55,32 +56,40 @@ if __name__ == '__main__':
     KNN = knn.verifyFace
     SVM = svm.verifyFace
     euclidean = euclideanDistance.verifyFace
+    SVM_nonLinear = svm.verifyFace
 
     hog = features.extractFeatureHOG
     lbp = features.extractFeatureLBP
     eigen = features.extractFeatureEigenFaces
 
-    # euclidianDistance_eigen = test(euclidean, 'eigen', eigen)
-    # euclidianDistance_lbp = test(euclidean, 'lbp', lbp)
-    euclidianDistance_hog = test(euclidean, 'hog', hog)
-    print("Distancia euclidiana:")
+    # print("Distancia euclidiana:")
+    # euclidianDistance_eigen = test(euclidean, 'eigen', eigen) #71%
     # print(" |->Eigenfaces: ", euclidianDistance_eigen)
+    # euclidianDistance_lbp = test(euclidean, 'lbp', lbp) #68%
     # print(" |->LBP: ", euclidianDistance_lbp)
-    print(" |->HOG: ", euclidianDistance_hog)
+    # euclidianDistance_hog = test(euclidean, 'hog', hog) #76%
+    # print(" |->HOG: ", euclidianDistance_hog)
 
-    # knn_lbp = test(KNN, 'lbp', lbp)
-    # knn_eigen = test(KNN, 'eigen', eigen)
-    # knn_hog = test(KNN, 'hog', hog)
     # print("KNN:")
-    # print(" |->Eigenfaces: ", knn_eigen)
+    # knn_lbp = test(KNN, 'lbp', lbp) #76%
     # print(" |->LBP: ", knn_lbp)
+    # knn_eigen = test(KNN, 'eigen', eigen) #78%
+    # print(" |->Eigenfaces: ", knn_eigen)
+    # knn_hog = test(KNN, 'hog', hog) #79%
     # print(" |->HOG: ", knn_hog)
 
-    # svm_lbp = test(SVM, 'lbp', lbp)
-    # svm_eigen = test(SVM, 'eigen', eigen)
-    # svm_hog = test(SVM, 'hog', hog)
     # print("SVM(linear):")
-    # print(" |->Eigenfaces: ", svm_eigen)
+    # svm_lbp = test(SVM, 'lbp', lbp) #85%
     # print(" |->LBP: ", svm_lbp)
+    # svm_eigen = test(SVM, 'eigen', eigen) #90%
+    # print(" |->Eigenfaces: ", svm_eigen)
+    # svm_hog = test(SVM, 'hog', hog) #85%
     # print(" |->HOG: ", svm_hog)
 
+    print("SVM(não linear)")
+    svmNonLinear_lbp = test(SVM_nonLinear, 'lbp', lbp) #85%
+    print(" |->LBP: ", svmNonLinear_lbp)
+    svmNonLinear_eigen = test(SVM_nonLinear, 'eigen', eigen) #90%
+    print(" |->Eigenfaces: ", svmNonLinear_eigen)
+    svmNonLinear_hog = test(SVM_nonLinear, 'hog', hog) #85%
+    print(" |->HOG: ", svmNonLinear_hog)

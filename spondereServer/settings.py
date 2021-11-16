@@ -8,7 +8,7 @@ MIN_SIZE_DATASET = 3
 NUMBER_FEATURES_DATASET = 10
 THRESHOLD = 2200
 
-NUMBER_NEIGHBORS = 5
+NUMBER_NEIGHBORS = 1
 
 faceCascade = cv.CascadeClassifier('static/xml/haarcascade_frontalface_default.xml')
 eyeCascade = cv.CascadeClassifier('static/xml/haarcascade_eye.xml')

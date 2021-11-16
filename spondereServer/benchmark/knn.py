@@ -9,13 +9,9 @@ from sklearn.neighbors import KNeighborsClassifier
 from sklearn.preprocessing import LabelEncoder
 from sys import stderr
 
-
-# a entrada que representa as caracteristicas da face deve ser um vetor unidimensional
 def verifyFace(image, userID, name, featureMethod):
-    #otmizar na versão final, deixar tudo em memoria
 
-    featuresTest, error = featureMethod(image)
-    if error is not None: return None, error
+    featuresTest = featureMethod([image])
 
     features, errors = loadFullTrain(name, featureMethod)
     #if len(errors) > 0: print(errors, file=stderr)
@@ -29,10 +25,14 @@ def verifyFace(image, userID, name, featureMethod):
 
     featuresLettering, labels = lettering(features, labelsUser)
 
-    model = KNeighborsClassifier(n_neighbors= NUMBER_NEIGHBORS, n_jobs=-1)
+    k = NUMBER_NEIGHBORS
+    if name == 'eigen':
+        k = 1
+    
+    model = KNeighborsClassifier(n_neighbors = k, n_jobs=-1)
     model.fit(featuresLettering, labels)
 
-    result = model.predict([featuresTest])
+    result = model.predict(featuresTest)
     label = labelEncoder.inverse_transform(result)
 
     if label[0] == userID: return True, None

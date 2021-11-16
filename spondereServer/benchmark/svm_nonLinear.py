@@ -4,8 +4,7 @@ from sklearn.preprocessing import LabelEncoder
 
 def verifyFace(image, userID, name, featureMethod):
 
-    featuresTest, error = featureMethod(image)
-    if error is not None: return None, error
+    featuresTest= featureMethod([image])
 
     features, errors = loadFullTrain(name, featureMethod)
     labelsUser = loadFullLabels(name)
@@ -21,7 +20,7 @@ def verifyFace(image, userID, name, featureMethod):
     model = svm.NuSVC(gamma="auto")
     model.fit(featuresLettering, labels)
 
-    result = model.predict([featuresTest])
+    result = model.predict(featuresTest)
     label = labelEncoder.inverse_transform(result)
 
     if label[0] == userID: return True, None

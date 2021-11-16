@@ -1,5 +1,3 @@
-from skimage import feature
-from database import user
 from settings import(
     PATH_DATA_TRAIN,
     PATH_IMAGES,
@@ -51,20 +49,13 @@ def loadFullLabels(name):
     return labels
 
 def updateTrain(path, userID, methodExtractFeature, name):
-    images, error = extractFace(path, userID)
+    faces, error = extractFace(path, userID)
 
     if error is not None: return None, [error]
-    if len(images) < MIN_SIZE_DATASET:
+    if len(faces) < MIN_SIZE_DATASET:
         return None, ["O usuario não tem imagens sufucientes com a face detectavel."]
 
-    errors = []
-    features = []
-    for image in images:
-        feature, error = methodExtractFeature(image)
-        if error is not None: errors.append(error)
-        
-        if feature is not None or len(features) > 1:
-            features.append(np.array(feature, dtype=float))
+    features = methodExtractFeature(faces)
     
     if len(features) < MIN_SIZE_DATASET:
         return None, "quantidade de caracteristicas insuficiente:" + userID
@@ -74,7 +65,7 @@ def updateTrain(path, userID, methodExtractFeature, name):
 
     np.save(path + '/' + userID + '/' + name + '.npy', features)
 
-    return  features, errors
+    return  features, error
 
 def normalizeFeatures(features):
     if len(features) > NUMBER_FEATURES_DATASET:

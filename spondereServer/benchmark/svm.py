@@ -5,8 +5,7 @@ from sys import stderr
 
 def verifyFace(image, userID, name, featureMethod, kernel='linear'):
 
-    featuresTest, error = featureMethod(image)
-    if error is not None: return None, error
+    featuresTest = featureMethod([image])
 
     features, errors = loadFullTrain(name, featureMethod)
     #if len(errors) > 0: print(errors, file=stderr)
@@ -23,7 +22,7 @@ def verifyFace(image, userID, name, featureMethod, kernel='linear'):
     model = svm.SVC(kernel=kernel)
     model.fit(featuresLettering, labels)
 
-    result = model.predict([featuresTest])
+    result = model.predict(featuresTest)
     label = labelEncoder.inverse_transform(result)
 
     if label[0] == userID: return True, None

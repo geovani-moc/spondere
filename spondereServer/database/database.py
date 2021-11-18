@@ -1,4 +1,3 @@
-from typing import ContextManager
 import psycopg2
 from psycopg2 import connect, pool
 from config import(

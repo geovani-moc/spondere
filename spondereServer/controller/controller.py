@@ -6,13 +6,13 @@ from fastapi import (
     Body
     ) 
 from fastapi.responses import HTMLResponse
-from benchmark.euclideanDistance import verifyFace
 from recognition.findFace import findFace
 from database.user import checkUser
 from entity.user import User, UserCredential
 from entity.discipline import Discipline
 from controller.security import signJWT, JWTBearer
 from util.image import checkUploadedImage
+from database import user as userDB
 
 app = FastAPI()
 
@@ -34,12 +34,12 @@ async def homePage():
     return HTMLResponse(content = content)
 
 
-@app.post("/user/signup", tags=["Usuário"])
+@app.post("/usuario/criar", tags=["Usuário"])
 async def createUser(user:User = Body(...)):
-    #users.append(user) 
-    #verificar onde é nescessario salvar os dados do usuario
-    return signJWT(user.userName)
+    id, error = userDB.create(user)
 
+    return {'User id':user.code, 'error': error}
+    
 
 @app.post("/login", tags=["Autenticação"])
 async def userLogin(user: UserCredential):
@@ -48,6 +48,7 @@ async def userLogin(user: UserCredential):
         return signJWT(user.userName)
 
     return {"invalid_access": "Usuário ou senha inválidos."}
+
 
 
 @app.post("/v1/checar_biometria", tags=["Biometria"])

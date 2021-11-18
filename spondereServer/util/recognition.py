@@ -35,8 +35,8 @@ def loadFullTrain(trainName, method):
 
 def loadFullLabels(name):
     path = PATH_DATA_TRAIN
-    if os.path.exists(path + '/labels.npy'):
-        labels = np.load(path+"/labels.npy")
+    if os.path.exists(os.path.join(path, 'labels.npy')):
+        labels = np.load(os.path.join(path, 'labels.npy'))
         return labels
     
     labels = []
@@ -45,6 +45,8 @@ def loadFullLabels(name):
         if os.path.isdir(os.path.join(PATH_IMAGES, directorie)):
             if os.path.exists(os.path.join(PATH_IMAGES, directorie, name+'.npy')):
                 labels.append(directorie)
+    
+    np.save(os.path.join(path, 'labels.npy'), labels)
     
     return labels
 

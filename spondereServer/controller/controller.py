@@ -6,7 +6,8 @@ from fastapi import (
     Body
     ) 
 from fastapi.responses import HTMLResponse
-from recognition.faceRecognition import faceRecognition
+from benchmark.euclideanDistance import verifyFace
+from recognition.findFace import findFace
 from database.user import checkUser
 from entity.user import User, UserCredential
 from entity.discipline import Discipline
@@ -58,33 +59,16 @@ async def checkBiometry(file: UploadFile = File(...)):
     result:bool
     error:str
 
-    if image is None:
-        error = "Sem imagem"
-        result = False
-        return {
-            "recognition": result,
-            "error": error
-        }
-    else:
-        error = None
-        result = True
+    if image is None: return {"recognition": False,"error": "sem imagem"}
 
-    #result, error = faceRecognition(user.code, image)
-    if error is not None:
-        return {
-            "recognition": False,
-            "error": error
-        }   
+    face, error = findFace(image)
+    if error is None:
+        #result = verifyFace(face, user.code)
+        print("result:",  result)
 
-    if not result:
-        return{
-            "recognition": result,
-            "error":"Face não definida."
-        }
+        if not result: return{"recognition": result, "error":"Face não definida."}
 
-    return {
-        "recognition": result,
-        "error": None}
+    return {"recognition": result, "error": None}
 
 @app.post("/disciplinas", dependencies=[Depends(JWTBearer())], tags=["Disciplina"])
 async def add_post(discipline: Discipline) -> dict:

@@ -1,4 +1,5 @@
 import cv2 as cv
+import numpy as np
 
 FACE_DIM = 50
 PATH_IMAGES = 'recognition/dataset'
@@ -20,3 +21,7 @@ USER_TYPE_ADMIN = 3
 
 USER_ACCOUNT_ACTIVATED = 1
 USER_ACCOUNT_DESACTIVATED = 2
+
+
+SVM_HOG = np.array([], float)
+LABELS = np.array([], str)

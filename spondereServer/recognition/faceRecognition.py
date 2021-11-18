@@ -1,37 +1,62 @@
-from recognition.findFace import findFace
-import cv2 as cv
+from typing import Any
+from numpy import array
+from sklearn import svm
+from util.recognition import loadFullLabels, loadFullTrain
+from sklearn.preprocessing import LabelEncoder
+from recognition.featureExtraction import extractFeature
+import settings
 
+#svm classificador
+def verifyFace(image, userID):
+    name = 'hog'
+    featureMethod = extractFeature
+    kernel='linear'
+    features = Any
+    labelsUser = Any
 
-def verifyFace(features, labels, image, label):
-    image = cv.equalizeHist(image)
-    face, error = findFace(image)
-    if error is not None:
-        return None, "error em localizar a face"
+    featuresTest = featureMethod([image])
 
-    images = []
-    images.append(face)
+    if len(settings.SVM_HOG) > 0:
+        features = settings.SVM_HOG
+    else:
+        features, errors = loadFullTrain(name, featureMethod)
+        #if len(errors) > 0: print(errors, file=stderr)
+        settings.SVM_HOG = features
 
-    result = True
-    return result, None
+    if len(settings.LABELS) > 0:
+        labelsUser = settings.LABELS
+    else:
+        labelsUser = loadFullLabels(name)
+        settings.LABELS = labelsUser
 
+    if len(labelsUser) != len(features): return False, "caracteristicas e rotulos não coincidem"
+    if len(features) == 0: return False, None
 
-def faceRecognition(label, image):
-    features, labels = loadFeatures()
-    if len(features) < 1:
-        return None, "Problemas com a base de treinamento, não foi possivel carregar."
+    labelEncoder = LabelEncoder()
+    labelsUser = labelEncoder.fit_transform(labelsUser)
 
-    if len(image.shape) > 2:
-        image = cv.cvtColor(image, cv.COLOR_RGB2GRAY)
-    
-    result, error = verifyFace(features, labels, image, label)
+    featuresLettering, labels = lettering(features, labelsUser)
 
-    if error is not None:
-        return None, error
+    model = svm.SVC(kernel=kernel)
+    model.fit(featuresLettering, labels)
 
-    return result, None
+    result = model.predict(featuresTest)
+    label = labelEncoder.inverse_transform(result)
 
-def loadFeatures():
-    return ["features"], ["labels"]
-    
-if __name__ == '__main__':
-    print("no tests")
+    if label[0] == userID: return True, None
+
+    return False, None
+
+def lettering(features, labelsUser):
+    count = 0
+    labels = []
+    featuresLettering = []
+
+    for featuresUser in features:
+        label = labelsUser[count]
+        for feature in featuresUser:
+            featuresLettering.append(feature)
+            labels.append(label)
+        count += 1    
+
+    return featuresLettering, labels

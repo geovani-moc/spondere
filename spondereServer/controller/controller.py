@@ -57,15 +57,14 @@ async def checkBiometry(file: UploadFile = File(...)):
     contents = await file.read()
     image = checkUploadedImage(contents)
 
-    result:bool
-    error:str
+    result:bool = False
 
     if image is None: return {"recognition": False,"error": "sem imagem"}
 
     face, error = findFace(image)
     if error is None:
         #result = verifyFace(face, user.code)
-        print("result:",  result)
+        #print("result:",  result)
 
         if not result: return{"recognition": result, "error":"Face não definida."}
 

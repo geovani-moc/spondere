@@ -13,6 +13,7 @@ from entity.discipline import Discipline
 from controller.security import signJWT, JWTBearer
 from util.image import checkUploadedImage
 from database import user as userDB
+import cv2 as cv
 
 app = FastAPI()
 
@@ -51,8 +52,8 @@ async def userLogin(user: UserCredential):
 
 
 
-@app.post("/v1/checar_biometria", tags=["Biometria"])
-#@app.post("/v1/checar_biometria", dependencies=[Depends(JWTBearer())], tags=["Biometria"])
+#@app.post("/v1/checar_biometria", tags=["Biometria"])
+@app.post("/v1/checar_biometria", dependencies=[Depends(JWTBearer())], tags=["Biometria"])
 async def checkBiometry(file: UploadFile = File(...)):
     contents = await file.read()
     image = checkUploadedImage(contents)

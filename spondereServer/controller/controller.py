@@ -13,7 +13,6 @@ from entity.discipline import Discipline
 from controller.security import signJWT, JWTBearer
 from util.image import checkUploadedImage
 from database import user as userDB
-import cv2 as cv
 
 app = FastAPI()
 

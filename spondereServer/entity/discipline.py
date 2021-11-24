@@ -1,12 +1,11 @@
-
+from fastapi.param_functions import Body
 from pydantic.main import BaseModel
 
-
 class Discipline(BaseModel):
-    code:str
-    semesterCode: str
-    name:str
-    description:str
+    code:str = None
+    semesterCode: str = None
+    name:str = None
+    description:str = None
 
     class Config:
         schema_extra = {

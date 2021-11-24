@@ -1,21 +1,18 @@
-
 from typing import List
 from datetime import datetime
+from fastapi.param_functions import Body
 from pydantic.main import BaseModel
 
-#pesquisar sobre o Optional da biblioteca typing
 class Biometrics(BaseModel):
-    code: str = None
-    feature: List[int] = None
+    studentCode: str = None
     createDate: datetime = None
     status: int = None
-    studentCode: str = None
 
     class Config:
         schema_extra = {
             "example":{
                 "code": "fdkj8",
-                "createDate": "21/12/1992",
+                "createDate": "2021, 11, 24, 15, 46, 59, 24384",
                 "status": 1,
                 "studentCode": "jhfd2"
             }

@@ -1,6 +1,8 @@
 from datetime import datetime
 from typing import Any, List
 
+from fastapi.param_functions import Body
+
 class Frequency:
     studentCode: str = None
     academicClassCode: str = None

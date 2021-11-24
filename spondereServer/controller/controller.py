@@ -14,6 +14,7 @@ from controller.security import signJWT, JWTBearer
 from util.image import checkUploadedImage
 from database import user as userDB
 from recognition.faceRecognition import verifyFace
+from entity.academicClass import AcademicClass
 
 app = FastAPI()
 
@@ -74,5 +75,35 @@ async def checkBiometry(userCode:str, file: UploadFile = File(...)):
 async def add_post(discipline: Discipline) -> dict:
        
     return {
-        "data": "post added."
+        "result": "post added."
     }
+
+@app.post("/aula/criar", dependencies=[Depends(JWTBearer())], tags=['Aula'])
+async def create_AcademicClass(academicClass:AcademicClass) -> dict:
+
+    return {
+        "result": "class create."
+    }
+
+@app.post("/aula/editar", dependencies=[Depends(JWTBearer())], tags=['Aula'])
+async def update_AcademicClass(academicClass:AcademicClass)-> dict:
+
+    return{
+        "result": "class updated."
+    }
+
+@app.post("/aula/apagar", dependencies=[Depends(JWTBearer())], tags=['Aula'])
+async def delete_academicClass(codeAcademicClass:str) -> dict:
+    
+     return{
+         "result": "class deleted."
+     }
+
+@app.post("/aula/obter", dependencies=[Depends(JWTBearer())], tags=['Aula'])
+async def get_academicClass(codeStudent:str) -> dict:
+
+    return {
+        "result": "class caught."
+    }
+
+ 

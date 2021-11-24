@@ -25,12 +25,6 @@ def findFace(image):
     eyeLeftCenter = (int(eyeLeft[0]+ (eyeLeft[2]/2)), int(eyeLeft[1]+(eyeLeft[3]/2)))
     eyeRightCenter = (int(eyeRight[0]+ (eyeRight[2]/2)), int(eyeRight[1]+(eyeRight[3]/2)))
 
-    if eyeLeftCenter[1] > eyeRightCenter[1]:
-        A = (eyeRightCenter[0], eyeLeftCenter[1])
-        direction = -1 
-    else:
-        A = (eyeLeftCenter[0], eyeRightCenter[1])
-        direction = 1 
     
     delta_x = eyeRightCenter[0] - eyeLeftCenter[0]
     delta_y = eyeRightCenter[1] - eyeLeftCenter[1]
@@ -41,12 +35,10 @@ def findFace(image):
     center = (w // 2, h // 2)
     matrixRotation = cv.getRotationMatrix2D(center, (angle), 1.0)
 
-    rotated = cv.warpAffine(image, matrixRotation, (w, h))
-    
-    image = rotated #recortar apartir do centro dos olhos para mehor resultado
+    image = cv.warpAffine(image, matrixRotation, (w, h))
+    #recortar apartir do centro dos olhos para mehor resultado
 
     cropFace = image[ row: row+height, column:column+width]
-
     cropFace = cv.resize(cropFace, (FACE_DIM, FACE_DIM))    
 
     return cropFace, None

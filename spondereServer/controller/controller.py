@@ -13,6 +13,7 @@ from entity.discipline import Discipline
 from controller.security import signJWT, JWTBearer
 from util.image import checkUploadedImage
 from database import user as userDB
+from recognition.faceRecognition import verifyFace
 
 app = FastAPI()
 
@@ -53,7 +54,7 @@ async def userLogin(user: UserCredential):
 
 #@app.post("/v1/checar_biometria", tags=["Biometria"])
 @app.post("/v1/checar_biometria", dependencies=[Depends(JWTBearer())], tags=["Biometria"])
-async def checkBiometry(file: UploadFile = File(...)):
+async def checkBiometry(userCode:str, file: UploadFile = File(...)):
     contents = await file.read()
     image = checkUploadedImage(contents)
 
@@ -62,10 +63,9 @@ async def checkBiometry(file: UploadFile = File(...)):
     if image is None: return {"recognition": False,"error": "sem imagem"}
 
     face, error = findFace(image)
+    
     if error is None:
-        #result = verifyFace(face, user.code)
-        #print("result:",  result)
-
+        result = verifyFace(face, userCode)
         if not result: return{"recognition": result, "error":"Face não definida."}
 
     return {"recognition": result, "error": None}

@@ -1,6 +1,5 @@
 from datetime import datetime
 from typing import Optional
-from fastapi.param_functions import Body
 
 from pydantic.main import BaseModel
 

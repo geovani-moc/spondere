@@ -1,6 +1,5 @@
 from typing import List
 from datetime import datetime
-from fastapi.param_functions import Body
 from pydantic.main import BaseModel
 
 class Biometrics(BaseModel):

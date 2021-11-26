@@ -1,7 +1,7 @@
-from pydantic.utils import ClassAttribute
+from pydantic.main import BaseModel
+from pydantic.main import BaseModel
 
-
-class Group:
+class Group(BaseModel):
     classCode:str = None
     professorCode: str = None
     studentCode: str = None

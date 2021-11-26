@@ -1,18 +1,16 @@
 from datetime import datetime
-from typing import Any, List
+from typing import List
 
-from fastapi.param_functions import Body
+from pydantic.main import BaseModel
 
-class Frequency:
+class Frequency(BaseModel):
     studentCode: str = None
     academicClassCode: str = None
     method:int = None
     createDate: datetime = None
     geolocalization: str = None
     validationType: int = None
-    photo:List[int] = None
-
-    #checar os detalhes sobre datas e horas
+    photo:List[int] = None#mudar para binário
 
     class Config:
         schema_extra = {

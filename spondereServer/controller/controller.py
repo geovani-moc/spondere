@@ -67,6 +67,7 @@ async def checkBiometry(userCode:str, file: UploadFile = File(...)):
     
     if error is None:
         result = verifyFace(face, userCode)
+        #salvar face(frequencia)
         if not result: return{"recognition": result, "error":"Face não definida."}
 
     return {"recognition": result, "error": None}

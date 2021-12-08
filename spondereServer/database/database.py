@@ -1,5 +1,4 @@
 import psycopg2
-from psycopg2 import connect, pool
 from config import(
     MIN_CONNECTIONS,
     MAX_CONNECTIONS,
@@ -10,41 +9,33 @@ from config import(
     PORT
 )
 
-postgresSQL = psycopg2.pool.ThreadedConnectionPool(
-        MIN_CONNECTIONS,
-        MAX_CONNECTIONS,
-        user = DB_USERNAME,
-        password = DB_PASSWORD,
-        host = HOST,
-        port = PORT,
-        database=DB_NAME
-    )
-
-# @ContextManager
-# def getConnection():
-#     connection = postgresSQL.getconn()
-#     try:
-#         yield connection
-#     finally:
-#         postgresSQL.putconn(connection)
-
-# def getConnectio():
-#     if postgresSQL:
-#         return postgresSQL.getconn(), None
-#     else:
-#         return None, "Erro ao estabelece conexão pool."
+try:
+    postgresSQL = psycopg2.pool.ThreadedConnectionPool(
+            MIN_CONNECTIONS,
+            MAX_CONNECTIONS,
+            user = DB_USERNAME,
+            password = DB_PASSWORD,
+            host = HOST,
+            port = PORT,
+            database=DB_NAME
+        )
+except:
+    print("Não foi possivel se conectar ao servidor.")
+    postgresSQL = None
 
 def newConnection():
-    postgresSQL = psycopg2.pool.ThreadedConnectionPool(
-        MIN_CONNECTIONS,
-        MAX_CONNECTIONS,
-        user = DB_USERNAME,
-        password = DB_PASSWORD,
-        host = HOST,
-        port = PORT,
-        database=DB_NAME
-    )
-    if not postgresSQL:
+    try:
+        postgresSQL = psycopg2.pool.ThreadedConnectionPool(
+            MIN_CONNECTIONS,
+            MAX_CONNECTIONS,
+            user = DB_USERNAME,
+            password = DB_PASSWORD,
+            host = HOST,
+            port = PORT,
+            database=DB_NAME
+        )
+    except:
+        postgresSQL = None
         return ("Erro ao tentar se conectar ao BD postgresSQL.")
     
     return None

@@ -5,6 +5,7 @@ version: '3.8'
 services:
   db:
     image: postgres:13-alpine
+    restart: always
     volumes:
       -postgres_data:/var/lib/postgresql/data
     expose:
@@ -12,13 +13,13 @@ services:
     environment:
       - POSTGRES_USER=admin
       - POSTGRES_PASSWORD=123
-      - POSTGRES_DB=spondere_bd
+      - POSTGRES_DB=bd_spondere
     
   web:
     volumes:
       - 8008:8000
     environment:
-      - DATABASE_URL=postgres://url do postgres@db5432/user
+      - DATABASE_URL=postgres://admin:123@db:5432/bd_spondere
     depends_on:
       - db
 

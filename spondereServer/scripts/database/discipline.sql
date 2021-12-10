@@ -4,5 +4,5 @@ create table discipline(
     name varchar(30),
     description varchar(50),
     constraint discipline_pk primary key(code),
-    constraint period_pk foreign key(semesterCode) references period(code)
+    constraint period_fk foreign key(semesterCode) references period(code)
 );

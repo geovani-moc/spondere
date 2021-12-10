@@ -7,6 +7,5 @@ create table frequency(
     validationType integer,
     photo bytea,
     constraint frequency_pk primary key (studentCode, academicClassCode),
-    constraint studentCode_fk foreign key (studentCode) references users(code),
     constraint academicClassCode_fk foreign key (academicClassCode) references academicClass(code)
 );

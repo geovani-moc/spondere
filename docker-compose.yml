@@ -16,7 +16,11 @@ services:
       - POSTGRES_DB=bd_spondere
     
   web:
+    build: .
+    command: bash -c 'while !</dev/tcp/db/5432; do sleep 1; done; python main.py'
     volumes:
+      - .:/spondereServer
+    ports:
       - 8008:8000
     environment:
       - DATABASE_URL=postgres://admin:123@db:5432/bd_spondere

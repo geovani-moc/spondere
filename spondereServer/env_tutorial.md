@@ -4,6 +4,9 @@
 #Criando o ambiente virtual(deve estar dentro da pasta do projeto):
     -python -m venv nome_do_ambiente_virtual
 
+#criar ambiente virtual com versao especifica do python:
+    --python -m venv nome_do_ambiente_virtual -p python3.9
+
 #Acessar ambiente virtual:
     -source nome_do_ambiente_virtual/bin/activate
 
@@ -21,4 +24,3 @@
 
 #Instalar todas as dependências de um arquivo:
     -pip install -r requirements.txt 
-

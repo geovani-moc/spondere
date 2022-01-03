@@ -106,5 +106,3 @@ async def get_academicClass(codeStudent:str) -> dict:
     return {
         "result": "class caught."
     }
-
- 

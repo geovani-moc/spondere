@@ -1,7 +1,13 @@
 from entity.user import User
-from database.database import postgresSQL
 from passlib.context import CryptContext
-from psycopg2 import DatabaseError
+import psycopg2 as pg
+from config import(
+    DB_NAME,
+    DB_PASSWORD,
+    DB_USERNAME, 
+    HOST,
+    PORT
+)
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
@@ -11,25 +17,31 @@ def create(user: User):
      email, fullname, disabled) values (%s, %s, %s, %s, %s, %s, %s);'
 
     try:
-        connection = postgresSQL.getconn()
+        connection = pg.connect(
+            user = DB_USERNAME,
+            password = DB_PASSWORD,
+            host = HOST,
+            port = PORT,
+            database = DB_NAME
+        )
+        cursor = connection.cursor()
+        cursor.execute(sqlQuery, 
+        (   user.userName,
+            user.code,
+            user.password,
+            user.status,
+            user.email,
+            user.fullName,
+            user.disabled,
+        ))
+        connection.commit()
 
-        if(connection):
-            cur = connection.cursor()
-            cur.execute(sqlQuery, 
-            (   user.userName,
-                user.code,
-                user.password,
-                user.status,
-                user.email,
-                user.fullName,
-                user.disabled,
-             ))
-
-            connection.commit()
-            postgresSQL.putconn(connection)
-
-    except (Exception, DatabaseError) as error:
+    except (Exception, pg.DatabaseError) as error:
         return "Erro de conexão com o banco de dados: " + error
+    finally:
+        if (connection):
+            cursor.close()
+            connection.close()
 
     return None
 
@@ -38,33 +50,39 @@ def update(user: User):
 
 def read(code: str):
     sqlQuery = 'select code, userName, fullname, email, disabled, password, status\
-        from users where id = %s;'
+        from users where code = %s;'
     error = None
     user = User()
     
     try:
-        connection = postgresSQL.getconn()
+        connection = pg.connect(
+            user = DB_USERNAME,
+            password = DB_PASSWORD,
+            host = HOST,
+            port = PORT,
+            database = DB_NAME
+        )
 
-        if(connection):
-            cur = connection.cursor()
-            cur.execute(sqlQuery, (code,))
-            (user.code, user.userName, user.fullName, user.email, user.disabled,\
-                 user.password, user.status) = cur.fetchone()
 
-            connection.commit()
-            postgresSQL.putconn(connection)
+        cursor = connection.cursor()
+        cursor.execute(sqlQuery, (code,))
+        (user.code, user.userName, user.fullName, user.email, user.disabled,\
+                user.password, user.status) = cursor.fetchone()
 
-    except (Exception, DatabaseError) as error:
-        return -1, "Erro de conexão com o banco de dados: " + error
+        connection.commit()
+
+    except (Exception, pg.DatabaseError) as error:
+        print("Erro de conexão com o banco de dados: " + error)
+    finally:
+        if (connection):
+            cursor.close()
+            connection.close()
 
     return user, error
 
 def delete(code: str):
     return None
 
-
-# def getPassword_hash(password):
-#     return pwd_context.hash(password)
 
 def checkUser(userName: str, password:str):
     if userName is None or password is None:
@@ -74,17 +92,24 @@ def checkUser(userName: str, password:str):
     sql_query = "select username, \"password\" from users where username = %s;"
 
     try:
-        connection = postgresSQL.getconn()
+        connection = pg.connect(
+            user = DB_USERNAME,
+            password = DB_PASSWORD,
+            host = HOST,
+            port = PORT,
+            database = DB_NAME
+        )
 
-        if(connection):
-            cur = connection.cursor()
-            cur.execute(sql_query, (userName, ))
-            (user.userName, user.password) = cur.fetchone()
+        cursor = connection.cursor()
+        cursor.execute(sql_query, (userName, ))
+        (user.userName, user.password) = cursor.fetchone()
 
-            postgresSQL.putconn(connection)
-
-    except (Exception, DatabaseError) as error:
+    except (Exception, pg.DatabaseError) as error:
         print("Erro de conexão com o banco de dados: ", error)
+    finally:
+        if (connection):
+            cursor.close()
+            connection.close()
     
     if user.userName == userName and verifyPassword(password, user.password):
        return True
@@ -95,3 +120,34 @@ def checkUser(userName: str, password:str):
 def verifyPassword(plain_password, hashed_password):
     return pwd_context.verify(plain_password, hashed_password)
 
+
+if __name__ == '__main__':
+    sqlQuery = 'select code, username, fullName, email, disabled, password, status\
+        from users where code = %s;'
+    error = None
+    user = User()
+    
+    try:
+        connection = pg.connect(
+            user = DB_USERNAME,
+            password = DB_PASSWORD,
+            host = HOST,
+            port = PORT,
+            database = DB_NAME
+        )
+
+
+        cursor = connection.cursor()
+        cursor.execute(sqlQuery, ('gpds',))
+        (user.code, user.userName, user.fullName, user.email, user.disabled,\
+                user.password, user.status) = cursor.fetchone()
+
+        connection.commit()
+
+    except (Exception, pg.DatabaseError) as error:
+        print("Erro de conexão com o banco de dados: " + error)
+    finally:
+        if (connection):
+            cursor.close()
+            connection.close()
+    print(user)

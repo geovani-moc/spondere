@@ -3,14 +3,16 @@ from fastapi import (
     UploadFile, 
     Depends,
     FastAPI,
-    Body
+    Body,
+    HTTPException
     ) 
 from fastapi.responses import HTMLResponse
+from starlette.requests import Request
 from recognition.findFace import findFace
 from database.user import checkUser
 from entity.user import User, UserCredential
 from entity.discipline import Discipline
-from controller.security import signJWT, JWTBearer
+from controller.security import getCurrentUserName, signJWT, JWTBearer
 from util.image import checkUploadedImage
 from database import user as userDB
 from recognition.faceRecognition import verifyFace
@@ -30,17 +32,26 @@ async def shutdown_event():
 
 @app.get('/')
 async def homePage():
-    content = 'sponde API<br>\
-        docs<br>\
-        redoc'
+    content = '<center><h1>Sponde API</h1><br>\
+        <a href="/docs">Docs</a><br>\
+        <a href="/redoc">Redoc</a>\
+        </center>'
     return HTMLResponse(content = content)
-
+ 
 
 @app.post("/usuario/criar", tags=["Usuário"])
-async def createUser(user:User = Body(...)):
-    id, error = userDB.create(user)
+async def createUser(request:Request, user:User = Body(...)):
+    authorization = request.headers.get("authorization")
+    userName = getCurrentUserName(authorization)
 
-    return {'User id':user.code, 'error': error}
+    user = userDB.read(userName)
+
+    if not user.administrator:
+        return {'User code':-1, 'error': 'u002'}
+    
+    code, error = userDB.create(user)
+
+    return {'User code':user.code, 'error': error}
     
 
 @app.post("/login", tags=["Autenticação"])
@@ -52,10 +63,13 @@ async def userLogin(user: UserCredential):
     return {"invalid_access": "Usuário ou senha inválidos."}
 
 
-
-#@app.post("/v1/checar_biometria", tags=["Biometria"])
 @app.post("/v1/checar_biometria", dependencies=[Depends(JWTBearer())], tags=["Biometria"])
-async def checkBiometry(userCode:str, file: UploadFile = File(...)):
+async def checkBiometry(userCode:str, request:Request, file: UploadFile = File(...)):
+    #print(f'request header       : {dict(request.headers.items())}' )
+    #print(f'request query params : {dict(request.query_params.items())}')
+    
+
+    
     contents = await file.read()
     image = checkUploadedImage(contents)
 

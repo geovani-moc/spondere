@@ -10,17 +10,22 @@ class User(BaseModel):
     email: Optional[str] = None
     fullName: str = None
     disabled: bool = None
+    professor: bool = None
+    student: bool = None
+    administrator: bool = None
 
     class Config:
         schema_extra = {
             "example": {
-                "userName" : "usuario 1",
-                "code": "8aa100",
+                "userName" : "geo",
+                "code": "gpds",
                 "email": "user@user.com",
-                "password": "356a192b7913b04c54574d18c28d46e6395428ab",
+                "password": "$2a$12$XeC9hXg2D4PHXPaVyGy5FuNjU9SqblGpN073r./4NIiYXzdyZey42",
                 "status": 1,
                 "fullName": "Alcarmo da silva alves",
-                "disabled": False
+                "disabled": False,
+                "administrator": True,
+                "student": True
             }
         }
 
@@ -31,7 +36,7 @@ class UserCredential(BaseModel):
     class Config:
         schema_extra = {
             "example": {
-                "userName" : "usuario 1",
-                "password": "abc"
+                "userName" : "geo",
+                "password": "123"
             }
         }

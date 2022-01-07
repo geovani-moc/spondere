@@ -48,9 +48,9 @@ def create(user: User):
 def update(user: User):
     return None
 
-def read(code: str):
+def read(userName: str):
     sqlQuery = 'select code, userName, fullname, email, disabled, password, status\
-        from users where code = %s;'
+        from users where userName = %s;'
     error = None
     user = User()
     
@@ -65,7 +65,7 @@ def read(code: str):
 
 
         cursor = connection.cursor()
-        cursor.execute(sqlQuery, (code,))
+        cursor.execute(sqlQuery, (userName,))
         (user.code, user.userName, user.fullName, user.email, user.disabled,\
                 user.password, user.status) = cursor.fetchone()
 

@@ -1,7 +1,7 @@
 create table frequency(
     studentUsername varchar(20),
     academicClassID integer,
-    attendaceMethod integer not null,
+    attendanceMethod integer not null,
     createDate timestamp not null,
     geolocalization point,
     validationType integer,

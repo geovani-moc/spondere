@@ -49,8 +49,8 @@ def update(user: User):
     return None
 
 def read(userName: str):
-    sqlQuery = 'select code, userName, fullname, email, disabled, password, status\
-        from users where userName = %s;'
+    sqlQuery = 'select id, username, fullname, email, disabled, administrator, professor, student \
+        from users where username = %s;'
     error = None
     user = User()
     
@@ -66,8 +66,8 @@ def read(userName: str):
 
         cursor = connection.cursor()
         cursor.execute(sqlQuery, (userName,))
-        (user.code, user.userName, user.fullName, user.email, user.disabled,\
-                user.password, user.status) = cursor.fetchone()
+        (user.id, user.userName, user.fullName, user.email, user.disabled,
+                user.administrator, user.professor, user.student) = cursor.fetchone()
 
         connection.commit()
 

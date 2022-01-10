@@ -1,9 +1,9 @@
 create table groups(
-    code varchar(10),
+    id serial,
     beginDate timestamp,
     endDate timestamp,
-    groupStatus integer,
-    disciplineCode varchar(10),
-    constraint group_pk primary key (code),
-    constraint discipline_fk foreign key(disciplineCode) references discipline(code)
+    deactivate boolean default false not null,
+    disciplineID integer,
+    constraint group_pk primary key (id),
+    constraint discipline_fk foreign key(disciplineID) references discipline(id)
 );

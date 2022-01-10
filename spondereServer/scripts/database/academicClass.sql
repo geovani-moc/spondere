@@ -1,14 +1,13 @@
 create table academicClass(
-    code varchar(10),
-    groupCode varchar(10),
-    classNumber integer not null,
+    id serial,
+    groupID integer,
     titleClass varchar(20),
-    description varchar(100),
+    descriptionClass varchar(100),
     beginDate timestamp,
     endDate timestamp,
     validationStatus integer,
     validationType integer,
     validationCode varchar(10),
-    constraint academicClass_pk primary key (code),
-    constraint group_fk foreign key (groupCode) references groups(code)
+    constraint academicClass_pk primary key (id),
+    constraint group_fk foreign key (groupID) references groups(id)
 );

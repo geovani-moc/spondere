@@ -1,11 +1,11 @@
 create table frequency(
-    studentCode varchar(10),
-    academicClassCode varchar(10),
+    studentUsername varchar(20),
+    academicClassID integer,
     attendaceMethod integer not null,
     createDate timestamp not null,
-    geolocalization varchar(21),
+    geolocalization point,
     validationType integer,
     photo bytea,
-    constraint frequency_pk primary key (studentCode, academicClassCode),
-    constraint academicClassCode_fk foreign key (academicClassCode) references academicClass(code)
+    constraint frequency_pk primary key (academicClassID, studentUsername),
+    constraint academicClassID_fk foreign key (academicClassID) references academicClass(id)
 );

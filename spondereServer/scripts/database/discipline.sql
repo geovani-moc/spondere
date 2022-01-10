@@ -1,8 +1,8 @@
 create table discipline(
-    code varchar(10),
-    semesterCode varchar(10),
+    id serial,
+    semesterID integer,
     name varchar(30),
     description varchar(50),
-    constraint discipline_pk primary key(code),
-    constraint period_fk foreign key(semesterCode) references period(code)
+    constraint discipline_pk primary key(id),
+    constraint period_fk foreign key(semesterID) references period(id)
 );

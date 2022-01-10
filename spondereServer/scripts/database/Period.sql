@@ -1,6 +1,6 @@
 create table period(
-    code varchar(10),
+    id serial,
     beginDate timestamp,
-    endFate timestamp,
-    constraint period_pk primary key(code)
+    endDate timestamp,
+    constraint period_pk primary key(id)
 )

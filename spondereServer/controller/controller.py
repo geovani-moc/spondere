@@ -46,11 +46,11 @@ async def createUser(request:Request, user:User = Body(...)):
     user = userDB.read(userName)
 
     if not user.administrator:
-        return {'User code':-1, 'error': 'u002'}
+        return {'User code': None, 'error': 'u002'}
     
-    code, error = userDB.create(user)
+    id = userDB.create(user)
 
-    return {'User code':user.code, 'error': error}
+    return {'User code': id, 'error':None}
     
 @app.get("/login", tags=["Usuário"])
 async def userLogin(user: UserCredential):
@@ -73,31 +73,22 @@ async def checkBiometry(request:Request, file: UploadFile = File(...)):
     if image is None: return {"recognition": False,"error": "sem imagem"}
 
     face, error = findFace(image)
+    if error:
+        raise HTTPException(status_code=500,
+            detail="Erro no sistema de reconhecimento facial: \n" + error) 
     
     if error is None:
         result = verifyFace(face, userName)
-        #salvar face(frequencia)
+        #salvar face(frequencia) --await
         if not result: return{"recognition": result, "error":"Face não definida."}
 
     return {"recognition": result, "error": None}
 
-@app.get("/disciplinas", dependencies=[Depends(JWTBearer())], tags=["Disciplina"])
-async def readAllDisciplines(request:Request) -> dict:
-    authorization = request.headers.get("authorization")
-    userName = getCurrentUserName(authorization)
-    disciplines = disciplineDB.read(userName=userName)
-
-    return {
-        "discipline": disciplines
-    }
-
 @app.get("/disciplinas/{id}", dependencies=[Depends(JWTBearer())], tags=["Disciplina"])
-async def readDiscipline(id:int ,request:Request):
-    authorization = request.headers.get("authorization")
-    userName = getCurrentUserName(authorization)
-    specificDiscipline = disciplineDB.read(userName=userName, id=id)
+async def readDiscipline(id:int):
+    discipline = disciplineDB.read(id=id)
     return {
-        "discipline": specificDiscipline
+        "discipline": discipline
     }
 
 

@@ -33,7 +33,7 @@ def loadImages(path):
     for pathImage in pathImages: 
         image = cv.imread(pathImage, cv.IMREAD_GRAYSCALE)
         if image is None:
-            print("Erro loaddataset, erro ao carregar imagem.")
+            print("Nenhuma imagem carregada do dataset.")
         else:
             images.append(image)
 

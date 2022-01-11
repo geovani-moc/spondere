@@ -1,4 +1,5 @@
 from entity.discipline import Discipline
+from fastapi import HTTPException
 import psycopg2 as pg
 from config import(
     DB_NAME,
@@ -9,7 +10,9 @@ from config import(
 )
 
 def create(discipline: Discipline):
-    sqlQuery = ''
+    sqlQuery = 'insert  into discipline (semesterid, name, description)\
+        values(%s, %s, %s) returning id;'
+    id = None
 
     try:
         connection = pg.connect(
@@ -21,23 +24,23 @@ def create(discipline: Discipline):
         )
         cursor = connection.cursor()
         cursor.execute(sqlQuery, 
-            ())
+            (discipline.semesterID, discipline.name, discipline.description))
 
+        id = cursor.fetchone()[0]
         connection.commit()
 
-    except (Exception, pg.DatabaseError) as error:
-        return "Erro de conexão com o banco de dados: " + error
+    except:
+        raise HTTPException(status_code=406,
+            detail="Erro de conexão com o banco de dados.") 
     finally:
         if (connection):
             cursor.close()
             connection.close()
 
-    return None
+    return id
 
-def read(userName:str, id: str = None):
-    sqlQuery = 'select id, username, fullname, email, disabled, administrator, professor, student \
-        from users where username = %s;'
-    error = None
+def read(id:int):
+    sqlQuery = 'select id, semesterid, /"name/", description from discipline where id = %s;'
     discipline = Discipline()
     
     try:
@@ -49,15 +52,19 @@ def read(userName:str, id: str = None):
             database = DB_NAME
         )
 
-
         cursor = connection.cursor()
-        cursor.execute(sqlQuery, (userName,))
-        () = cursor.fetchone()
+        cursor.execute(sqlQuery, (id,))
+        
+        (discipline.id,
+        discipline.semesterID, 
+        discipline.name, 
+        discipline.description) = cursor.fetchone()
 
         connection.commit()
 
-    except (Exception, pg.DatabaseError) as error:
-        print("Erro de conexão com o banco de dados: " + error)
+    except:
+        raise HTTPException(status_code=406,
+            detail="Erro de conexão com o banco de dados.") 
     finally:
         if (connection):
             cursor.close()
@@ -65,36 +72,6 @@ def read(userName:str, id: str = None):
 
     return discipline
 
-def readAll(userName:str):
-    sqlQuery = 'select id, username, fullname, email, disabled, administrator, professor, student \
-        from users where username = %s;'
-    error = None
-    disciplines = []
-    
-    try:
-        connection = pg.connect(
-            user = DB_USERNAME,
-            password = DB_PASSWORD,
-            host = HOST,
-            port = PORT,
-            database = DB_NAME
-        )
-
-
-        cursor = connection.cursor()
-        cursor.execute(sqlQuery, (userName,))
-        () = cursor.fetchall()#melhorar a captura de varios cursos
-
-        connection.commit()
-
-    except (Exception, pg.DatabaseError) as error:
-        print("Erro de conexão com o banco de dados: " + error)
-    finally:
-        if (connection):
-            cursor.close()
-            connection.close()
-
-    return disciplines
 
 def update(discipline: Discipline):
     return None

@@ -1,4 +1,5 @@
 from entity.period import Period
+from fastapi import HTTPException
 import psycopg2 as pg
 from config import(
     DB_NAME,
@@ -9,8 +10,8 @@ from config import(
 )
 
 def create(period:Period):
-    sqlQuery = ''
-
+    sqlQuery = 'insert into /"period/" (code, begindate, enddate) values (%s, %s, %s);'
+    id = None
     try:
         connection = pg.connect(
             user = DB_USERNAME,
@@ -20,23 +21,22 @@ def create(period:Period):
             database = DB_NAME
         )
         cursor = connection.cursor()
-        cursor.execute(sqlQuery, 
-            ())
-
+        cursor.execute(sqlQuery, (period.code, period.beginDate, period.endDate))
+        id = cursor.fetchone()[0]
         connection.commit()
 
-    except (Exception, pg.DatabaseError) as error:
-        return "Erro de conexão com o banco de dados: " + error
+    except:
+        raise HTTPException(status_code=406,
+            detail="Erro de conexão com o banco de dados.") 
     finally:
         if (connection):
             cursor.close()
             connection.close()
 
-    return None
+    return id
 
 def read(id:int):
-    sqlQuery = ''
-    error = None
+    sqlQuery = 'select code, begindate, enddate, deactivate from /"period/" where id = %s;'
     discipline = Period()
     
     try:
@@ -48,15 +48,19 @@ def read(id:int):
             database = DB_NAME
         )
 
-
         cursor = connection.cursor()
         cursor.execute(sqlQuery, (id,))
-        () = cursor.fetchone()
+
+        (discipline.code, 
+        discipline.beginDate, 
+        discipline.endDate, 
+        discipline.deactivate) = cursor.fetchone()
 
         connection.commit()
 
-    except (Exception, pg.DatabaseError) as error:
-        print("Erro de conexão com o banco de dados: " + error)
+    except:
+        raise HTTPException(status_code=406,
+            detail="Erro de conexão com o banco de dados.") 
     finally:
         if (connection):
             cursor.close()
@@ -67,7 +71,6 @@ def read(id:int):
 
 def update(updatedPeriod: Period):
     return None
-
 
 def delete(id:int ):
     return None

@@ -1,5 +1,6 @@
 from entity.user import User
 from passlib.context import CryptContext
+from fastapi import HTTPException
 import psycopg2 as pg
 from config import(
     DB_NAME,
@@ -13,8 +14,8 @@ pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 def create(user: User):
     sqlQuery = 'insert  into users (username, \"password\", email, fullname,\
-        disabled, professor, student, administrator) values (%s, %s, %s, %s, %s, %s, %s, %s);'
-
+        disabled, professor, student, administrator) values (%s, %s, %s, %s, %s, %s, %s, %s) returning id;'
+    id = None
     try:
         connection = pg.connect(
             user = DB_USERNAME,
@@ -27,17 +28,19 @@ def create(user: User):
         cursor.execute(sqlQuery, 
             (user.userName, user.password, user.email, user.fullName,
             user.disabled, user.professor, user.student, user.administrator))
+        id = cursor.fetchone()[0]
 
         connection.commit()
 
-    except (Exception, pg.DatabaseError) as error:
-        return "Erro de conexão com o banco de dados: " + error
+    except:
+        raise HTTPException(status_code=406,
+                detail="Erro de conexão com o banco de dados.") 
     finally:
         if (connection):
             cursor.close()
             connection.close()
 
-    return None
+    return id
 
 def update(userName:str, updatedUser: User):
     sqlQuery = 'UPDATE users SET username = %s, /"password/" = %s,\
@@ -59,8 +62,9 @@ def update(userName:str, updatedUser: User):
 
         connection.commit()
 
-    except (Exception, pg.DatabaseError) as error:
-        return "Erro de conexão com o banco de dados: " + error
+    except:
+        raise HTTPException(status_code=406,
+            detail="Erro de conexão com o banco de dados.") 
     finally:
         if (connection):
             cursor.close()
@@ -91,8 +95,9 @@ def read(userName: str):
 
         connection.commit()
 
-    except (Exception, pg.DatabaseError) as error:
-        print("Erro de conexão com o banco de dados: " + error)
+    except:
+        raise HTTPException(status_code=406,
+            detail="Erro de conexão com o banco de dados.")
     finally:
         if (connection):
             cursor.close()
@@ -117,8 +122,9 @@ def delete(userName: str):
 
         connection.commit()
 
-    except (Exception, pg.DatabaseError) as error:
-        return "Erro de conexão com o banco de dados: " + error
+    except:
+        raise HTTPException(status_code=406,
+            detail="Erro de conexão com o banco de dados.") 
     finally:
         if (connection):
             cursor.close()
@@ -146,8 +152,9 @@ def checkUser(userName: str, password:str):
         cursor.execute(sql_query, (userName, ))
         (user.userName, user.password) = cursor.fetchone()
 
-    except (Exception, pg.DatabaseError) as error:
-        print("Erro de conexão com o banco de dados: ", error)
+    except:
+        raise HTTPException(status_code=406,
+            detail="Erro de conexão com o banco de dados.") 
     finally:
         if (connection):
             cursor.close()

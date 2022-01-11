@@ -12,9 +12,8 @@ from config import(
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 def create(user: User):
-
-    sqlQuery = 'insert  into users (username, code, "password", status,\
-     email, fullname, disabled) values (%s, %s, %s, %s, %s, %s, %s);'
+    sqlQuery = 'insert  into users (username, \"password\", email, fullname,\
+        disabled, professor, student, administrator) values (%s, %s, %s, %s, %s, %s, %s, %s);'
 
     try:
         connection = pg.connect(
@@ -26,14 +25,9 @@ def create(user: User):
         )
         cursor = connection.cursor()
         cursor.execute(sqlQuery, 
-        (   user.userName,
-            user.code,
-            user.password,
-            user.status,
-            user.email,
-            user.fullName,
-            user.disabled,
-        ))
+            (user.userName, user.password, user.email, user.fullName,
+            user.disabled, user.professor, user.student, user.administrator))
+
         connection.commit()
 
     except (Exception, pg.DatabaseError) as error:
@@ -45,7 +39,33 @@ def create(user: User):
 
     return None
 
-def update(user: User):
+def update(userName:str, updatedUser: User):
+    sqlQuery = 'UPDATE users SET username = %s, /"password/" = %s,\
+    email = %s, fullname = %s, disabled = %s, professor = %s,\
+    student = %s, administrator = %s  WHERE username = %s;'
+
+    try:
+        connection = pg.connect(
+            user = DB_USERNAME,
+            password = DB_PASSWORD,
+            host = HOST,
+            port = PORT,
+            database = DB_NAME
+        )
+        cursor = connection.cursor()
+        cursor.execute(sqlQuery, 
+            (updatedUser.userName, updatedUser.password, updatedUser.email, updatedUser.fullName,
+            updatedUser.disabled, updatedUser.professor, updatedUser.student, updatedUser.administrator, userName))
+
+        connection.commit()
+
+    except (Exception, pg.DatabaseError) as error:
+        return "Erro de conexão com o banco de dados: " + error
+    finally:
+        if (connection):
+            cursor.close()
+            connection.close()
+
     return None
 
 def read(userName: str):
@@ -80,9 +100,31 @@ def read(userName: str):
 
     return user, error
 
-def delete(code: str):
-    return None
+def delete(userName: str):
+    sqlQuery = 'delete from users where username = %s;'
 
+    try:
+        connection = pg.connect(
+            user = DB_USERNAME,
+            password = DB_PASSWORD,
+            host = HOST,
+            port = PORT,
+            database = DB_NAME
+        )
+        cursor = connection.cursor()
+        cursor.execute(sqlQuery, 
+            (userName,))
+
+        connection.commit()
+
+    except (Exception, pg.DatabaseError) as error:
+        return "Erro de conexão com o banco de dados: " + error
+    finally:
+        if (connection):
+            cursor.close()
+            connection.close()
+
+    return None
 
 def checkUser(userName: str, password:str):
     if userName is None or password is None:
@@ -116,38 +158,9 @@ def checkUser(userName: str, password:str):
 
     return False
 
-
 def verifyPassword(plain_password, hashed_password):
     return pwd_context.verify(plain_password, hashed_password)
 
 
 if __name__ == '__main__':
-    sqlQuery = 'select code, username, fullName, email, disabled, password, status\
-        from users where code = %s;'
-    error = None
-    user = User()
-    
-    try:
-        connection = pg.connect(
-            user = DB_USERNAME,
-            password = DB_PASSWORD,
-            host = HOST,
-            port = PORT,
-            database = DB_NAME
-        )
-
-
-        cursor = connection.cursor()
-        cursor.execute(sqlQuery, ('gpds',))
-        (user.code, user.userName, user.fullName, user.email, user.disabled,\
-                user.password, user.status) = cursor.fetchone()
-
-        connection.commit()
-
-    except (Exception, pg.DatabaseError) as error:
-        print("Erro de conexão com o banco de dados: " + error)
-    finally:
-        if (connection):
-            cursor.close()
-            connection.close()
-    print(user)
+    pass

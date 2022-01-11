@@ -86,11 +86,12 @@ def getCurrentUserName(authorization:str):
                 detail="Token inválido.")
     
     return decodedToken["userName"]
-
-    
+  
 
 
 if __name__ == "__main__":
+    #print(f'request header       : {dict(request.headers.items())}' )
+    #print(f'request query params : {dict(request.query_params.items())}')
     token = signJWT("geovani")
     #print(token["token"])
     #token["token"] = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiZ2VvdmFuaSIsImV4cGlyZXMiOjE2MzQ4MjE1MTQuMzYxNjA0Mn0.Guf_R-QbrOszc3GjZj13Eb1tkMf-Nufc0401jd5mzRE"

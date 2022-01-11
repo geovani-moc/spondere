@@ -1,4 +1,4 @@
-from entity.discipline import Discipline
+from entity.period import Period
 import psycopg2 as pg
 from config import(
     DB_NAME,
@@ -8,7 +8,7 @@ from config import(
     PORT
 )
 
-def create(discipline: Discipline):
+def create(period:Period):
     sqlQuery = ''
 
     try:
@@ -34,11 +34,10 @@ def create(discipline: Discipline):
 
     return None
 
-def read(userName:str, id: str = None):
-    sqlQuery = 'select id, username, fullname, email, disabled, administrator, professor, student \
-        from users where username = %s;'
+def read(id:int):
+    sqlQuery = ''
     error = None
-    discipline = Discipline()
+    discipline = Period()
     
     try:
         connection = pg.connect(
@@ -51,7 +50,7 @@ def read(userName:str, id: str = None):
 
 
         cursor = connection.cursor()
-        cursor.execute(sqlQuery, (userName,))
+        cursor.execute(sqlQuery, (id,))
         () = cursor.fetchone()
 
         connection.commit()
@@ -65,40 +64,10 @@ def read(userName:str, id: str = None):
 
     return discipline
 
-def readAll(userName:str):
-    sqlQuery = 'select id, username, fullname, email, disabled, administrator, professor, student \
-        from users where username = %s;'
-    error = None
-    disciplines = []
-    
-    try:
-        connection = pg.connect(
-            user = DB_USERNAME,
-            password = DB_PASSWORD,
-            host = HOST,
-            port = PORT,
-            database = DB_NAME
-        )
 
-
-        cursor = connection.cursor()
-        cursor.execute(sqlQuery, (userName,))
-        () = cursor.fetchall()#melhorar a captura de varios cursos
-
-        connection.commit()
-
-    except (Exception, pg.DatabaseError) as error:
-        print("Erro de conexão com o banco de dados: " + error)
-    finally:
-        if (connection):
-            cursor.close()
-            connection.close()
-
-    return disciplines
-
-def update(discipline: Discipline):
+def update(updatedPeriod: Period):
     return None
 
 
-def delete(code: str):
+def delete(id:int ):
     return None

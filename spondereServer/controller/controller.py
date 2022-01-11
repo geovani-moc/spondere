@@ -15,6 +15,7 @@ from entity.discipline import Discipline
 from controller.security import getCurrentUserName, signJWT, JWTBearer
 from util.image import checkUploadedImage
 from database import user as userDB
+from database import discipline as disciplineDB
 from recognition.faceRecognition import verifyFace
 from entity.academicClass import AcademicClass
 
@@ -29,7 +30,6 @@ async def robotsTxt():
 async def shutdown_event():
     print("Aplicação encerrada.")
 
-
 @app.get('/')
 async def homePage():
     content = '<center><h1>Sponde API</h1><br>\
@@ -38,7 +38,6 @@ async def homePage():
         </center>'
     return HTMLResponse(content = content)
  
-
 @app.post("/usuario/criar", tags=["Usuário"])
 async def createUser(request:Request, user:User = Body(...)):
     authorization = request.headers.get("authorization")
@@ -53,8 +52,7 @@ async def createUser(request:Request, user:User = Body(...)):
 
     return {'User code':user.code, 'error': error}
     
-
-@app.post("/login", tags=["Autenticação"])
+@app.get("/login", tags=["Usuário"])
 async def userLogin(user: UserCredential):
 
     if checkUser(user.userName, user.password):
@@ -62,14 +60,11 @@ async def userLogin(user: UserCredential):
 
     return {"invalid_access": "Usuário ou senha inválidos."}
 
-
 @app.post("/v1/checar_biometria", dependencies=[Depends(JWTBearer())], tags=["Biometria"])
-async def checkBiometry(userCode:str, request:Request, file: UploadFile = File(...)):
-    #print(f'request header       : {dict(request.headers.items())}' )
-    #print(f'request query params : {dict(request.query_params.items())}')
-    
+async def checkBiometry(request:Request, file: UploadFile = File(...)):
+    authorization = request.headers.get("authorization")
+    userName = getCurrentUserName(authorization)
 
-    
     contents = await file.read()
     image = checkUploadedImage(contents)
 
@@ -80,18 +75,31 @@ async def checkBiometry(userCode:str, request:Request, file: UploadFile = File(.
     face, error = findFace(image)
     
     if error is None:
-        result = verifyFace(face, userCode)
+        result = verifyFace(face, userName)
         #salvar face(frequencia)
         if not result: return{"recognition": result, "error":"Face não definida."}
 
     return {"recognition": result, "error": None}
 
-@app.post("/disciplinas", dependencies=[Depends(JWTBearer())], tags=["Disciplina"])
-async def add_post(discipline: Discipline) -> dict:
-       
+@app.get("/disciplinas", dependencies=[Depends(JWTBearer())], tags=["Disciplina"])
+async def readAllDisciplines(request:Request) -> dict:
+    authorization = request.headers.get("authorization")
+    userName = getCurrentUserName(authorization)
+    disciplines = disciplineDB.read(userName=userName)
+
     return {
-        "result": "post added."
+        "discipline": disciplines
     }
+
+@app.get("/disciplinas/{id}", dependencies=[Depends(JWTBearer())], tags=["Disciplina"])
+async def readDiscipline(id:int ,request:Request):
+    authorization = request.headers.get("authorization")
+    userName = getCurrentUserName(authorization)
+    specificDiscipline = disciplineDB.read(userName=userName, id=id)
+    return {
+        "discipline": specificDiscipline
+    }
+
 
 @app.post("/aula/criar", dependencies=[Depends(JWTBearer())], tags=['Aula'])
 async def create_AcademicClass(academicClass:AcademicClass) -> dict:

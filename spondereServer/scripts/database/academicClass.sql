@@ -1,8 +1,8 @@
 create table academicClass(
     id serial,
     groupID integer,
-    titleClass varchar(20),
-    descriptionClass varchar(100),
+    titleClass varchar(50),
+    descriptionClass varchar(200),
     beginDate timestamp,
     endDate timestamp,
     validationStatus integer,

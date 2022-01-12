@@ -38,7 +38,7 @@ async def homePage():
         </center>'
     return HTMLResponse(content = content)
  
-@app.post("/usuario/criar", tags=["Usuário"])
+@app.post("/usuario", tags=["Usuário"])
 async def createUser(request:Request, user:User = Body(...)):
     authorization = request.headers.get("authorization")
     userName = getCurrentUserName(authorization)
@@ -60,7 +60,7 @@ async def userLogin(user: UserCredential):
 
     return {"invalid_access": "Usuário ou senha inválidos."}
 
-@app.post("/v1/checar_biometria", dependencies=[Depends(JWTBearer())], tags=["Biometria"])
+@app.post("/checar_biometria", dependencies=[Depends(JWTBearer())], tags=["Biometria"])
 async def checkBiometry(request:Request, file: UploadFile = File(...)):
     authorization = request.headers.get("authorization")
     userName = getCurrentUserName(authorization)

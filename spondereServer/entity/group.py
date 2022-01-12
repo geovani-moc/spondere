@@ -4,6 +4,7 @@ from pydantic.main import BaseModel
 
 class Group(BaseModel):
     id:int = None
+    code:int = None
     beginDate:Optional[datetime] = None
     endDate:Optional[datetime] = None
     deactivate:bool = None

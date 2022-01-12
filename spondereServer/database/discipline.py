@@ -73,9 +73,57 @@ def read(id:int):
     return discipline
 
 
-def update(discipline: Discipline):
-    return None
+def update(id:int, discipline: Discipline):
+    sqlQuery = 'UPDATE discipline SET semesterid = %s, /"name/" = %s, description = %s WHERE id = %s;'
+    
+    try:
+        connection = pg.connect(
+            user = DB_USERNAME,
+            password = DB_PASSWORD,
+            host = HOST,
+            port = PORT,
+            database = DB_NAME
+        )
+
+        cursor = connection.cursor()
+        cursor.execute(sqlQuery, 
+            (discipline.semesterID, discipline.name, discipline.description, id))
+        connection.commit()
+
+    except:
+        raise HTTPException(status_code=406,
+            detail="Erro de conexão com o banco de dados.") 
+    finally:
+        if (connection):
+            cursor.close()
+            connection.close()
+
+    return discipline
 
 
-def delete(code: str):
+def delete(id: int):
+    sqlQuery = 'delete from discipline where id = %s;'
+    
+    try:
+        connection = pg.connect(
+            user = DB_USERNAME,
+            password = DB_PASSWORD,
+            host = HOST,
+            port = PORT,
+            database = DB_NAME
+        )
+
+        cursor = connection.cursor()
+        cursor.execute(sqlQuery, (id,))
+    
+        connection.commit()
+
+    except:
+        raise HTTPException(status_code=406,
+            detail="Erro de conexão com o banco de dados.") 
+    finally:
+        if (connection):
+            cursor.close()
+            connection.close()
+
     return None

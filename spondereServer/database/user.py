@@ -75,7 +75,6 @@ def update(userName:str, updatedUser: User):
 def read(userName: str):
     sqlQuery = 'select id, username, fullname, email, disabled, administrator, professor, student \
         from users where username = %s;'
-    error = None
     user = User()
     
     try:
@@ -86,7 +85,6 @@ def read(userName: str):
             port = PORT,
             database = DB_NAME
         )
-
 
         cursor = connection.cursor()
         cursor.execute(sqlQuery, (userName,))
@@ -103,7 +101,7 @@ def read(userName: str):
             cursor.close()
             connection.close()
 
-    return user, error
+    return user
 
 def delete(userName: str):
     sqlQuery = 'delete from users where username = %s;'

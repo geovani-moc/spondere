@@ -73,14 +73,16 @@ def decodeJWT(token: str) -> dict:
 def getCurrentUserName(authorization:str):
     try:
         bearer, _, token =  authorization.partition(' ')
-        if bearer != 'Bearer ': 
+    
+        if bearer != 'Bearer': 
             raise HTTPException(status_code=403,
                 detail="Esquema de autenticação invalida.")   
         decodedToken = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-
+        
         if decodedToken.get("userName") is None:
             raise HTTPException(status_code=500,
-                detail="Usuário não identificado pelo token.")   
+                detail="Usuário não identificado pelo token.")
+        
     except:
         raise HTTPException(status_code=403,
                 detail="Token inválido.")

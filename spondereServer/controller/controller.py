@@ -1,3 +1,4 @@
+from logging import currentframe
 from fastapi import (
     File, 
     UploadFile, 
@@ -52,13 +53,22 @@ async def createUser(request:Request, user:User = Body(...)):
 
     return {'User code': id, 'error':None}
     
-@app.get("/login", tags=["Usuário"])
+@app.post("/login", tags=["Usuário"])
 async def userLogin(user: UserCredential):
 
     if checkUser(user.userName, user.password):
         return signJWT(user.userName)
 
     return {"invalid_access": "Usuário ou senha inválidos."}
+
+@app.get("/usuario", dependencies=[Depends(JWTBearer())], tags=["Usuário"])
+async def getCurrentUser(request:Request):
+    authorization = request.headers.get("authorization")
+    userName = getCurrentUserName(authorization)
+
+    currentUser = userDB.read(userName)
+    return {'user': currentUser}
+
 
 @app.post("/checar_biometria", dependencies=[Depends(JWTBearer())], tags=["Biometria"])
 async def checkBiometry(request:Request, file: UploadFile = File(...)):

@@ -43,7 +43,7 @@ def create(user: User):
     return id
 
 def update(userName:str, updatedUser: User):
-    sqlQuery = 'UPDATE users SET username = %s, /"password/" = %s,\
+    sqlQuery = 'UPDATE users SET username = %s, \"password\" = %s,\
     email = %s, fullname = %s, disabled = %s, professor = %s,\
     student = %s, administrator = %s  WHERE username = %s;'
 

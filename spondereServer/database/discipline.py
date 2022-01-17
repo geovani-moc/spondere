@@ -40,7 +40,7 @@ def create(discipline: Discipline):
     return id
 
 def read(id:int):
-    sqlQuery = 'select id, semesterid, /"name/", description from discipline where id = %s;'
+    sqlQuery = 'select id, semesterid, \"name\", description from discipline where id = %s;'
     discipline = Discipline()
     
     try:
@@ -74,7 +74,7 @@ def read(id:int):
 
 
 def update(id:int, discipline: Discipline):
-    sqlQuery = 'UPDATE discipline SET semesterid = %s, /"name/" = %s, description = %s WHERE id = %s;'
+    sqlQuery = 'UPDATE discipline SET semesterid = %s, \"name\" = %s, description = %s WHERE id = %s;'
     
     try:
         connection = pg.connect(

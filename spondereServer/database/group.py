@@ -10,7 +10,7 @@ from config import(
 )
 
 def create(group: Group):
-    sqlQuery = 'insert  into /"groups/" (code, begindate, enddate, disciplineid) values (%s, %s, %s, %s) returning id;'
+    sqlQuery = 'insert  into \"groups\" (code, begindate, enddate, disciplineid) values (%s, %s, %s, %s) returning id;'
     id = None
     try:
         connection = pg.connect(
@@ -38,7 +38,7 @@ def create(group: Group):
     return id
 
 def update(id:int, group:Group):
-    sqlQuery = 'update  /"groups/" set code = %s, begindate = %s, enddate = %s,\
+    sqlQuery = 'update  \"groups\" set code = %s, begindate = %s, enddate = %s,\
     deactivate = %s, disciplineid = %s where id = %s;'
 
     try:
@@ -68,7 +68,7 @@ def update(id:int, group:Group):
 
 def read(id: int):
     sqlQuery = 'select id, code, begindate, enddate, deactivate , \
-        disciplineid from /"groups/" where id = %s;'
+        disciplineid from \"groups\" where id = %s;'
     group = Group()
     
     try:
@@ -102,7 +102,7 @@ def read(id: int):
     return group
 
 def delete(id:int):
-    sqlQuery = 'delete from /"groups/" where id = %s;'
+    sqlQuery = 'delete from \"groups\" where id = %s;'
 
     try:
         connection = pg.connect(

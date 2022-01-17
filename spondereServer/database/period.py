@@ -10,7 +10,7 @@ from config import(
 )
 
 def create(period:Period):
-    sqlQuery = 'insert into /"period/" (code, begindate, enddate) values (%s, %s, %s);'
+    sqlQuery = 'insert into \"period\" (code, begindate, enddate) values (%s, %s, %s);'
     id = None
     try:
         connection = pg.connect(
@@ -36,7 +36,7 @@ def create(period:Period):
     return id
 
 def read(id:int):
-    sqlQuery = 'select code, begindate, enddate, deactivate from /"period/" where id = %s;'
+    sqlQuery = 'select code, begindate, enddate, deactivate from \"period\" where id = %s;'
     discipline = Period()
     
     try:
@@ -51,14 +51,15 @@ def read(id:int):
         cursor = connection.cursor()
         cursor.execute(sqlQuery, (id,))
 
-        (discipline.code, 
-        discipline.beginDate, 
-        discipline.endDate, 
+        (discipline.code,
+        discipline.beginDate ,
+        discipline.endDate ,
         discipline.deactivate) = cursor.fetchone()
 
         connection.commit()
 
-    except:
+    except pg.OperationalError as e:
+        print(e)
         raise HTTPException(status_code=406,
             detail="Erro de conexão com o banco de dados.") 
     finally:

@@ -99,11 +99,20 @@ def read(id: int):
 
         cursor = connection.cursor()
         cursor.execute(sqlQuery, (id,))
-        () = cursor.fetchone()
+        (academicClass.id,
+        academicClass.groupID,
+        academicClass.titleClass,
+        academicClass.descriptionClass,
+        academicClass.beginDate,
+        academicClass.endDate,
+        academicClass.validationStatus,
+        academicClass.validationType,
+        academicClass.validationCode) = cursor.fetchone()
 
         connection.commit()
 
-    except:
+    except pg.OperationalError as e:
+        print(e)
         raise HTTPException(status_code=406,
             detail="Erro de conexão com o banco de dados.")
     finally:

@@ -61,3 +61,10 @@ async def getAcademicClass(id:int) -> dict:
     return {
         "academicClass": academicClass
     }
+
+@router.get("/professor/{id}", dependencies=[Depends(JWTBearer())])
+async def getCurrentClassByProfessorID(id:int):
+    academicClass = classDB.readByProfessorID(id)
+    return {
+        "academicClass": academicClass
+    }

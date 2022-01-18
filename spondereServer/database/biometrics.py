@@ -1,19 +1,19 @@
 from entity.biometrics import Biometrics
 
 def create(biometrics: Biometrics):
-    
-    return None
+    id:int = 0
+    return id
 
 def update(biometrics: Biometrics):
-    return None
+    return True
 
-def read(code: str):
-    temp:Biometrics
+def read(id: int):
+    biometrics:Biometrics
 
-    return temp, None
+    return biometrics
 
 def delete(code: str):
 
-    return None
+    return True
 
 

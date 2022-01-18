@@ -1,3 +1,4 @@
+import logging
 from entity.discipline import Discipline
 from fastapi import HTTPException
 import psycopg2 as pg
@@ -29,7 +30,8 @@ def create(discipline: Discipline):
         id = cursor.fetchone()[0]
         connection.commit()
 
-    except:
+    except pg.OperationalError as e:
+        logging.exception(e)
         raise HTTPException(status_code=406,
             detail="Erro de conexão com o banco de dados.") 
     finally:
@@ -62,7 +64,8 @@ def read(id:int):
 
         connection.commit()
 
-    except:
+    except pg.OperationalError as e:
+        logging.exception(e)
         raise HTTPException(status_code=406,
             detail="Erro de conexão com o banco de dados.") 
     finally:
@@ -71,7 +74,6 @@ def read(id:int):
             connection.close()
 
     return discipline
-
 
 def update(id:int, discipline: Discipline):
     sqlQuery = 'UPDATE discipline SET semesterid = %s, \"name\" = %s, description = %s WHERE id = %s;'
@@ -90,7 +92,8 @@ def update(id:int, discipline: Discipline):
             (discipline.semesterID, discipline.name, discipline.description, id))
         connection.commit()
 
-    except:
+    except pg.OperationalError as e:
+        logging.exception(e)
         raise HTTPException(status_code=406,
             detail="Erro de conexão com o banco de dados.") 
     finally:
@@ -98,8 +101,7 @@ def update(id:int, discipline: Discipline):
             cursor.close()
             connection.close()
 
-    return discipline
-
+    return True
 
 def delete(id: int):
     sqlQuery = 'delete from discipline where id = %s;'
@@ -118,7 +120,8 @@ def delete(id: int):
     
         connection.commit()
 
-    except:
+    except pg.OperationalError as e:
+        logging.exception(e)
         raise HTTPException(status_code=406,
             detail="Erro de conexão com o banco de dados.") 
     finally:
@@ -126,4 +129,4 @@ def delete(id: int):
             cursor.close()
             connection.close()
 
-    return None
+    return True

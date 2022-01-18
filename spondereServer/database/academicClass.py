@@ -1,3 +1,4 @@
+import logging
 from entity.academicClass import AcademicClass
 from fastapi import HTTPException
 import psycopg2 as pg
@@ -36,7 +37,8 @@ def create(academicClass: AcademicClass):
 
         connection.commit()
 
-    except:
+    except pg.OperationalError as e:
+        logging.exception(e)
         raise HTTPException(status_code=406,
                 detail="Erro de conexão com o banco de dados.") 
     finally:
@@ -73,7 +75,8 @@ def update(id:int, academicClass: AcademicClass):
 
         connection.commit()
 
-    except:
+    except pg.OperationalError as e:
+        logging.exception(e)
         raise HTTPException(status_code=406,
             detail="Erro de conexão com o banco de dados.") 
     finally:
@@ -81,7 +84,7 @@ def update(id:int, academicClass: AcademicClass):
             cursor.close()
             connection.close()
 
-    return None
+    return True
 
 def read(id: int):
     sqlQuery = 'select id, groupid, titleclass, descriptionclass, begindate, enddate,\
@@ -112,7 +115,7 @@ def read(id: int):
         connection.commit()
 
     except pg.OperationalError as e:
-        print(e)
+        logging.exception(e)
         raise HTTPException(status_code=406,
             detail="Erro de conexão com o banco de dados.")
     finally:
@@ -139,7 +142,8 @@ def delete(id:int):
 
         connection.commit()
 
-    except:
+    except pg.OperationalError as e:
+        logging.exception(e)
         raise HTTPException(status_code=406,
             detail="Erro de conexão com o banco de dados.") 
     finally:
@@ -147,4 +151,4 @@ def delete(id:int):
             cursor.close()
             connection.close()
 
-    return None
+    return True

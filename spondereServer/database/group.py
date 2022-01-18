@@ -1,3 +1,4 @@
+import logging
 from entity.group import Group
 from fastapi import HTTPException
 import psycopg2 as pg
@@ -10,7 +11,8 @@ from config import(
 )
 
 def create(group: Group):
-    sqlQuery = 'insert  into \"groups\" (code, begindate, enddate, disciplineid) values (%s, %s, %s, %s) returning id;'
+    sqlQuery = 'insert  into \"groups\" (code, begindate, enddate, disciplineid)\
+         values (%s, %s, %s, %s) returning id;'
     id = None
     try:
         connection = pg.connect(
@@ -27,7 +29,8 @@ def create(group: Group):
 
         connection.commit()
 
-    except:
+    except pg.OperationalError as e:
+        logging.exception(e)
         raise HTTPException(status_code=406,
                 detail="Erro de conexão com o banco de dados.") 
     finally:
@@ -56,7 +59,8 @@ def update(id:int, group:Group):
 
         connection.commit()
 
-    except:
+    except pg.OperationalError as e:
+        logging.exception(e)
         raise HTTPException(status_code=406,
             detail="Erro de conexão com o banco de dados.") 
     finally:
@@ -64,7 +68,7 @@ def update(id:int, group:Group):
             cursor.close()
             connection.close()
 
-    return None
+    return True
 
 def read(id: int):
     sqlQuery = 'select id, code, begindate, enddate, deactivate , \
@@ -91,7 +95,8 @@ def read(id: int):
 
         connection.commit()
 
-    except:
+    except pg.OperationalError as e:
+        logging.exception(e)
         raise HTTPException(status_code=406,
             detail="Erro de conexão com o banco de dados.")
     finally:
@@ -118,7 +123,8 @@ def delete(id:int):
 
         connection.commit()
 
-    except:
+    except pg.OperationalError as e:
+        logging.exception(e)
         raise HTTPException(status_code=406,
             detail="Erro de conexão com o banco de dados.") 
     finally:
@@ -126,4 +132,4 @@ def delete(id:int):
             cursor.close()
             connection.close()
 
-    return None
+    return True

@@ -1,14 +1,15 @@
 from entity.frequency import Frequency
 
 def create(frequency: Frequency):
-    return None
+    id = 0
+    return id
 
 def update(frequency: Frequency):
-    return None
+    return True
 
 def read(code: str):
     frequency: Frequency
     return frequency
 
 def delete(code: str):
-    return None
+    return True

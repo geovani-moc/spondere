@@ -1,13 +1,14 @@
+from typing import Dict
 from fastapi import (
     APIRouter, 
     Depends,
     File, 
     UploadFile,
-    HTTPException)
+    HTTPException,
+    Request)
 from controller.security import (
     JWTBearer,
     getCurrentUserName)
-from starlette.requests import Request
 from util.image import checkUploadedImage
 from recognition.findFace import findFace
 from recognition.faceRecognition import verifyFace
@@ -15,7 +16,7 @@ from recognition.faceRecognition import verifyFace
 router = APIRouter()
 
 @router.post("/checar", dependencies=[Depends(JWTBearer())])
-async def checkBiometry(request:Request, file: UploadFile = File(...)):
+async def checkBiometry(request:Request, file: UploadFile = File(...))->Dict:
     authorization = request.headers.get("authorization")
     userName = getCurrentUserName(authorization)
 

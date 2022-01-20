@@ -1,6 +1,6 @@
 import logging
 from typing import List
-from entity.biometrics import Biometrics
+from entity.groupProfessor import GroupProfessor
 from fastapi import HTTPException
 import psycopg2 as pg
 from config import(
@@ -11,9 +11,8 @@ from config import(
     PORT
 )
 
-def create(biometric: Biometrics):
-    sqlQuery = 'insert into biometrics (studentID, createdate, deactivate,\
-    invalid) values(%s, %s, %s, %s) returning id;'
+def create(groupProfessor:GroupProfessor):
+    sqlQuery = 'insert into group_professors (groupid, professorusername) values(%s, %s);'
     id = None
     try:
         connection = pg.connect(
@@ -24,12 +23,7 @@ def create(biometric: Biometrics):
             database = DB_NAME
         )
         cursor = connection.cursor()
-        cursor.execute(sqlQuery, 
-            (biometric.studentID,
-            biometric.createDate,
-            biometric.deactivate,
-            biometric.invalid))
-        id = cursor.fetchone()[0]
+        cursor.execute(sqlQuery, (groupProfessor.groupID, groupProfessor.professorUsername))
 
         connection.commit()
 
@@ -42,11 +36,11 @@ def create(biometric: Biometrics):
             cursor.close()
             connection.close()
 
-    return id
+    return True
 
-def update(id:int, biometric: Biometrics):
-    sqlQuery = 'update biometrics set studentid=%s, createdate=%s, \
-        deactivate=%s, invalid=%s where id=%s;'
+def update(new:GroupProfessor, groupProfessor:GroupProfessor):
+    sqlQuery = 'update group_professors set groupid=%s, professorusername = %s\
+        where groupid=%s and professorusername=%s;'
 
     try:
         connection = pg.connect(
@@ -58,10 +52,8 @@ def update(id:int, biometric: Biometrics):
         )
         cursor = connection.cursor()
         cursor.execute(sqlQuery, 
-            (biometric.studentID,
-            biometric.createDate,
-            biometric.deactivate,
-            biometric.invalid, id))
+            (groupProfessor.groupID, groupProfessor.professorUsername,
+            new.groupID, new.professorUsername))
 
         connection.commit()
 
@@ -76,11 +68,11 @@ def update(id:int, biometric: Biometrics):
 
     return True
 
-def read(id: int):
-    sqlQuery = 'select id, studentID, createdate, deactivate, invalid \
-        from biometrics where id=%s;'
-    biometric = Biometrics()
-    
+def readByUser(username:str):
+    sqlQuery = 'select groupid, professorusername \
+        from group_professors where professorusername=%s;'
+    groups:List[GroupProfessor] = []
+
     try:
         connection = pg.connect(
             user = DB_USERNAME,
@@ -91,11 +83,16 @@ def read(id: int):
         )
 
         cursor = connection.cursor()
-        cursor.execute(sqlQuery, (id,))
-        (biometric.id, biometric.studentID,
-        biometric.createDate, biometric.deactivate,
-        biometric.invalid) = cursor.fetchone()
+        cursor.execute(sqlQuery, (username,))
+        temp = cursor.fetchall()
+        
+        for (groupID, professor) in temp:
 
+            temp = GroupProfessor()
+            temp.groupID = groupID
+            temp.professorUsername = professor
+                        
+            groups.append(temp)
         connection.commit()
 
     except pg.OperationalError as e:
@@ -107,10 +104,49 @@ def read(id: int):
             cursor.close()
             connection.close()
 
-    return biometric
+    return groups
 
-def delete(id:int):
-    sqlQuery = 'delete from biometrics where id = %s;'
+def readByGroup(id:int):
+    sqlQuery = 'select  groupid, professorusername \
+        from group_professors where groupid=%s;'
+    professors:List[GroupProfessor] = []
+
+    try:
+        connection = pg.connect(
+            user = DB_USERNAME,
+            password = DB_PASSWORD,
+            host = HOST,
+            port = PORT,
+            database = DB_NAME
+        )
+
+        cursor = connection.cursor()
+        cursor.execute(sqlQuery, (id,))
+        temp = cursor.fetchall()
+        
+        for (groupID, professor) in temp:
+
+            temp = GroupProfessor()
+            temp.groupID = groupID
+            temp.professorUsername = professor
+                        
+            professors.append(temp)
+        connection.commit()
+
+    except pg.OperationalError as e:
+        logging.exception(e)
+        raise HTTPException(status_code=406,
+            detail="Erro de conexão com o banco de dados.")
+    finally:
+        if (connection):
+            cursor.close()
+            connection.close()
+
+    return professors
+
+
+def delete(groupID:int, professorUsername:str):
+    sqlQuery = 'delete from group_professors where professorusername=%s and groupid=%s;'
 
     try:
         connection = pg.connect(
@@ -122,7 +158,7 @@ def delete(id:int):
         )
         cursor = connection.cursor()
         cursor.execute(sqlQuery, 
-            (id,))
+            (professorUsername, groupID))
 
         connection.commit()
 

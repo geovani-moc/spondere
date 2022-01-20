@@ -7,7 +7,6 @@ from controller.discipline import router as disciplineRouter
 from controller.academicClass import router as academicClassRouter
 from controller.period import router as periodRouter
 from controller.group import router as groupRouter
-from database import period
 
 app = FastAPI()
 

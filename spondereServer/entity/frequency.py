@@ -9,21 +9,22 @@ class Point(object):
         self.y = y
 
 class Frequency(BaseModel):
-    studentUsername: str = None
+    id:int = None
+    studentID:int = None
     academicClassID: int = None
-    attendanceMethod:int = None
+    ManualAttendance:bool = None
+    BLEAttendance:bool = None
+    QrCodeAttendance:bool = None
     createDate: datetime = None
+    validationCode:str = None
     geolocalization: Optional[Point] = None
-    validationType: int = None
     photo:List[bytes] = None
 
     class Config:
         schema_extra = {
             "example": {
-                "studentUsername" : "geo",
+                "studentID" : 1,
                 "academmicClassId": 1,
-                "attendanceMethod": 1,
-                "createDate": "12/12/1999",
-                "validationType": 2
+                "createDate": "12/12/1999"
             }
         }

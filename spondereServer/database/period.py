@@ -39,7 +39,7 @@ def create(period:Period):
     return id
 
 def read(id:int):
-    sqlQuery = 'select id, code, begindate, enddate, deactivate from \"period\" where id = %s;'
+    sqlQuery = 'select id, code, begindate, enddate, active from \"period\" where id = %s;'
     discipline = Period()
     
     try:
@@ -58,7 +58,7 @@ def read(id:int):
         discipline.code,
         discipline.beginDate ,
         discipline.endDate ,
-        discipline.deactivate) = cursor.fetchone()
+        discipline.active) = cursor.fetchone()
 
         connection.commit()
 
@@ -76,7 +76,7 @@ def read(id:int):
 
 def update(id:int, period: Period):
     sqlQuery = 'UPDATE \"period\" \
-        SET code=%s, begindate=%s, enddate=%s, deactivate=%s\
+        SET code=%s, begindate=%s, enddate=%s, active=%s\
         WHERE id=%s;'
     
     try:
@@ -90,7 +90,7 @@ def update(id:int, period: Period):
 
         cursor = connection.cursor()
         cursor.execute(sqlQuery, 
-            (period.code, period.beginDate, period.endDate, period.deactivate, id))
+            (period.code, period.beginDate, period.endDate, period.active, id))
         connection.commit()
 
     except pg.OperationalError as e:

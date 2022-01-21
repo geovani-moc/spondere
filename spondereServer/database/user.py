@@ -26,7 +26,7 @@ def create(user: User):
         )
         cursor = connection.cursor()
         cursor.execute(sqlQuery, 
-            (user.userName, user.password, user.email, user.fullName,
+            (user.username, user.password, user.email, user.fullName,
             user.disabled, user.professor, user.student, user.administrator))
         id = cursor.fetchone()[0]
 
@@ -42,7 +42,7 @@ def create(user: User):
 
     return id
 
-def update(userName:str, updatedUser: User):
+def update(username:str, updatedUser: User):
     sqlQuery = 'UPDATE users SET username = %s, \"password\" = %s,\
     email = %s, fullname = %s, disabled = %s, professor = %s,\
     student = %s, administrator = %s  WHERE username = %s;'
@@ -57,8 +57,8 @@ def update(userName:str, updatedUser: User):
         )
         cursor = connection.cursor()
         cursor.execute(sqlQuery, 
-            (updatedUser.userName, updatedUser.password, updatedUser.email, updatedUser.fullName,
-            updatedUser.disabled, updatedUser.professor, updatedUser.student, updatedUser.administrator, userName))
+            (updatedUser.username, updatedUser.password, updatedUser.email, updatedUser.fullName,
+            updatedUser.disabled, updatedUser.professor, updatedUser.student, updatedUser.administrator, username))
 
         connection.commit()
 
@@ -72,7 +72,7 @@ def update(userName:str, updatedUser: User):
 
     return None
 
-def read(userName: str):
+def read(username: str):
     sqlQuery = 'select id, username, fullname, email, disabled, administrator, professor, student \
         from users where username = %s;'
     user = User()
@@ -87,8 +87,8 @@ def read(userName: str):
         )
 
         cursor = connection.cursor()
-        cursor.execute(sqlQuery, (userName,))
-        (user.id, user.userName, user.fullName, user.email, user.disabled,
+        cursor.execute(sqlQuery, (username,))
+        (user.id, user.username, user.fullName, user.email, user.disabled,
                 user.administrator, user.professor, user.student) = cursor.fetchone()
 
         connection.commit()
@@ -103,7 +103,7 @@ def read(userName: str):
 
     return user
 
-def delete(userName: str):
+def delete(username: str):
     sqlQuery = 'delete from users where username = %s;'
 
     try:
@@ -116,7 +116,7 @@ def delete(userName: str):
         )
         cursor = connection.cursor()
         cursor.execute(sqlQuery, 
-            (userName,))
+            (username,))
 
         connection.commit()
 
@@ -130,8 +130,8 @@ def delete(userName: str):
 
     return None
 
-def checkUser(userName: str, password:str):
-    if userName is None or password is None:
+def checkUser(username: str, password:str):
+    if username is None or password is None:
         return False
 
     user = User()
@@ -147,8 +147,8 @@ def checkUser(userName: str, password:str):
         )
 
         cursor = connection.cursor()
-        cursor.execute(sql_query, (userName, ))
-        (user.userName, user.password) = cursor.fetchone()
+        cursor.execute(sql_query, (username, ))
+        (user.username, user.password) = cursor.fetchone()
 
     except:
         raise HTTPException(status_code=406,
@@ -158,7 +158,7 @@ def checkUser(userName: str, password:str):
             cursor.close()
             connection.close()
     
-    if user.userName == userName and verifyPassword(password, user.password):
+    if user.username == username and verifyPassword(password, user.password):
        return True
 
     return False

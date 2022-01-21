@@ -16,8 +16,8 @@ router = APIRouter()
 @router.post("", dependencies=[Depends(JWTBearer())])
 async def createDiscipline(discipline:Discipline, request:Request) -> Dict:
     authorization = request.headers.get("authorization")
-    userName = getCurrentUserName(authorization)
-    user = userDB.read(userName)
+    username = getCurrentUserName(authorization)
+    user = userDB.read(username)
 
     if not user.administrator or not user.professor:
         raise HTTPException(status_code=401,
@@ -32,8 +32,8 @@ async def createDiscipline(discipline:Discipline, request:Request) -> Dict:
 @router.put("/{id}", dependencies=[Depends(JWTBearer())])
 async def updateDiscipline(id:int, discipline:Discipline, request:Request) -> Dict:
     authorization = request.headers.get("authorization")
-    userName = getCurrentUserName(authorization)
-    user = userDB.read(userName)
+    username = getCurrentUserName(authorization)
+    user = userDB.read(username)
 
     if not user.administrator or not user.professor:
         raise HTTPException(status_code=401,
@@ -47,8 +47,8 @@ async def updateDiscipline(id:int, discipline:Discipline, request:Request) -> Di
 @router.delete("/{id}", dependencies=[Depends(JWTBearer())])
 async def deleteDiscipline(id:int, request:Request) -> Dict:
     authorization = request.headers.get("authorization")
-    userName = getCurrentUserName(authorization)
-    user = userDB.read(userName)
+    username = getCurrentUserName(authorization)
+    user = userDB.read(username)
 
     if not user.administrator or not user.professor:
         raise HTTPException(status_code=401,

@@ -17,8 +17,8 @@ router = APIRouter()
 @router.post("", dependencies=[Depends(JWTBearer())])
 async def createUser(request:Request, user:User = Body(...)):
     authorization = request.headers.get("authorization")
-    userName = getCurrentUserName(authorization)
-    user = userDB.read(userName)
+    username = getCurrentUserName(authorization)
+    user = userDB.read(username)
 
     if not user.administrator:
         return {'User code': None, 'error': 'u002'}
@@ -29,15 +29,15 @@ async def createUser(request:Request, user:User = Body(...)):
 @router.post("/login")
 async def userLogin(user: UserCredential):
 
-    if checkUser(user.userName, user.password):
-        return signJWT(user.userName)
+    if checkUser(user.username, user.password):
+        return signJWT(user.username)
 
     return {"invalid_access": "Usuário ou senha inválidos."}
 
 @router.get("", dependencies=[Depends(JWTBearer())])
 async def getCurrentUser(request:Request):
     authorization = request.headers.get("authorization")
-    userName = getCurrentUserName(authorization)
+    username = getCurrentUserName(authorization)
 
-    currentUser = userDB.read(userName)
+    currentUser = userDB.read(username)
     return {'user': currentUser}

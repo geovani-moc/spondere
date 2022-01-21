@@ -49,9 +49,9 @@ def tokenResponse(token: str):
         "token": token
     }
 
-def signJWT(userName:str )->Dict[str, str]:
+def signJWT(username:str )->Dict[str, str]:
     accessInfo = {
-        "userName": userName,
+        "username": username,
         "expires": time.time() + ACCESS_TOKEN_EXPIRE_SECONDS
     }
     token = jwt.encode(accessInfo, SECRET_KEY, algorithm=ALGORITHM)
@@ -79,7 +79,7 @@ def getCurrentUserName(authorization:str):
                 detail="Esquema de autenticação invalida.")   
         decodedToken = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         
-        if decodedToken.get("userName") is None:
+        if decodedToken.get("username") is None:
             raise HTTPException(status_code=500,
                 detail="Usuário não identificado pelo token.")
         
@@ -87,7 +87,7 @@ def getCurrentUserName(authorization:str):
         raise HTTPException(status_code=403,
                 detail="Token inválido.")
     
-    return decodedToken["userName"]
+    return decodedToken["username"]
   
 
 

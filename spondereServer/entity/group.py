@@ -1,20 +1,20 @@
-from datetime import datetime
+from locale import strcoll
 from typing import Optional
 from pydantic.main import BaseModel
 
 class Group(BaseModel):
     id:int = None
-    code:int = None
-    beginDate:Optional[datetime] = None
-    endDate:Optional[datetime] = None
-    deactivate:bool = None
+    code:str = None
+    active:bool = None
+    semesterID:int = None
     disciplineID:Optional[int] = None
 
     class Config:
         schema_extra = {
             "example":{
-                "beginDate": "12/12/1999",
-                "endDate": "01/06/2000",
-                "deactivate": "false"
+                "code":"calculo2022A1",
+                "semesterID":1,
+                "active": "true",
+                "disciplineID":1
             }
         }

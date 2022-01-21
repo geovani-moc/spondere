@@ -1,4 +1,3 @@
-from sys import prefix
 from fastapi import FastAPI
 from fastapi.responses import HTMLResponse
 from controller.user import router as userRouter

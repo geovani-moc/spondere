@@ -42,7 +42,7 @@ def create(group: Group):
 
 def update(id:int, group:Group):
     sqlQuery = 'update  \"groups\" set code = %s, begindate = %s, enddate = %s,\
-    deactivate = %s, disciplineid = %s where id = %s;'
+    active = %s, disciplineid = %s where id = %s;'
 
     try:
         connection = pg.connect(
@@ -55,7 +55,7 @@ def update(id:int, group:Group):
         cursor = connection.cursor()
         cursor.execute(sqlQuery, 
             (group.code, group.beginDate, group.endDate,
-             group.deactivate, group.disciplineID, id))
+             group.active, group.disciplineID, id))
 
         connection.commit()
 
@@ -71,7 +71,7 @@ def update(id:int, group:Group):
     return True
 
 def read(id: int):
-    sqlQuery = 'select id, code, begindate, enddate, deactivate , \
+    sqlQuery = 'select id, code, begindate, enddate, active , \
         disciplineid from \"groups\" where id = %s;'
     group = Group()
     
@@ -90,7 +90,7 @@ def read(id: int):
         group.code, 
         group.beginDate, 
         group.endDate, 
-        group.deactivate, 
+        group.active, 
         group.disciplineID) = cursor.fetchone()
 
         connection.commit()

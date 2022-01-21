@@ -33,8 +33,8 @@ async def readGroupByStudent(username:Optional[str]=None):
 @router.post("", dependencies=[Depends(JWTBearer())])
 async def createGroup(group:GroupStudent, request:Request):
     authorization = request.headers.get("authorization")
-    userName = getCurrentUserName(authorization)
-    user = userDB.read(userName)
+    username = getCurrentUserName(authorization)
+    user = userDB.read(username)
 
     if not user.administrator:
         raise HTTPException(status_code=401,
@@ -48,8 +48,8 @@ async def createGroup(group:GroupStudent, request:Request):
 @router.put("/", dependencies=[Depends(JWTBearer())])
 async def updateGroup(request:Request, group:GroupStudent, new:GroupStudent):
     authorization = request.headers.get("authorization")
-    userName = getCurrentUserName(authorization)
-    user = userDB.read(userName)
+    username = getCurrentUserName(authorization)
+    user = userDB.read(username)
 
     if not user.administrator:
         raise HTTPException(status_code=401,
@@ -64,8 +64,8 @@ async def updateGroup(request:Request, group:GroupStudent, new:GroupStudent):
 @router.delete("/", dependencies=[Depends(JWTBearer())])
 async def deleteGroup(request:Request, id:int = Body(...), student:str = Body(...)):
     authorization = request.headers.get("authorization")
-    userName = getCurrentUserName(authorization)
-    user = userDB.read(userName)
+    username = getCurrentUserName(authorization)
+    user = userDB.read(username)
 
     if not user.administrator:
         raise HTTPException(status_code=401,

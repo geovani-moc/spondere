@@ -22,8 +22,8 @@ async def readPeriod(id:int):
 @router.post("", dependencies=[Depends(JWTBearer())])
 async def createPeriod(period:Period, request:Request):
     authorization = request.headers.get("authorization")
-    userName = getCurrentUserName(authorization)
-    user = userDB.read(userName)
+    username = getCurrentUserName(authorization)
+    user = userDB.read(username)
 
     if not user.administrator:
         raise HTTPException(status_code=401,
@@ -38,8 +38,8 @@ async def createPeriod(period:Period, request:Request):
 @router.put("/{id}", dependencies=[Depends(JWTBearer())])
 async def updatePeriod(id:int, period:Period, request:Request):
     authorization = request.headers.get("authorization")
-    userName = getCurrentUserName(authorization)
-    user = userDB.read(userName)
+    username = getCurrentUserName(authorization)
+    user = userDB.read(username)
 
     if not user.administrator:
         raise HTTPException(status_code=401,
@@ -53,8 +53,8 @@ async def updatePeriod(id:int, period:Period, request:Request):
 @router.delete("/{id}", dependencies=[Depends(JWTBearer())])
 async def deletePeriod(id:int, request:Request):
     authorization = request.headers.get("authorization")
-    userName = getCurrentUserName(authorization)
-    user = userDB.read(userName)
+    username = getCurrentUserName(authorization)
+    user = userDB.read(username)
 
     if not user.administrator:
         raise HTTPException(status_code=401,

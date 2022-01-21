@@ -13,8 +13,8 @@ router = APIRouter()
 @router.post("", dependencies=[Depends(JWTBearer())])
 async def createAcademicClass(academicClass:AcademicClass, request:Request) -> dict:
     authorization = request.headers.get("authorization")
-    userName = getCurrentUserName(authorization)
-    user = userDB.read(userName)
+    username = getCurrentUserName(authorization)
+    user = userDB.read(username)
 
     if not user.administrator or not user.professor:
         raise HTTPException(status_code=401,
@@ -28,8 +28,8 @@ async def createAcademicClass(academicClass:AcademicClass, request:Request) -> d
 @router.put("/{id}", dependencies=[Depends(JWTBearer())])
 async def updateAcademicClass(id:int, academicClass:AcademicClass, request:Request)-> dict:
     authorization = request.headers.get("authorization")
-    userName = getCurrentUserName(authorization)
-    user = userDB.read(userName)
+    username = getCurrentUserName(authorization)
+    user = userDB.read(username)
 
     if not user.administrator or not user.professor:
         raise HTTPException(status_code=401,
@@ -43,8 +43,8 @@ async def updateAcademicClass(id:int, academicClass:AcademicClass, request:Reque
 @router.delete("/{id}", dependencies=[Depends(JWTBearer())])
 async def deleteAcademicClass(id:int, request:Request) -> dict:
     authorization = request.headers.get("authorization")
-    userName = getCurrentUserName(authorization)
-    user = userDB.read(userName)
+    username = getCurrentUserName(authorization)
+    user = userDB.read(username)
 
     if not user.administrator or not user.professor:
         raise HTTPException(status_code=401,

@@ -20,7 +20,7 @@ router = APIRouter()
 @router.post("/checar", dependencies=[Depends(JWTBearer())])
 async def checkBiometry(request:Request, file: UploadFile = File(...))->Dict:
     authorization = request.headers.get("authorization")
-    userName = getCurrentUserName(authorization)
+    username = getCurrentUserName(authorization)
 
     contents = await file.read()
     image = checkUploadedImage(contents)
@@ -35,7 +35,7 @@ async def checkBiometry(request:Request, file: UploadFile = File(...))->Dict:
             detail="Erro no sistema de reconhecimento facial: \n" + error) 
     
     if error is None:
-        result = verifyFace(face, userName)
+        result = verifyFace(face, username)
         #salvar face(frequencia) --await
         if not result: return{"recognition": result, "error":"Face não definida."}
 

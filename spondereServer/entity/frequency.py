@@ -25,6 +25,6 @@ class Frequency(BaseModel):
             "example": {
                 "studentID" : 1,
                 "academmicClassId": 1,
-                "createDate": "12/12/1999"
+                "createDate": "1999, 12, 12"
             }
         }

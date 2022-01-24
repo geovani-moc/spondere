@@ -1,6 +1,5 @@
-insert  into discipline 
-	(semesterid, "name", description)
+insert into discipline 
+	(code, "name", description)
 values 
-	(1, 'artes', 'aula basica de desenho'),
-	(1, 'educação fisica', 'aula para a pratica de esportes'),
-	(1, 'quimica organica', 'estudo da quimica da vida');
+	('BioquimicaM', 'Bioquimica', 'Estudo das reações quimicas ocorentes em sistemas biologicos.'),
+	('calc1CC', 'Calculo 1', 'Introdução a calculo, limite, derivada e integral.');

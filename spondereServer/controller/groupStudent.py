@@ -18,7 +18,7 @@ router = APIRouter()
 async def readGroupByGroup(id:int):
     groups = groupDB.readByGroup(id)
     return {
-        "Groups": groups
+        "group": groups
     }
 
 @router.get("", dependencies=[Depends(JWTBearer())])
@@ -27,7 +27,7 @@ async def readGroupByStudent(username:Optional[str]=None):
         return {"Students":None}
     students = groupDB.readByUser(username)
     return {
-        "Students": students
+        "student": students
     }
 
 @router.post("", dependencies=[Depends(JWTBearer())])

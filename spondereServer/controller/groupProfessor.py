@@ -39,10 +39,10 @@ async def readGroupByProfessor(request:Request, username:Optional[str]=None):
             detail="O usuario não tem privilegio de administrador ou professor.")
 
     if username == None:
-        return {"Professors":None}
+        return {"professor":None}
     professors = groupDB.readByUser(username)
     return {
-        "Professors": professors
+        "professor": professors
     }
 
 @router.post("", dependencies=[Depends(JWTBearer())])

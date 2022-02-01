@@ -1,8 +1,9 @@
 import logging
-from typing import List
+from typing import Dict, List
 from entity.academicClass import AcademicClass
 from fastapi import HTTPException
 import psycopg2 as pg
+from psycopg2.extras import RealDictCursor
 from config import(
     DB_NAME,
     DB_PASSWORD,
@@ -12,9 +13,9 @@ from config import(
 )
 
 def create(academicClass: AcademicClass):
-    sqlQuery = 'insert into academicclass (groupid, titleclass, descriptionclass, \
-        begindate, enddate, validationstatus, validationtype, validationcode) values\
-        (%s, %s, %s, %s, %s, %s, %s, %s ) returning id;'
+    sqlQuery = 'insert into academicclass (groupid, titleclass, descriptionclass, begindate, \
+        enddate, activevalidation , validationbyqrcode, validationbyble, validationcode) \
+        values (%s, %s, %s, %s, %s, %s, %s, %s ) returning id;'
     id = None
     try:
         connection = pg.connect(
@@ -31,8 +32,9 @@ def create(academicClass: AcademicClass):
             academicClass.descriptionClass,
             academicClass.beginDate,
             academicClass.endDate,
-            academicClass.validationStatus,
-            academicClass.validationType,
+            academicClass.activeValidation,
+            academicClass.validationByQrCode,
+            academicClass.validationByBLE,
             academicClass.validationCode))
         id = cursor.fetchone()[0]
 
@@ -51,8 +53,8 @@ def create(academicClass: AcademicClass):
 
 def update(id:int, academicClass: AcademicClass):
     sqlQuery = 'update academicclass set groupid=%s, titleclass=%s,\
-    descriptionclass=%s, begindate=%s, enddate=%s, validationstatus=%s,\
-    validationtype=%s, validationcode=%s where id = %s;'
+    descriptionclass=%s, begindate=%s, enddate=%s, activevalidation=%s,\
+	validationbyqrcode=%s, validationbyble=%s, validationcode=%s where id=%s;'
 
     try:
         connection = pg.connect(
@@ -69,8 +71,9 @@ def update(id:int, academicClass: AcademicClass):
             academicClass.descriptionClass,
             academicClass.beginDate,
             academicClass.endDate,
-            academicClass.validationStatus,
-            academicClass.validationType,
+            academicClass.activeValidation,
+            academicClass.validationByQrCode,
+            academicClass.validationByBLE,
             academicClass.validationCode,
             id))
 
@@ -89,7 +92,8 @@ def update(id:int, academicClass: AcademicClass):
 
 def read(id: int):
     sqlQuery = 'select id, groupid, titleclass, descriptionclass, begindate, enddate,\
-        validationstatus, validationtype, validationcode from academicclass where id = %s;'
+    activevalidation , validationbyqrcode, validationbyble, validationcode \
+    from academicclass where id=%s;'
     academicClass = AcademicClass()
     
     try:
@@ -109,8 +113,9 @@ def read(id: int):
         academicClass.descriptionClass,
         academicClass.beginDate,
         academicClass.endDate,
-        academicClass.validationStatus,
-        academicClass.validationType,
+        academicClass.activeValidation,
+        academicClass.validationByQrCode,
+        academicClass.validationByBLE,
         academicClass.validationCode) = cursor.fetchone()
 
         connection.commit()
@@ -126,12 +131,9 @@ def read(id: int):
 
     return academicClass
 
-def readByProfessorID(id:int) -> List[AcademicClass]:
+def readByProfessorID(id:int) -> Dict:
     #atualizar sql
-    sqlQuery = 'select id, groupid, titleclass, descriptionclass, begindate, enddate,\
-        validationstatus, validationtype, validationcode from academicclass whwre id=%s;'
-
-    classes:List[AcademicClass]
+    sqlQuery = ''
     
     try:
         connection = pg.connect(
@@ -142,27 +144,9 @@ def readByProfessorID(id:int) -> List[AcademicClass]:
             database = DB_NAME
         )
 
-        cursor = connection.cursor()
+        cursor = connection.cursor(cursor_factory=RealDictCursor)
         cursor.execute(sqlQuery, (id,))
-        temp = cursor.fetchall()
-
-        for (id, groupID, titleClass, descriptionClass, beginDate, endDate, 
-        validationStatus, validationType, validationCode) in temp:
-
-            temp = AcademicClass()
-            temp.id = id
-            temp.groupID = groupID
-            temp.titleClass = titleClass
-            temp.descriptionClass = descriptionClass
-            temp.beginDate = beginDate
-            temp.endDate = endDate
-            temp.validationStatus = validationStatus
-            temp.validationType = validationType
-            temp.validationCode = validationCode 
-            
-            classes.append(temp)
-            
-        
+        records = cursor.fetchall()
         connection.commit()
 
     except pg.OperationalError as e:
@@ -174,7 +158,7 @@ def readByProfessorID(id:int) -> List[AcademicClass]:
             cursor.close()
             connection.close()
 
-    return classes
+    return records
 
 def delete(id:int):
     sqlQuery = 'delete from academicClass where id = %s;'

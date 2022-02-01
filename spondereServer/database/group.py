@@ -11,7 +11,7 @@ from config import(
 )
 
 def create(group: Group):
-    sqlQuery = 'insert  into \"groups\" (code, begindate, enddate, disciplineid)\
+    sqlQuery = 'insert  into \"groups\" (code, active, semesterid, disciplineid)\
          values (%s, %s, %s, %s) returning id;'
     id = None
     try:
@@ -24,7 +24,7 @@ def create(group: Group):
         )
         cursor = connection.cursor()
         cursor.execute(sqlQuery, 
-            (group.code, group.beginDate, group.endDate, group.disciplineID))
+            (group.code, group.active, group.semesterID, group.disciplineID))
         id = cursor.fetchone()[0]
 
         connection.commit()
@@ -41,8 +41,8 @@ def create(group: Group):
     return id
 
 def update(id:int, group:Group):
-    sqlQuery = 'update  \"groups\" set code = %s, begindate = %s, enddate = %s,\
-    active = %s, disciplineid = %s where id = %s;'
+    sqlQuery = 'update  \"groups\" set code = %s, active = %s, semesterid = %s,\
+    disciplineid = %s where id = %s;'
 
     try:
         connection = pg.connect(
@@ -54,8 +54,8 @@ def update(id:int, group:Group):
         )
         cursor = connection.cursor()
         cursor.execute(sqlQuery, 
-            (group.code, group.beginDate, group.endDate,
-             group.active, group.disciplineID, id))
+            (group.code, group.active, group.semesterID,
+             group.disciplineID, id))
 
         connection.commit()
 
@@ -71,8 +71,9 @@ def update(id:int, group:Group):
     return True
 
 def read(id: int):
-    sqlQuery = 'select id, code, begindate, enddate, active , \
-        disciplineid from \"groups\" where id = %s;'
+    sqlQuery = 'select id, code, active, semesterid, disciplineid \
+        from \"groups\" where id=%s;'
+
     group = Group()
     
     try:
@@ -88,9 +89,8 @@ def read(id: int):
         cursor.execute(sqlQuery, (id,))
         (group.id, 
         group.code, 
-        group.beginDate, 
-        group.endDate, 
-        group.active, 
+        group.active,
+        group.semesterID, 
         group.disciplineID) = cursor.fetchone()
 
         connection.commit()

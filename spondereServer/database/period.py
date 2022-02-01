@@ -11,8 +11,8 @@ from config import(
 )
 
 def create(period:Period):
-    sqlQuery = 'insert into \"period\" (code, begindate, enddate) \
-        values (%s, %s, %s) returning id;'
+    sqlQuery = 'insert into \"period\" (code, active, begindate, enddate) \
+        values (%s, %s, %s, %s) returning id;'
     id = None
     try:
         connection = pg.connect(
@@ -23,7 +23,7 @@ def create(period:Period):
             database = DB_NAME
         )
         cursor = connection.cursor()
-        cursor.execute(sqlQuery, (period.code, period.beginDate, period.endDate))
+        cursor.execute(sqlQuery, (period.code, period.active, period.beginDate, period.endDate))
         id = cursor.fetchone()[0]
         connection.commit()
 
@@ -39,7 +39,7 @@ def create(period:Period):
     return id
 
 def read(id:int):
-    sqlQuery = 'select id, code, begindate, enddate, active from \"period\" where id = %s;'
+    sqlQuery = 'select id, code, active, begindate, enddate from \"period\" where id=%s;'
     discipline = Period()
     
     try:
@@ -56,9 +56,9 @@ def read(id:int):
 
         (discipline.id,
         discipline.code,
-        discipline.beginDate ,
-        discipline.endDate ,
-        discipline.active) = cursor.fetchone()
+        discipline.active,
+        discipline.beginDate,
+        discipline.endDate) = cursor.fetchone()
 
         connection.commit()
 
@@ -72,7 +72,6 @@ def read(id:int):
             connection.close()
 
     return discipline
-
 
 def update(id:int, period: Period):
     sqlQuery = 'UPDATE \"period\" \

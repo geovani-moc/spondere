@@ -1,8 +1,9 @@
 import logging
-from typing import List
+from typing import Dict, List
 from entity.groupStudent import GroupStudent
 from fastapi import HTTPException
 import psycopg2 as pg
+from psycopg2.extras import RealDictCursor
 from config import(
     DB_NAME,
     DB_PASSWORD,
@@ -68,10 +69,9 @@ def update(new:GroupStudent, groupStudent:GroupStudent):
 
     return True
 
-def readByUser(username:str):
+def readByUser(username:str)->Dict:
     sqlQuery = 'select groupid, studentusername \
         from group_students where studentusername=%s;'
-    groups:List[GroupStudent] = []
 
     try:
         connection = pg.connect(
@@ -82,17 +82,10 @@ def readByUser(username:str):
             database = DB_NAME
         )
 
-        cursor = connection.cursor()
+        cursor = connection.cursor(cursor_factory=RealDictCursor)
         cursor.execute(sqlQuery, (username,))
-        temp = cursor.fetchall()
+        records = cursor.fetchall()
         
-        for (groupID, student) in temp:
-
-            temp = GroupStudent()
-            temp.groupID = groupID
-            temp.studentUsername = student
-                        
-            groups.append(temp)
         connection.commit()
 
     except pg.OperationalError as e:
@@ -104,12 +97,11 @@ def readByUser(username:str):
             cursor.close()
             connection.close()
 
-    return groups
+    return records
 
-def readByGroup(id:int):
+def readByGroup(id:int)->Dict:
     sqlQuery = 'select  groupid, studentusername \
         from group_students where groupid=%s;'
-    students:List[GroupStudent] = []
 
     try:
         connection = pg.connect(
@@ -120,17 +112,10 @@ def readByGroup(id:int):
             database = DB_NAME
         )
 
-        cursor = connection.cursor()
+        cursor = connection.cursor(cursor_factory=RealDictCursor)
         cursor.execute(sqlQuery, (id,))
-        temp = cursor.fetchall()
+        records = cursor.fetchall()
         
-        for (groupID, student) in temp:
-
-            temp = GroupStudent()
-            temp.groupID = groupID
-            temp.studentUsername = student
-                        
-            students.append(temp)
         connection.commit()
 
     except pg.OperationalError as e:
@@ -142,7 +127,7 @@ def readByGroup(id:int):
             cursor.close()
             connection.close()
 
-    return students
+    return records
 
 
 def delete(groupID:int, studentUsername:str):

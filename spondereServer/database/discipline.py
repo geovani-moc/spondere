@@ -133,7 +133,7 @@ def delete(id: int):
     return True
 
 def readActiveByProfessor(username:str):
-    sqlQuery = 'select d.id, d.code, d.\"name\", d.description from "groups" g inner join\
+    sqlQuery = 'select distinct d.id, d.code, d.\"name\", d.description from "groups" g inner join\
     group_professors gp on gp.groupid = g.id and gp.professorusername = %s and g.active is true \
     inner join discipline d on d.id = g.disciplineid\
     inner join "period" p on g.semesterid = p.id and p.active is true;'

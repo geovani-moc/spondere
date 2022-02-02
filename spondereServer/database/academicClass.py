@@ -131,9 +131,11 @@ def read(id: int):
 
     return academicClass
 
-def readByProfessorID(id:int) -> Dict:
-    #atualizar sql
-    sqlQuery = ''
+def readByDisciplineID(id:int) -> Dict:
+    sqlQuery = 'select a.id, a.groupid, a.titleclass, a.descriptionclass, a.begindate, \
+        a.enddate, a.activevalidation, a.validationbyqrcode, a.validationbyble, \
+        a.validationcode from \"groups\" g inner join academicclass a on g.disciplineid = %s\
+        and g.id = a.groupid inner join \"period\" p ON g.semesterid = p.id and p.active is true;'
     
     try:
         connection = pg.connect(

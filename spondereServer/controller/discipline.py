@@ -80,4 +80,5 @@ async def readActiveDisciplineByProfessor(professorUsername:str, request:Request
 
     return{
         "discipline": disciplines
+        #tambem é necessario retorna o grupo da disciplina(para habilitar a adição de uma aula)
     }

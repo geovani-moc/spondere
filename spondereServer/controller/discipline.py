@@ -71,14 +71,15 @@ async def readActiveDisciplineByProfessor(professorUsername:str, request:Request
     authorization = request.headers.get("authorization")
     username = getCurrentUserName(authorization)
     user = userDB.read(username)
+
     
     if user.username != professorUsername and not user.administrator:
         raise HTTPException(status_code=401,
             detail="O usuario não tem privilegio de administrador ou não é o pofessor.")
 
-    disciplines = disciplineDB.readActiveByProfessor(professorUsername)
+    disciplines, groups = disciplineDB.readActiveByProfessor(professorUsername)
 
     return{
-        "discipline": disciplines
-        #tambem é necessario retorna o grupo da disciplina(para habilitar a adição de uma aula)
+        "discipline": disciplines,
+        "group": groups
     }

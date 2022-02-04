@@ -1,4 +1,3 @@
-from locale import strcoll
 from typing import Optional
 from pydantic.main import BaseModel
 

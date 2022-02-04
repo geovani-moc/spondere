@@ -10,6 +10,7 @@ from config import(
     HOST,
     PORT
 )
+from entity.group import Group
 
 def create(discipline: Discipline):
     sqlQuery = 'insert  into discipline (code, name, description)\
@@ -133,10 +134,11 @@ def delete(id: int):
     return True
 
 def readActiveByProfessor(username:str):
-    sqlQuery = 'select distinct d.id, d.code, d.\"name\", d.description from "groups" g inner join\
-    group_professors gp on gp.groupid = g.id and gp.professorusername = %s and g.active is true \
-    inner join discipline d on d.id = g.disciplineid\
-    inner join "period" p on g.semesterid = p.id and p.active is true;'
+    sqlQuery = 'select d.id, d.code, d.\"name\", d.description, g.id , g.code, \
+        g.active, g.semesterid, g.disciplineid from "groups" g inner join\
+        group_professors gp on gp.groupid = g.id and gp.professorusername = %s\
+        and g.active is true inner join discipline d on d.id = g.disciplineid\
+        inner join \"period\" p on g.semesterid = p.id and p.active is true;'
     
     try:
         connection = pg.connect(
@@ -147,7 +149,7 @@ def readActiveByProfessor(username:str):
             database = DB_NAME
         )
 
-        cursor = connection.cursor(cursor_factory=RealDictCursor)
+        cursor = connection.cursor()
         cursor.execute(sqlQuery, (username,))   
         records = cursor.fetchall()
         connection.commit()
@@ -161,4 +163,30 @@ def readActiveByProfessor(username:str):
             cursor.close()
             connection.close()
 
-    return records
+    return responseToDisciplineAndGroup(records)
+
+def responseToDisciplineAndGroup(records):
+    groups = []
+    disciplines = []
+
+    for (id, code, name, description,
+        groupID , groupCode, active, semesterid, disciplineid
+    ) in records:
+        discipline = Discipline()
+        group = Group()
+
+        discipline.id = id
+        discipline.code = code
+        discipline.name = name 
+        discipline.description = description 
+
+        group.id = groupID
+        group.code = groupCode 
+        group.active = active
+        group.semesterID = semesterid
+        group.disciplineID = disciplineid
+
+        groups.append(group)
+        disciplines.append(discipline)
+
+    return disciplines, groups

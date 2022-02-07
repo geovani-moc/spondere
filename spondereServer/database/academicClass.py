@@ -131,11 +131,10 @@ def read(id: int):
 
     return academicClass
 
-def readByDisciplineID(id:int) -> Dict:
+def readByGroupID(groupID:int) -> Dict:
     sqlQuery = 'select a.id, a.groupid, a.titleclass, a.descriptionclass, a.begindate, \
-        a.enddate, a.activevalidation, a.validationbyqrcode, a.validationbyble, \
-        a.validationcode from \"groups\" g inner join academicclass a on g.disciplineid = %s\
-        and g.id = a.groupid inner join \"period\" p ON g.semesterid = p.id and p.active is true;'
+        a.enddate, a.activevalidation, a.validationbyqrcode, a.validationbyble, a.validationcode \
+        from academicclass a where a.groupid = %s;'
     
     try:
         connection = pg.connect(
@@ -147,7 +146,7 @@ def readByDisciplineID(id:int) -> Dict:
         )
 
         cursor = connection.cursor(cursor_factory=RealDictCursor)
-        cursor.execute(sqlQuery, (id,))
+        cursor.execute(sqlQuery, (groupID,))
         records = cursor.fetchall()
         connection.commit()
 

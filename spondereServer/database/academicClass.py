@@ -1,5 +1,5 @@
 import logging
-from typing import Dict, List
+from typing import Dict
 from entity.academicClass import AcademicClass
 from fastapi import HTTPException
 import psycopg2 as pg
@@ -13,10 +13,13 @@ from config import(
 )
 
 def create(academicClass: AcademicClass):
-    sqlQuery = 'insert into academicclass (groupid, titleclass, descriptionclass, begindate, \
-        enddate, activevalidation , validationbyqrcode, validationbyble, validationcode) \
-        values (%s, %s, %s, %s, %s, %s, %s, %s ) returning id;'
+    sqlQuery = 'insert into academicclass (groupid, titleclass, descriptionclass, begindate,\
+    enddate, activevalidation , validationbyqrcode, validationbyble, validationcode)\
+    values (%s, %s, %s, to_timestamp(%s, %s), to_timestamp(%s, %s), %s, %s, %s, %s) returning id;'
+    
     id = None
+    datetimeFormat = 'dd-mm-yyyy HH24:MI'
+
     try:
         connection = pg.connect(
             user = DB_USERNAME,
@@ -31,11 +34,14 @@ def create(academicClass: AcademicClass):
             academicClass.titleClass,
             academicClass.descriptionClass,
             academicClass.beginDate,
+            datetimeFormat,
             academicClass.endDate,
+            datetimeFormat,
             academicClass.activeValidation,
             academicClass.validationByQrCode,
             academicClass.validationByBLE,
             academicClass.validationCode))
+        
         id = cursor.fetchone()[0]
 
         connection.commit()
@@ -53,9 +59,10 @@ def create(academicClass: AcademicClass):
 
 def update(id:int, academicClass: AcademicClass):
     sqlQuery = 'update academicclass set groupid=%s, titleclass=%s,\
-    descriptionclass=%s, begindate=%s, enddate=%s, activevalidation=%s,\
-	validationbyqrcode=%s, validationbyble=%s, validationcode=%s where id=%s;'
-
+    descriptionclass=%s, begindate=to_timestamp(%s, %s), enddate=to_timestamp(%s, %s),\
+    activevalidation=%s, validationbyqrcode=%s, validationbyble=%s, validationcode=%s \
+    where id=%s;'
+    datetimeFormat = 'dd-mm-yyyy HH24:MI'
     try:
         connection = pg.connect(
             user = DB_USERNAME,
@@ -70,7 +77,9 @@ def update(id:int, academicClass: AcademicClass):
             academicClass.titleClass,
             academicClass.descriptionClass,
             academicClass.beginDate,
+            datetimeFormat,
             academicClass.endDate,
+            datetimeFormat,
             academicClass.activeValidation,
             academicClass.validationByQrCode,
             academicClass.validationByBLE,

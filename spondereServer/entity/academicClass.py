@@ -8,8 +8,8 @@ class AcademicClass(BaseModel):
     groupID:int = None
     titleClass:Optional[str] = None
     descriptionClass:Optional[str] = None
-    beginDate: Optional[datetime] = None
-    endDate: Optional[datetime] = None
+    beginDate: Optional[str] = None
+    endDate: Optional[str] = None
     activeValidation:Optional[bool] = None
     validationByQrCode:Optional[bool] = None
     validationByBLE:Optional[bool] = None
@@ -19,13 +19,13 @@ class AcademicClass(BaseModel):
         schema_extra = {
             "example":{
                 "groupID": 1,
-                "titleCLass": "p = np",
-                "descriptionClass": "Introdução a complexidade de classes de problemas.",
-                "beginDate": "2021, 11, 24, 15, 46, 3, 301046",
-                "endDate": "2021, 11, 24, 15, 46, 59, 24384",
+                "titleClass": "Integral",
+                "descriptionClass": "Aula 2.",
+                "beginDate": "25-02-2022 12:01",
+                "endDate": "25-02-2022 14:01",
                 "activeValidation": False,
                 "validationByQrCode": False,
                 "validationByBLE": False,
-                "validationCode": "kskdk2"
+                "validationCode": "AAAPPPUUU1"
             }
         }

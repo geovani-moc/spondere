@@ -10,7 +10,7 @@ from fastapi import HTTPException
 
 router = APIRouter()
  
-@router.post("", dependencies=[Depends(JWTBearer())])
+@router.post("/", dependencies=[Depends(JWTBearer())])
 async def createAcademicClass(academicClass:AcademicClass, request:Request) -> dict:
     authorization = request.headers.get("authorization")
     username = getCurrentUserName(authorization)
@@ -19,7 +19,7 @@ async def createAcademicClass(academicClass:AcademicClass, request:Request) -> d
     if not user.administrator or not user.professor:
         raise HTTPException(status_code=401,
             detail="O usuario não tem privilegio de administrador ou professor.")
-    
+
     id = classDB.create(academicClass)
     return {
         "id": id

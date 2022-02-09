@@ -165,6 +165,38 @@ def readActiveByProfessor(username:str):
 
     return responseToDisciplineAndGroup(records)
 
+def readActiveByStudent(username:str):
+    sqlQuery = 'select d.id, d.code, d.\"name\", d.description, g.id , g.code, \
+        g.active, g.semesterid, g.disciplineid from \"groups\" g inner join\
+        group_students gs on gs.groupid = g.id and gs.studentusername = %s\
+        and g.active is true inner join discipline d on d.id = g.disciplineid\
+        inner join \"period\" p on g.semesterid = p.id and p.active is true;'
+    
+    try:
+        connection = pg.connect(
+            user = DB_USERNAME,
+            password = DB_PASSWORD,
+            host = HOST,
+            port = PORT,
+            database = DB_NAME
+        )
+
+        cursor = connection.cursor()
+        cursor.execute(sqlQuery, (username,))   
+        records = cursor.fetchall()
+        connection.commit()
+
+    except pg.OperationalError as e:
+        logging.exception(e)
+        raise HTTPException(status_code=406,
+            detail="Erro de conexão com o banco de dados.") 
+    finally:
+        if (connection):
+            cursor.close()
+            connection.close()
+
+    return responseToDisciplineAndGroup(records)
+
 def responseToDisciplineAndGroup(records):
     groups = []
     disciplines = []

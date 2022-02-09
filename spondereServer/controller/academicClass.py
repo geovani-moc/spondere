@@ -63,15 +63,8 @@ async def getAcademicClass(id:int) -> dict:
     }
 
 @router.get("/", dependencies=[Depends(JWTBearer())])
-async def getClassByGroupID(groupID:int, request:Request):
-    authorization = request.headers.get("authorization")
-    username = getCurrentUserName(authorization)
-    user = userDB.read(username)
-    
-    if not user.administrator or not user.professor:
-        raise HTTPException(status_code=401,
-            detail="O usuario não tem privilegio de administrador ou professor.")
-            
+async def getClassByGroupID(groupID:int):
+                
     academicClasses = classDB.readByGroupID(groupID)
 
     return {

@@ -66,7 +66,7 @@ async def readDiscipline(id:int) -> Dict:
         "discipline": discipline
     }
 
-@router.get("/", dependencies=[Depends(JWTBearer())])
+@router.get("/professor/", dependencies=[Depends(JWTBearer())])
 async def readActiveDisciplineByProfessor(professorUsername:str, request:Request)-> Dict:
     authorization = request.headers.get("authorization")
     username = getCurrentUserName(authorization)
@@ -78,6 +78,23 @@ async def readActiveDisciplineByProfessor(professorUsername:str, request:Request
             detail="O usuario não tem privilegio de administrador ou não é o pofessor.")
 
     disciplines, groups = disciplineDB.readActiveByProfessor(professorUsername)
+
+    return{
+        "discipline": disciplines,
+        "group": groups
+    }
+
+@router.get("/aluno/", dependencies=[Depends(JWTBearer())])
+async def readActiveDisciplineByStudent(studentUsername:str, request:Request)-> Dict:
+    authorization = request.headers.get("authorization")
+    username = getCurrentUserName(authorization)
+    user = userDB.read(username)
+
+    if user.username != studentUsername and not user.administrator:
+        raise HTTPException(status_code=401,
+            detail="O usuario não tem privilegio de administrador ou não é o pofessor.")
+
+    disciplines, groups = disciplineDB.readActiveByStudent(studentUsername)
 
     return{
         "discipline": disciplines,

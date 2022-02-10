@@ -11,6 +11,8 @@ THRESHOLD = 2200
 
 NUMBER_NEIGHBORS = 1
 
+VALIDATION_CODE_SIZE = 10
+
 faceCascade = cv.CascadeClassifier('static/xml/haarcascade_frontalface_default.xml')
 eyeCascade = cv.CascadeClassifier('static/xml/haarcascade_eye.xml')
 PATH_CLASSIFIER_TRAIN ='static/xml/face_classifier.xml'

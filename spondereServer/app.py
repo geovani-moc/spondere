@@ -8,6 +8,7 @@ from controller.period import router as periodRouter
 from controller.group import router as groupRouter
 from controller.groupStudent import router as groupStudentRouter
 from controller.groupProfessor import router as groupProfessorRouter
+from controller.validation import router as validationRouter
 
 app = FastAPI()
 
@@ -36,3 +37,4 @@ app.include_router(periodRouter, tags=["Periodo"], prefix="/periodo")
 app.include_router(groupRouter, tags=["Grupo"], prefix="/grupo")
 app.include_router(groupStudentRouter, tags=["Groupo de  estudantes"], prefix="/grupoEstudantes")
 app.include_router(groupProfessorRouter, tags=["Grupo de Professores"], prefix="/grupoProfessores")
+app.include_router(validationRouter, tags=["Validação"], prefix="/validacao")

@@ -197,3 +197,59 @@ def delete(id:int):
             connection.close()
 
     return True
+
+def setValidationCode(id:int, validationCode:str) -> bool:
+    #testar o sql
+    sqlQuery = 'update academicclass set validationcode=%s where id=%s;'
+
+    try:
+        connection = pg.connect(
+            user = DB_USERNAME,
+            password = DB_PASSWORD,
+            host = HOST,
+            port = PORT,
+            database = DB_NAME
+        )
+        cursor = connection.cursor()
+        cursor.execute(sqlQuery, (validationCode,id))
+
+        connection.commit()
+
+    except pg.OperationalError as e:
+        logging.exception(e)
+        raise HTTPException(status_code=406,
+            detail="Erro de conexão com o banco de dados.") 
+    finally:
+        if (connection):
+            cursor.close()
+            connection.close()
+
+    return True
+
+def getActiveClassIDByCode(validationCode:str) -> bool:
+    #atualizar o sql
+    sqlQuery = ''
+
+    try:
+        connection = pg.connect(
+            user = DB_USERNAME,
+            password = DB_PASSWORD,
+            host = HOST,
+            port = PORT,
+            database = DB_NAME
+        )
+        cursor = connection.cursor()
+        cursor.execute(sqlQuery, (validationCode,))
+        id = cursor.fetchone()
+        connection.commit()
+
+    except pg.OperationalError as e:
+        logging.exception(e)
+        raise HTTPException(status_code=406,
+            detail="Erro de conexão com o banco de dados.") 
+    finally:
+        if (connection):
+            cursor.close()
+            connection.close()
+
+    return id

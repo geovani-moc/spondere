@@ -1,5 +1,5 @@
 import logging
-from typing import Dict
+from typing import Dict, List
 from entity.academicClass import AcademicClass
 from fastapi import HTTPException
 import psycopg2 as pg
@@ -199,8 +199,8 @@ def delete(id:int):
     return True
 
 def setValidationCode(id:int, validationCode:str) -> bool:
-    #testar o sql
-    sqlQuery = 'update academicclass set validationcode=%s where id=%s;'
+    sqlQuery = 'update academicclass set validationcode=%s, activevalidation=true \
+        where id=%s and validationcode is null returning id;'
 
     try:
         connection = pg.connect(
@@ -212,6 +212,7 @@ def setValidationCode(id:int, validationCode:str) -> bool:
         )
         cursor = connection.cursor()
         cursor.execute(sqlQuery, (validationCode,id))
+        records = cursor.fetchall()
 
         connection.commit()
 
@@ -223,12 +224,14 @@ def setValidationCode(id:int, validationCode:str) -> bool:
         if (connection):
             cursor.close()
             connection.close()
+    
+    if len(records) == 0: return False
 
     return True
 
-def getActiveClassIDByCode(validationCode:str) -> bool:
-    #atualizar o sql
-    sqlQuery = ''
+def getActiveClassIDByCode(validationCode:str) -> List:
+
+    sqlQuery = 'select a.id from academicclass a where a.validationcode=%s and activevalidation = true;'
 
     try:
         connection = pg.connect(
@@ -240,7 +243,7 @@ def getActiveClassIDByCode(validationCode:str) -> bool:
         )
         cursor = connection.cursor()
         cursor.execute(sqlQuery, (validationCode,))
-        id = cursor.fetchone()
+        records = cursor.fetchall()
         connection.commit()
 
     except pg.OperationalError as e:
@@ -252,4 +255,4 @@ def getActiveClassIDByCode(validationCode:str) -> bool:
             cursor.close()
             connection.close()
 
-    return id
+    return records

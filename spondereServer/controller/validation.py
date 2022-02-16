@@ -26,23 +26,25 @@ async def startClassAttendance(classID:int, request:Request):
     if classDB.setValidationCode(classID, validationCode):
         logging.info("Aula iniciada, id da aula: "+classID+",\
              codigo de valição: "+ validationCode )
+    else:
+        raise HTTPException(status_code=406,
+            detail="Código não existe, ou não é válido ou já existe código cadastrado.")
 
     return {
         "validationCode":validationCode
     }
 
 @router.get("/verificar/{code}", dependencies=[Depends(JWTBearer())])
-async def validationCode(classID:int, request:Request):
-    authorization = request.headers.get("authorization")
-    username = getCurrentUserName(authorization)
-    user = userDB.read(username)
+async def validationCode(code:str):
     
-    validationCode = generateValidationCode()
-    
-    if classDB.setValidationCode(classID, validationCode):
-        logging.info("Aula iniciada, id da aula: "+classID+",\
-             codigo de valição: "+ validationCode )
+    classIDs = classDB.getActiveClassIDByCode(code)
+    if len(classIDs) > 0:
+        logging.info("Codigo de aula verificado com sucesso: " + code)
+    else:
+        raise HTTPException(status_code=406,
+            detail="Código não existe ou não é válido.")
 
     return {
-        "validationCode":validationCode
+        "result": "success",
+        "classIDs": classIDs
     }

@@ -35,14 +35,18 @@ async def startClassAttendance(classID:int, request:Request):
     }
 
 @router.get("/verificar/", dependencies=[Depends(JWTBearer())])
-async def validationCode(code:str):
-    classIDs = classDB.getActiveClassIDByCode(code)
-    if len(classIDs) > 0:
+async def validationCode(code:str, request:Request):
+    authorization = request.headers.get("authorization")
+    username = getCurrentUserName(authorization)
+
+    classID:int = classDB.getActiveClassIDByCode(code, username)
+    
+    if classID > 0:
         logging.info("Codigo de aula verificado com sucesso: " + code)
     else:
         raise HTTPException(status_code=406,
             detail="Código não existe ou não é válido.")
 
     return {
-        "classIDs": classIDs
+        "classID": classID
     }

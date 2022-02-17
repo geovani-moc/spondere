@@ -229,9 +229,10 @@ def setValidationCode(id:int, validationCode:str) -> bool:
 
     return True
 
-def getActiveClassIDByCode(validationCode:str) -> List[int]:
-
-    sqlQuery = 'select a.id from academicclass a where a.validationcode=%s and activevalidation = true;'
+def getActiveClassIDByCode(validationCode:str, username:str) -> int:
+    sqlQuery = 'select a.id from academicclass a \
+    inner join \"groups\" g on a.activevalidation is true and a.validationcode=%s and a.groupid = g.id\
+    inner join group_students gs on gs.studentusername=%s and gs.groupid=g.id;'
 
     try:
         connection = pg.connect(
@@ -242,8 +243,8 @@ def getActiveClassIDByCode(validationCode:str) -> List[int]:
             database = DB_NAME
         )
         cursor = connection.cursor()
-        cursor.execute(sqlQuery, (validationCode,))
-        records = cursor.fetchall()
+        cursor.execute(sqlQuery, (validationCode, username))
+        records = cursor.fetchone()[0]
         connection.commit()
 
     except pg.OperationalError as e:

@@ -229,7 +229,7 @@ def setValidationCode(id:int, validationCode:str) -> bool:
 
     return True
 
-def getActiveClassIDByCode(validationCode:str) -> List:
+def getActiveClassIDByCode(validationCode:str) -> List[int]:
 
     sqlQuery = 'select a.id from academicclass a where a.validationcode=%s and activevalidation = true;'
 

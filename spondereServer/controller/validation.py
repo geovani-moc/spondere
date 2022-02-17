@@ -11,7 +11,7 @@ from util.validation import generateValidationCode
 
 router = APIRouter()
 
-@router.post("/criar/{ClassID}", dependencies=[Depends(JWTBearer())])
+@router.get("/criar/", dependencies=[Depends(JWTBearer())])
 async def startClassAttendance(classID:int, request:Request):
     authorization = request.headers.get("authorization")
     username = getCurrentUserName(authorization)
@@ -24,7 +24,7 @@ async def startClassAttendance(classID:int, request:Request):
     validationCode = generateValidationCode()
     
     if classDB.setValidationCode(classID, validationCode):
-        logging.info("Aula iniciada, id da aula: "+classID+",\
+        logging.info("Aula iniciada, id da aula: "+ str(classID)+",\
              codigo de valição: "+ validationCode )
     else:
         raise HTTPException(status_code=406,
@@ -34,9 +34,8 @@ async def startClassAttendance(classID:int, request:Request):
         "validationCode":validationCode
     }
 
-@router.get("/verificar/{code}", dependencies=[Depends(JWTBearer())])
+@router.get("/verificar/", dependencies=[Depends(JWTBearer())])
 async def validationCode(code:str):
-    
     classIDs = classDB.getActiveClassIDByCode(code)
     if len(classIDs) > 0:
         logging.info("Codigo de aula verificado com sucesso: " + code)
@@ -45,6 +44,5 @@ async def validationCode(code:str):
             detail="Código não existe ou não é válido.")
 
     return {
-        "result": "success",
         "classIDs": classIDs
     }

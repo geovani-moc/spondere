@@ -17,14 +17,24 @@ from database import biometrics as biometryDB
 
 router = APIRouter()
 
-@router.post("/checar", dependencies=[Depends(JWTBearer())])
-async def checkBiometry(request:Request, file: UploadFile = File(...))->Dict:
+@router.post("/checar/", dependencies=[Depends(JWTBearer())])
+async def checkBiometry(classID:int, validationcode:str, request:Request,
+            longitude:str, latitude:str, file: UploadFile = File(...))->Dict:
+
     authorization = request.headers.get("authorization")
     username = getCurrentUserName(authorization)
 
     contents = await file.read()
-    image = checkUploadedImage(contents)
 
+    #chamar função em thread
+    #processBiometrics(classID, validationcode, longitude, latitude, username, contents)
+
+    return {"result": "Imagem recebida, em processamento."}
+
+def processBiometrics(classID:int, validationcode:str,
+        longitude:str, latitude:str, username:str, contents):
+    
+    image = checkUploadedImage(contents)
     result:bool = False
 
     if image is None: return {"recognition": False,"error": "sem imagem"}
@@ -33,13 +43,12 @@ async def checkBiometry(request:Request, file: UploadFile = File(...))->Dict:
     if error:
         raise HTTPException(status_code=500,
             detail="Erro no sistema de reconhecimento facial: \n" + error) 
-    
+
     if error is None:
         result = verifyFace(face, username)
         #salvar face(frequencia) --await
         if not result: return{"recognition": result, "error":"Face não definida."}
 
-    return {"recognition": result, "error": None}
 
 @router.post("", dependencies=[Depends(JWTBearer())])
 async def createBiometry(biometry:Biometrics) -> dict:

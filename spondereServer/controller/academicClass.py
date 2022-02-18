@@ -62,7 +62,7 @@ async def getAcademicClass(id:int) -> dict:
         "academicClass": academicClass
     }
 
-@router.get("/", dependencies=[Depends(JWTBearer())])
+@router.get("/grupo/", dependencies=[Depends(JWTBearer())])
 async def getClassByGroupID(groupID:int):
                 
     academicClasses = classDB.readByGroupID(groupID)

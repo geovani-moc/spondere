@@ -1,4 +1,3 @@
-from typing import Optional
 from pydantic.main import BaseModel
 
 class Group(BaseModel):
@@ -6,7 +5,7 @@ class Group(BaseModel):
     code:str = None
     active:bool = None
     semesterID:int = None
-    disciplineID:Optional[int] = None
+    disciplineID:int = None
 
     class Config:
         schema_extra = {

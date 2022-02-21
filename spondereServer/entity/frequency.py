@@ -1,4 +1,3 @@
-from datetime import datetime
 from typing import List
 from typing import Optional
 from pydantic.main import BaseModel
@@ -15,9 +14,11 @@ class Frequency(BaseModel):
     ManualAttendance:bool = None
     BLEAttendance:bool = None
     QrCodeAttendance:bool = None
-    createDate: datetime = None
+    createDate:str = None
     validationCode:str = None
-    geolocalization: Optional[Point] = None
+    latitude:Optional[str] = None
+    longitude:Optional[str] = None
+    failure:Optional[str] = None
     photo:List[bytes] = None
 
     class Config:
@@ -25,6 +26,9 @@ class Frequency(BaseModel):
             "example": {
                 "studentID" : 1,
                 "academmicClassId": 1,
-                "createDate": "1999, 12, 12"
+                "ManualAttendance": True,
+                "BLEAttendance": False,
+                "QrCodeAttendance": False,
+                "createDate": "2021-10-19 10:23:54+2"
             }
         }

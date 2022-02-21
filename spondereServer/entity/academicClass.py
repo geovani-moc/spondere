@@ -1,18 +1,19 @@
-from datetime import datetime
 from typing import Optional
-
 from pydantic.main import BaseModel
 
 class AcademicClass(BaseModel):
     id:int = None
     groupID:int = None
-    titleClass:Optional[str] = None
-    descriptionClass:Optional[str] = None
+    titleClass:str = None
+    descriptionClass:str = None
     beginDate: Optional[str] = None
     endDate: Optional[str] = None
-    activeValidation:Optional[bool] = None
-    validationByQrCode:Optional[bool] = None
-    validationByBLE:Optional[bool] = None
+    longitude: Optional[float] = None
+    latitude: Optional[float] = None
+    activeValidation:bool= None
+    validationByQrCode:bool = None
+    validationByBLE:bool = None
+    blockedAttendance:bool = None
     validationCode:Optional[str] = None
 
     class Config:
@@ -21,11 +22,11 @@ class AcademicClass(BaseModel):
                 "groupID": 1,
                 "titleClass": "Integral",
                 "descriptionClass": "Aula 2.",
-                "beginDate": "25-02-2022 12:01",
-                "endDate": "25-02-2022 14:01",
+                "beginDate": "2022-10-19 10:10:00+2",
+                "endDate": "2022-10-19 12:00:00+2",
                 "activeValidation": False,
                 "validationByQrCode": False,
                 "validationByBLE": False,
-                "validationCode": "AAAPPPUUU1"
+                "blockedAttendance": False
             }
         }

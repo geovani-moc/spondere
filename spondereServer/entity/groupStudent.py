@@ -7,7 +7,7 @@ class GroupStudent(BaseModel):
     class Config:
         schema_extra = {
             "example":{
-                "studentUsername": "mari",
+                "studentUsername": "Jessica",
                 "group": "1",
             }
         }

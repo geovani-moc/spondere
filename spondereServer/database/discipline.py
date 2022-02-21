@@ -2,7 +2,6 @@ import logging
 from entity.discipline import Discipline
 from fastapi import HTTPException
 import psycopg2 as pg
-from psycopg2.extras import RealDictCursor
 from config import(
     DB_NAME,
     DB_PASSWORD,

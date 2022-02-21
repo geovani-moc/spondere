@@ -13,7 +13,7 @@ from fastapi import HTTPException
 
 router = APIRouter()
 
-@router.post("", dependencies=[Depends(JWTBearer())])
+@router.post("/", dependencies=[Depends(JWTBearer())])
 async def createDiscipline(discipline:Discipline, request:Request) -> Dict:
     authorization = request.headers.get("authorization")
     username = getCurrentUserName(authorization)

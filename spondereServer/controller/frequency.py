@@ -14,7 +14,15 @@ from fastapi import HTTPException
 router = APIRouter()
 
 @router.post("/", dependencies=[Depends(JWTBearer())])
-async def createFrequency(frequency:Frequency) -> Dict:   
+async def createFrequency(frequency:Frequency, request:Request) -> Dict:
+    authorization = request.headers.get("authorization")
+    username = getCurrentUserName(authorization)
+    user = userDB.read(username)
+
+    if not user.administrator:
+        raise HTTPException(status_code=401,
+            detail="O usuario não tem privilegio de administrador.")
+     
     id = frequencyDB.create(frequency)
     return {
         "id": id
@@ -52,7 +60,7 @@ async def deleteFrequency(id:int, request:Request) -> Dict:
 
 @router.get("/{id}", dependencies=[Depends(JWTBearer())])
 async def readFrequency(id:int) -> Dict:   
-    frequency = frequencyDB.read(id=id)
+    frequency = frequencyDB.read(id)
     return {
         "frequency": frequency
     }

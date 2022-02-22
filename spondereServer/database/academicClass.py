@@ -1,5 +1,5 @@
 import logging
-from typing import Dict, List
+from typing import Dict
 from entity.academicClass import AcademicClass
 from fastapi import HTTPException
 import psycopg2 as pg
@@ -13,12 +13,12 @@ from config import(
 )
 
 def create(academicClass: AcademicClass):
-    sqlQuery = 'insert into academicclass (groupid, titleclass, descriptionclass, begindate,\
-    enddate, activevalidation , validationbyqrcode, validationbyble, validationcode)\
-    values (%s, %s, %s, to_timestamp(%s, %s), to_timestamp(%s, %s), %s, %s, %s, %s) returning id;'
+    sqlQuery = 'insert into academicclass (id, groupid, titleclass, descriptionclass,\
+        begindate, enddate, longitude, latitude, activevalidation , validationbyqrcode,\
+        validationbyble, blockedAttendance, validationcode\
+    values (%s, %s, %s,%s, %s, %s, %s, %s, %s, %s, %s, %s, %s) returning id;'
     
     id = None
-    datetimeFormat = 'dd-mm-yyyy HH24:MI'
 
     try:
         connection = pg.connect(
@@ -34,12 +34,13 @@ def create(academicClass: AcademicClass):
             academicClass.titleClass,
             academicClass.descriptionClass,
             academicClass.beginDate,
-            datetimeFormat,
             academicClass.endDate,
-            datetimeFormat,
+            academicClass.longitude,
+            academicClass.latitude,
             academicClass.activeValidation,
             academicClass.validationByQrCode,
             academicClass.validationByBLE,
+            academicClass.blockedAttendance,
             academicClass.validationCode))
         
         id = cursor.fetchone()[0]
@@ -58,11 +59,11 @@ def create(academicClass: AcademicClass):
     return id
 
 def update(id:int, academicClass: AcademicClass):
-    sqlQuery = 'update academicclass set groupid=%s, titleclass=%s,\
-    descriptionclass=%s, begindate=to_timestamp(%s, %s), enddate=to_timestamp(%s, %s),\
-    activevalidation=%s, validationbyqrcode=%s, validationbyble=%s, validationcode=%s \
+    sqlQuery = 'update academicclass set groupid=%s, titleclass=%s, descriptionclass=%s,\
+        begindate=%s, enddate=%s, longitude=%s, latitude=%s, activevalidation=%s,\
+        validationbyqrcode=%s, validationbyble=%s, validationcode=%s, validationcode=%s \
     where id=%s;'
-    datetimeFormat = 'dd-mm-yyyy HH24:MI'
+ 
     try:
         connection = pg.connect(
             user = DB_USERNAME,
@@ -77,12 +78,13 @@ def update(id:int, academicClass: AcademicClass):
             academicClass.titleClass,
             academicClass.descriptionClass,
             academicClass.beginDate,
-            datetimeFormat,
             academicClass.endDate,
-            datetimeFormat,
+            academicClass.longitude,
+            academicClass.latitude,
             academicClass.activeValidation,
             academicClass.validationByQrCode,
             academicClass.validationByBLE,
+            academicClass.blockedAttendance,
             academicClass.validationCode,
             id))
 
@@ -101,8 +103,8 @@ def update(id:int, academicClass: AcademicClass):
 
 def read(id: int):
     sqlQuery = 'select id, groupid, titleclass, descriptionclass, begindate, enddate,\
-    activevalidation , validationbyqrcode, validationbyble, validationcode \
-    from academicclass where id=%s;'
+    longitude, latitude, activevalidation , validationbyqrcode, validationbyble,\
+    blockedAttendance, validationcode from academicclass where id=%s;'
     academicClass = AcademicClass()
     
     try:
@@ -122,9 +124,12 @@ def read(id: int):
         academicClass.descriptionClass,
         academicClass.beginDate,
         academicClass.endDate,
+        academicClass.longitude,
+        academicClass.latitude,
         academicClass.activeValidation,
         academicClass.validationByQrCode,
         academicClass.validationByBLE,
+        academicClass.blockedAttendance,
         academicClass.validationCode) = cursor.fetchone()
 
         connection.commit()
@@ -142,8 +147,9 @@ def read(id: int):
 
 def readByGroupID(groupID:int) -> Dict:
     sqlQuery = 'select a.id, a.groupid, a.titleclass, a.descriptionclass, a.begindate, \
-        a.enddate, a.activevalidation, a.validationbyqrcode, a.validationbyble, a.validationcode \
-        from academicclass a where a.groupid = %s;'
+        a.enddate, a.longitude, a.latitude, a.activevalidation, a.validationbyqrcode, \
+        a.validationbyble, a.blockedAttendance, a.validationcode from academicclass a \
+        where a.groupid = %s;'
     
     try:
         connection = pg.connect(

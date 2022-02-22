@@ -2,6 +2,7 @@ from entity.frequency import Frequency
 import logging
 from fastapi import HTTPException
 import psycopg2 as pg
+from datetime import datetime
 from config import(
     DB_NAME,
     DB_PASSWORD,
@@ -9,8 +10,11 @@ from config import(
     HOST,
     PORT
 )
+from settings import TIMEZONE_API_SERVER
 
 def create(frequency: Frequency):
+    frequency.createDate = str(datetime.datetime.now())+str(TIMEZONE_API_SERVER)
+
     sqlQuery = 'insert into frequency (studentID, academicClassID, manualAttendance,\
     BLEAttendance, QrCodeAttendance, createDate, validationCode, latitude, longitude,\
     failure, photo) values (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s),'

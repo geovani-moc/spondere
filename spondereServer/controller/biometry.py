@@ -4,50 +4,65 @@ from fastapi import (
     Depends,
     File, 
     UploadFile,
-    HTTPException,
-    Request)
+    Request, 
+    BackgroundTasks)
 from controller.security import (
     JWTBearer,
     getCurrentUserName)
 from entity.biometrics import Biometrics
+from entity.frequency import Frequency
 from util.image import checkUploadedImage
 from recognition.findFace import findFace
 from recognition.faceRecognition import verifyFace
 from database import biometrics as biometryDB
+from database import frequency as frequencyDB
 
 router = APIRouter()
 
 @router.post("/checar/", dependencies=[Depends(JWTBearer())])
-async def checkBiometry(classID:int, validationcode:str, request:Request,
-            longitude:str, latitude:str, file: UploadFile = File(...))->Dict:
-
+async def checkBiometry(data:Frequency, request:Request, file: UploadFile = File(...))->Dict:
     authorization = request.headers.get("authorization")
     username = getCurrentUserName(authorization)
-
     contents = await file.read()
-
-    #chamar função em thread
-    #processBiometrics(classID, validationcode, longitude, latitude, username, contents)
+    BackgroundTasks.add_task(processBiometrics, data, username, contents)
 
     return {"result": "Imagem recebida, em processamento."}
 
-def processBiometrics(classID:int, validationcode:str,
-        longitude:str, latitude:str, username:str, contents):
-    
+def processBiometrics(frequency:Frequency, username:str, contents):
     image = checkUploadedImage(contents)
-    result:bool = False
 
-    if image is None: return {"recognition": False,"error": "sem imagem"}
+    if image is None:
+        frequency.failure = "Falha na imagem recebida."
+        try:
+            id = frequencyDB.create(frequency=frequency)
+        except Exception as inst:
+            print(type(inst))   
+            print(inst.args)
+        return
 
     face, error = findFace(image)
     if error:
-        raise HTTPException(status_code=500,
-            detail="Erro no sistema de reconhecimento facial: \n" + error) 
+        frequency.failure = "Falha no reconhecimento facial."
+        print("Erro no sistema de reconhecimento facial: \n" + error)
+        try:
+            id = frequencyDB.create(frequency=frequency)
+        except Exception as inst:
+            print(type(inst))   
+            print(inst.args)
+        return
+            
+    result, error = verifyFace(face, username)
+    if not result: 
+        frequency.failure = error
+        
+    try:
+         id = frequencyDB.create(frequency)
+    except Exception as inst:
+        print(type(inst))   
+        print(inst.args)
+        return
 
-    if error is None:
-        result = verifyFace(face, username)
-        #salvar face(frequencia) --await
-        if not result: return{"recognition": result, "error":"Face não definida."}
+    print("A frequencia com id: " + str(id) + " foi criada")
 
 
 @router.post("", dependencies=[Depends(JWTBearer())])

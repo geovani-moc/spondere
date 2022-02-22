@@ -13,7 +13,7 @@ from config import(
 
 def create(biometric: Biometrics):
     sqlQuery = 'insert into biometrics (studentID, createdate, active,\
-    invalid) values(%s, %s, %s, %s) returning id;'
+    invalid, failure) values(%s, %s, %s, %s, %s) returning id;'
     id = None
     try:
         connection = pg.connect(
@@ -28,7 +28,8 @@ def create(biometric: Biometrics):
             (biometric.studentID,
             biometric.createDate,
             biometric.active,
-            biometric.invalid))
+            biometric.invalid,
+            biometric.failure))
         id = cursor.fetchone()[0]
 
         connection.commit()
@@ -46,7 +47,7 @@ def create(biometric: Biometrics):
 
 def update(id:int, biometric: Biometrics):
     sqlQuery = 'update biometrics set studentid=%s, createdate=%s, \
-        active=%s, invalid=%s where id=%s;'
+        active=%s, invalid=%s, failure=%s where id=%s;'
 
     try:
         connection = pg.connect(
@@ -61,7 +62,8 @@ def update(id:int, biometric: Biometrics):
             (biometric.studentID,
             biometric.createDate,
             biometric.active,
-            biometric.invalid, id))
+            biometric.invalid,
+            biometric.failure, id))
 
         connection.commit()
 
@@ -77,7 +79,7 @@ def update(id:int, biometric: Biometrics):
     return True
 
 def read(id: int):
-    sqlQuery = 'select id, studentID, createdate, active, invalid \
+    sqlQuery = 'select id, studentID, createdate, active, invalid, failure \
         from biometrics where id=%s;'
     biometric = Biometrics()
     
@@ -94,7 +96,7 @@ def read(id: int):
         cursor.execute(sqlQuery, (id,))
         (biometric.id, biometric.studentID,
         biometric.createDate, biometric.active,
-        biometric.invalid) = cursor.fetchone()
+        biometric.invalid, biometric.failure) = cursor.fetchone()
 
         connection.commit()
 

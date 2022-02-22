@@ -13,7 +13,7 @@ from config import(
 )
 
 def create(groupStudent:GroupStudent):
-    sqlQuery = 'insert into group_students  (groupid, studentusername) values(%s, %s);'
+    sqlQuery = 'insert into group_students (groupid, studentusername) values(%s, %s);'
     id = None
     try:
         connection = pg.connect(

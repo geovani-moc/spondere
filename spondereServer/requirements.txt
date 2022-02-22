@@ -1,5 +1,7 @@
 aiofiles==0.5.0
 aniso8601==7.0.0
+anyio==3.4.0
+asgiref==3.4.1
 async-exit-stack==1.0.1
 async-generator==1.10
 bcrypt==3.2.0
@@ -52,6 +54,7 @@ scikit-image==0.18.3
 scikit-learn==1.0.1
 scipy==1.7.1
 six==1.16.0
+sniffio==1.2.0
 starlette==0.14.2
 threadpoolctl==3.0.0
 tifffile==2021.11.2

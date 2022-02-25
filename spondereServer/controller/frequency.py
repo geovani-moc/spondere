@@ -28,6 +28,28 @@ async def createFrequency(frequency:Frequency, request:Request) -> Dict:
         "id": id
     }
 
+@router.post("/manual", dependencies=[Depends(JWTBearer())])
+async def createManualFrequency(academicClassID:int, studentID, request:Request) -> Dict:
+    authorization = request.headers.get("authorization")
+    username = getCurrentUserName(authorization)
+    user = userDB.read(username)
+
+    if not user.administrator and not user.professor:
+        raise HTTPException(status_code=401,
+            detail="O usuario não tem privilegio de administrador ou professor.")
+
+    frequency = Frequency()
+    frequency.academicClassID = academicClassID
+    frequency.studentID = studentID
+    frequency.ManualAttendance = True
+    frequency.BLEAttendance = False
+    frequency.QrCodeAttendance = False
+         
+    id = frequencyDB.create(frequency)
+    return {
+        "id": id
+    }
+
 @router.put("/{id}", dependencies=[Depends(JWTBearer())])
 async def updateFrequency(id:int, frequency:Frequency, request:Request) -> Dict:
     authorization = request.headers.get("authorization")
@@ -49,9 +71,9 @@ async def deleteFrequency(id:int, request:Request) -> Dict:
     username = getCurrentUserName(authorization)
     user = userDB.read(username)
 
-    if not user.administrator:
+    if not user.administrator and not user.professor:
         raise HTTPException(status_code=401,
-            detail="O usuario não tem privilegio de administrador.")
+            detail="O usuario não tem privilegio de administrador ou professor.")
     
     frequencyDB.delete(id)
     return{

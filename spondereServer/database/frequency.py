@@ -13,11 +13,11 @@ from config import(
 from settings import TIMEZONE_API_SERVER
 
 def create(frequency: Frequency):
-    frequency.createDate = str(datetime.datetime.now())+str(TIMEZONE_API_SERVER)
+    frequency.createDate = str(datetime.now())+str(TIMEZONE_API_SERVER)
 
     sqlQuery = 'insert into frequency (studentID, academicClassID, manualAttendance,\
     BLEAttendance, QrCodeAttendance, createDate, validationCode, latitude, longitude,\
-    failure, photo) values (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s),'
+    failure, photo) values (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s) returning id;'
     id = None
 
     try:

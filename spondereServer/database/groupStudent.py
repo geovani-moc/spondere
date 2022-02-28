@@ -85,9 +85,7 @@ def readByUser(username:str)->Dict:
         cursor = connection.cursor(cursor_factory=RealDictCursor)
         cursor.execute(sqlQuery, (username,))
         records = cursor.fetchall()
-        
-        connection.commit()
-
+ 
     except pg.OperationalError as e:
         logging.exception(e)
         raise HTTPException(status_code=406,
@@ -115,8 +113,6 @@ def readByGroup(id:int)->Dict:
         cursor = connection.cursor(cursor_factory=RealDictCursor)
         cursor.execute(sqlQuery, (id,))
         records = cursor.fetchall()
-        
-        connection.commit()
 
     except pg.OperationalError as e:
         logging.exception(e)
@@ -128,7 +124,6 @@ def readByGroup(id:int)->Dict:
             connection.close()
 
     return records
-
 
 def delete(groupID:int, studentUsername:str):
     sqlQuery = 'delete from group_students where studentusername=%s and groupid=%s;'
@@ -157,3 +152,32 @@ def delete(groupID:int, studentUsername:str):
             connection.close()
 
     return True
+
+def readStudentsIDbyGroup(groupID:int)->Dict:
+    sqlQuery = 'select u.id, u.fullname from group_students gs\
+    inner join users u on u.username = gs.studentusername \
+    and gs.groupid = %s;'
+
+    try:
+        connection = pg.connect(
+            user = DB_USERNAME,
+            password = DB_PASSWORD,
+            host = HOST,
+            port = PORT,
+            database = DB_NAME
+        )
+
+        cursor = connection.cursor()
+        cursor.execute(sqlQuery, (groupID,))
+        records = cursor.fetchall()
+
+    except pg.OperationalError as e:
+        logging.exception(e)
+        raise HTTPException(status_code=406,
+            detail="Erro de conexão com o banco de dados.")
+    finally:
+        if (connection):
+            cursor.close()
+            connection.close()
+
+    return records

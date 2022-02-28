@@ -32,3 +32,10 @@ class Frequency(BaseModel):
                 "createDate": "2021-10-19 10:23:54+2"
             }
         }
+
+class FrequencyList(BaseModel):
+    groupID:int = None
+    studentID:int = None
+    fullName:str = None
+    frequencyID:int = None
+    isManual:bool = None

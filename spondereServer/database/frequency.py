@@ -67,12 +67,10 @@ def read(id:int):
         cursor = connection.cursor()
         cursor.execute(sqlQuery, (id,))
         
-        (frequency.studentID, frequency.academicClassID, frequency.ManualAttendance,
-            frequency.BLEAttendance, frequency.QrCodeAttendance, frequency.createDate, 
-            frequency.validationCode, frequency.latitude, frequency.longitude, frequency.failure, 
-            frequency.photo) = cursor.fetchone()
-
-        connection.commit()
+        (frequency.id, frequency.studentID, frequency.academicClassID, 
+        frequency.ManualAttendance, frequency.BLEAttendance, frequency.QrCodeAttendance, 
+        frequency.createDate, frequency.validationCode, frequency.latitude, 
+        frequency.longitude, frequency.failure, frequency.photo) = cursor.fetchone()
 
     except pg.OperationalError as e:
         logging.exception(e)
@@ -83,7 +81,7 @@ def read(id:int):
             cursor.close()
             connection.close()
 
-    return Frequency
+    return frequency
 
 def update(id:int, frequency: Frequency):
     sqlQuery = 'update frequency set studentID=%s, academicClassID=%s, manualAttendance=%s,\
@@ -145,3 +143,62 @@ def delete(id: int):
             connection.close()
 
     return True
+
+def studentsPresents(academicClassID:int):
+    sqlQuery = 'select u.id, f.id, f.manualattendance from users u \
+    inner join frequency f on f.studentid = u.id \
+    and f.academicclassid = %s and f.failure is null;'
+
+    try:
+        connection = pg.connect(
+            user = DB_USERNAME,
+            password = DB_PASSWORD,
+            host = HOST,
+            port = PORT,
+            database = DB_NAME
+        )
+
+        cursor = connection.cursor()
+        cursor.execute(sqlQuery, (academicClassID,))
+        
+        records = cursor.fetchall()
+
+    except pg.OperationalError as e:
+        logging.exception(e)
+        raise HTTPException(status_code=406,
+            detail="Erro de conexão com o banco de dados.") 
+    finally:
+        if (connection):
+            cursor.close()
+            connection.close()
+
+    return records
+
+def attendancePerStudent(academicClassID:int, studentID:int):
+    sqlQuery = 'select f.id, f.failure  from frequency f \
+    where f.academicclassid=%s and f.studentid=%s\
+    order by createdate desc limit 1;'
+
+    try:
+        connection = pg.connect(
+            user = DB_USERNAME,
+            password = DB_PASSWORD,
+            host = HOST,
+            port = PORT,
+            database = DB_NAME
+        )
+
+        cursor = connection.cursor()
+        cursor.execute(sqlQuery, (academicClassID, studentID))
+        record = cursor.fetchone()
+
+    except pg.OperationalError as e:
+        logging.exception(e)
+        raise HTTPException(status_code=406,
+            detail="Erro de conexão com o banco de dados.") 
+    finally:
+        if (connection):
+            cursor.close()
+            connection.close()
+
+    return record

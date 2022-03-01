@@ -1,11 +1,10 @@
+import logging
 from typing import Dict
-from unittest import result
 from fastapi import (
     APIRouter,
-    Body, 
     Depends, 
     Request)
-from numpy import full
+from sklearn.model_selection import validation_curve
 from controller.security import (
     JWTBearer,
     getCurrentUserName)
@@ -138,8 +137,16 @@ def createAttendanceList(groupID:int, presents, groupStudents):
     return result
 
 @router.get("/aluno/", dependencies=[Depends(JWTBearer())])
-async def isPresent(academicClassID:int, studentID:int) -> Dict:   
-    attendance = frequencyDB.attendancePerStudent(academicClassID, studentID)
+async def isPresent(academicClassID:int, studentID:int) -> Dict: 
+    try:  
+        (id, failure, validationCode) = frequencyDB.attendancePerStudent(academicClassID, studentID)
+    except:
+        logging.error("Nehuma frequencia encontrada com os dados fornecidos.")
+        raise HTTPException(status_code=403,
+                detail="Nehuma frequencia encontrada com os dados fornecidos.")
+
     return {
-        "attendance": attendance
+        "id": id,
+        "failure": failure,
+        "code": validationCode
     }

@@ -2,7 +2,8 @@ from fastapi import (
     APIRouter, 
     Depends,
     Body,
-    Request)
+    Request, 
+    HTTPException)
 from controller.security import (
     JWTBearer,
     getCurrentUserName,
@@ -32,7 +33,8 @@ async def userLogin(user: UserCredential):
     if checkUser(user.username, user.password):
         return signJWT(user.username)
 
-    return {"invalid_access": "Usuário ou senha inválidos."}
+    raise HTTPException(status_code=406,
+            detail="u001") 
 
 @router.get("", dependencies=[Depends(JWTBearer())])
 async def getCurrentUser(request:Request):

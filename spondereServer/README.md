@@ -10,5 +10,5 @@ Em desenvolvimento ...
 
 |Código do erro | tipo | descrição|
 |--- | --- | ---|
-|u001| Usuário | ...|
+|u001| Usuário | Usuário ou senha incorreto.|
 |u002| Usuário | ... |

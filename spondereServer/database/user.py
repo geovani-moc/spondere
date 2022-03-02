@@ -152,7 +152,7 @@ def checkUser(username: str, password:str):
 
     except:
         raise HTTPException(status_code=406,
-            detail="Erro de conexão com o banco de dados.") 
+            detail="u001") 
     finally:
         if (connection):
             cursor.close()

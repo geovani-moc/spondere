@@ -6,7 +6,7 @@ from fastapi import Request, HTTPException
 
 SECRET_KEY = "002ba35be5e3daadcc1c97d634d5a496bf9524d9d7757eca3f3699f7b0f6b834"
 ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_SECONDS = 604800 # uma semana em segundos
+ACCESS_TOKEN_EXPIRE_SECONDS = 864000 # 10 dias em segundos
 
 class JWTBearer(HTTPBearer):
     def __init__(self, auto_error: bool = True):

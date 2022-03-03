@@ -3,8 +3,8 @@ from typing import Dict
 from fastapi import (
     APIRouter,
     Depends, 
-    Request)
-from sklearn.model_selection import validation_curve
+    Request, 
+    Body)
 from controller.security import (
     JWTBearer,
     getCurrentUserName)
@@ -32,7 +32,7 @@ async def createFrequency(frequency:Frequency, request:Request) -> Dict:
     }
 
 @router.post("/manual", dependencies=[Depends(JWTBearer())])
-async def createManualFrequency(academicClassID:int, studentID, request:Request) -> Dict:
+async def createManualFrequency(request:Request, academicClassID:int = Body(...), studentID:int = Body(...)) -> Dict:
     authorization = request.headers.get("authorization")
     username = getCurrentUserName(authorization)
     user = userDB.read(username)
@@ -130,7 +130,7 @@ def createAttendanceList(groupID:int, presents, groupStudents):
             frequencyList.studentID = studentID
             frequencyList.fullName = fullName
             frequencyList.frequencyID = None
-            frequencyList.isManual = None
+            frequencyList.isManual = False
             result.append(frequencyList)
         
 

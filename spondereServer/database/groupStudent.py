@@ -156,7 +156,7 @@ def delete(groupID:int, studentUsername:str):
 def readStudentsIDbyGroup(groupID:int)->Dict:
     sqlQuery = 'select u.id, u.fullname from group_students gs\
     inner join users u on u.username = gs.studentusername \
-    and gs.groupid = %s;'
+    and gs.groupid = %s order by u.fullname;'
 
     try:
         connection = pg.connect(

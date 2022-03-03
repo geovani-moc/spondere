@@ -16,7 +16,7 @@ async def createAcademicClass(academicClass:AcademicClass, request:Request) -> d
     username = getCurrentUserName(authorization)
     user = userDB.read(username)
 
-    if not user.administrator or not user.professor:
+    if not user.administrator and not user.professor:
         raise HTTPException(status_code=401,
             detail="O usuario não tem privilegio de administrador ou professor.")
 
@@ -31,7 +31,7 @@ async def updateAcademicClass(id:int, academicClass:AcademicClass, request:Reque
     username = getCurrentUserName(authorization)
     user = userDB.read(username)
 
-    if not user.administrator or not user.professor:
+    if not user.administrator and not user.professor:
         raise HTTPException(status_code=401,
             detail="O usuario não tem privilegio de administrador ou professor.")
 
@@ -46,7 +46,7 @@ async def deleteAcademicClass(id:int, request:Request) -> dict:
     username = getCurrentUserName(authorization)
     user = userDB.read(username)
 
-    if not user.administrator or not user.professor:
+    if not user.administrator and not user.professor:
         raise HTTPException(status_code=401,
             detail="O usuario não tem privilegio de administrador ou professor.")
 

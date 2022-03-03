@@ -19,7 +19,7 @@ async def createDiscipline(discipline:Discipline, request:Request) -> Dict:
     username = getCurrentUserName(authorization)
     user = userDB.read(username)
 
-    if not user.administrator or not user.professor:
+    if not user.administrator and not user.professor:
         raise HTTPException(status_code=401,
             detail="O usuario não tem privilegio de administrador ou professor.")
     
@@ -35,7 +35,7 @@ async def updateDiscipline(id:int, discipline:Discipline, request:Request) -> Di
     username = getCurrentUserName(authorization)
     user = userDB.read(username)
 
-    if not user.administrator or not user.professor:
+    if not user.administrator and not user.professor:
         raise HTTPException(status_code=401,
             detail="O usuario não tem privilegio de administrador ou professor.")
 
@@ -50,7 +50,7 @@ async def deleteDiscipline(id:int, request:Request) -> Dict:
     username = getCurrentUserName(authorization)
     user = userDB.read(username)
 
-    if not user.administrator or not user.professor:
+    if not user.administrator and not user.professor:
         raise HTTPException(status_code=401,
             detail="O usuario não tem privilegio de administrador ou professor.")
     

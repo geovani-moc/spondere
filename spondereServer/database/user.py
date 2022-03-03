@@ -32,7 +32,8 @@ def create(user: User):
 
         connection.commit()
 
-    except:
+    except Exception as e:
+        print(e)
         raise HTTPException(status_code=406,
                 detail="Erro de conexão com o banco de dados.") 
     finally:
@@ -42,10 +43,10 @@ def create(user: User):
 
     return id
 
-def update(username:str, updatedUser: User):
+def update(id:int, updatedUser: User):
     sqlQuery = 'UPDATE users SET username = %s, \"password\" = %s,\
     email = %s, fullname = %s, disabled = %s, professor = %s,\
-    student = %s, administrator = %s  WHERE username = %s;'
+    student = %s, administrator = %s  WHERE id = %s;'
 
     try:
         connection = pg.connect(
@@ -58,7 +59,7 @@ def update(username:str, updatedUser: User):
         cursor = connection.cursor()
         cursor.execute(sqlQuery, 
             (updatedUser.username, updatedUser.password, updatedUser.email, updatedUser.fullName,
-            updatedUser.disabled, updatedUser.professor, updatedUser.student, updatedUser.administrator, username))
+            updatedUser.disabled, updatedUser.professor, updatedUser.student, updatedUser.administrator, id))
 
         connection.commit()
 
@@ -90,8 +91,6 @@ def read(username: str):
         cursor.execute(sqlQuery, (username,))
         (user.id, user.username, user.fullName, user.email, user.disabled,
                 user.administrator, user.professor, user.student) = cursor.fetchone()
-
-        connection.commit()
 
     except:
         raise HTTPException(status_code=406,

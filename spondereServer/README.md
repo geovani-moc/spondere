@@ -11,4 +11,4 @@ Em desenvolvimento ...
 |Código do erro | tipo | descrição|
 |--- | --- | ---|
 |u001| Usuário | Usuário ou senha incorreto.|
-|u002| Usuário | ... |
+|u002| Usuário | Usuário não tem credencial de administrador.|

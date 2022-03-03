@@ -13,10 +13,10 @@ from config import(
 )
 
 def create(academicClass: AcademicClass):
-    sqlQuery = 'insert into academicclass (id, groupid, titleclass, descriptionclass,\
+    sqlQuery = 'insert into academicclass (groupid, titleclass, descriptionclass,\
         begindate, enddate, longitude, latitude, activevalidation , validationbyqrcode,\
-        validationbyble, blockedAttendance, validationcode\
-    values (%s, %s, %s,%s, %s, %s, %s, %s, %s, %s, %s, %s, %s) returning id;'
+        validationbyble, blockedAttendance, validationcode) \
+    values (%s, %s, %s,%s, %s, %s, %s, %s, %s, %s, %s, %s) returning id;'
     
     id = None
 

@@ -1,7 +1,6 @@
 from fastapi import (
     APIRouter, 
     Depends,
-    Body,
     Request, 
     HTTPException)
 from controller.security import (
@@ -16,16 +15,16 @@ from database.user import checkUser
 router = APIRouter()
 
 @router.post("", dependencies=[Depends(JWTBearer())])
-async def createUser(request:Request, user:User = Body(...)):
+async def createUser(request:Request, newUser:User):
     authorization = request.headers.get("authorization")
     username = getCurrentUserName(authorization)
     user = userDB.read(username)
 
     if not user.administrator:
-        return {'User code': None, 'error': 'u002'}
+        return {'detail': 'u002'}
     
-    id = userDB.create(user)
-    return {'User code': id, 'error':None}
+    id = userDB.create(newUser)
+    return {'id': id}
     
 @router.post("/login")
 async def userLogin(user: UserCredential):
@@ -43,3 +42,18 @@ async def getCurrentUser(request:Request):
 
     currentUser = userDB.read(username)
     return {'user': currentUser}
+
+@router.put("/{id}", dependencies=[Depends(JWTBearer())])
+async def updatePeriod(id:int, newUser:User, request:Request):
+    authorization = request.headers.get("authorization")
+    username = getCurrentUserName(authorization)
+    user = userDB.read(username)
+
+    if not user.administrator:
+        raise HTTPException(status_code=401,
+            detail="O usuario não tem privilegio de administrador.")
+    
+    userDB.update(id, newUser)
+    return {
+        "result": "success"
+    }

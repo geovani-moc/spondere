@@ -17,7 +17,7 @@ async def startClassAttendance(classID:int, request:Request):
     username = getCurrentUserName(authorization)
     user = userDB.read(username)
 
-    if not user.administrator or not user.professor:
+    if not user.administrator and not user.professor:
         raise HTTPException(status_code=401,
             detail="O usuario não tem privilegio de administrador ou professor.")
     

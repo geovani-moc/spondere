@@ -70,3 +70,18 @@ async def getClassByGroupID(groupID:int):
     return {
         "academicClass": academicClasses
     }
+
+@router.put("/bloquear/", dependencies=[Depends(JWTBearer())])
+async def updateAcademicClass(request:Request, academicClassID:int)-> dict:
+    authorization = request.headers.get("authorization")
+    username = getCurrentUserName(authorization)
+    user = userDB.read(username)
+
+    if not user.administrator and not user.professor:
+        raise HTTPException(status_code=401,
+            detail="O usuario não tem privilegio de administrador ou professor.")
+
+    classDB.blockAttendance(academicClassID)
+    return{
+        "result": "success"
+    }

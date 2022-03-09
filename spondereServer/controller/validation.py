@@ -2,17 +2,19 @@ import logging
 from fastapi import (
     APIRouter, 
     Depends, 
-    Request)
+    Request, 
+    Body)
 from controller.security import JWTBearer, getCurrentUserName
 from database import academicClass as classDB
 from database import user as userDB
 from fastapi import HTTPException
 from util.validation import generateValidationCode
+from datetime import datetime
 
 router = APIRouter()
 
-@router.get("/criar/", dependencies=[Depends(JWTBearer())])
-async def startClassAttendance(classID:int, request:Request):
+@router.post("/criar", dependencies=[Depends(JWTBearer())])
+async def startClassAttendance(request:Request, academicClassID:int = Body(...)):
     authorization = request.headers.get("authorization")
     username = getCurrentUserName(authorization)
     user = userDB.read(username)
@@ -20,11 +22,15 @@ async def startClassAttendance(classID:int, request:Request):
     if not user.administrator and not user.professor:
         raise HTTPException(status_code=401,
             detail="O usuario não tem privilegio de administrador ou professor.")
+
+    if(not classAttendanceIsValidToBegin(academicClassID)):
+        raise HTTPException(status_code=406,
+            detail="Uma aula não pode ser iniciada mais de uma vez.")
     
     validationCode = generateValidationCode()
     
-    if classDB.setValidationCode(classID, validationCode):
-        logging.info("Aula iniciada, id da aula: "+ str(classID)+",\
+    if classDB.setValidationCode(academicClassID, validationCode):
+        logging.info("Aula iniciada, id da aula: "+ str(academicClassID)+",\
              codigo de valição: "+ validationCode )
     else:
         raise HTTPException(status_code=406,
@@ -33,6 +39,19 @@ async def startClassAttendance(classID:int, request:Request):
     return {
         "validationCode":validationCode
     }
+
+def classAttendanceIsValidToBegin(academicClassID:int) -> bool:
+    academicClass = classDB.read(academicClassID)
+
+    if academicClass.activeValidation:
+        if not academicClass.blockedAttendance:
+            classDB.blockAttendance(academicClassID)
+            return False
+    
+    if academicClass.endDate == None:
+        return False
+
+    return True
 
 @router.get("/verificar/", dependencies=[Depends(JWTBearer())])
 async def validationCode(code:str, request:Request):

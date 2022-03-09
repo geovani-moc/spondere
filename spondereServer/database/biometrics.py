@@ -139,7 +139,7 @@ def delete(id:int):
 
     return True
 
-def disable(id:int, biometric: Biometrics):
+def disable(id:int):
     sqlQuery = 'update biometrics set active=false where id=%s returning studentid;'
     studentID:int = 0
     try:

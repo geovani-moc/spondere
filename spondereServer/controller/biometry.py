@@ -90,8 +90,8 @@ async def deleteBiometry(id:int) -> dict:
          "result": "success"
      }
 '''
-@router.put("/{id}", dependencies=[Depends(JWTBearer())])
-async def disableBiometry(id:int, request:Request) -> Dict:
+@router.put("/desabilitar/{biometryID}", dependencies=[Depends(JWTBearer())])
+async def disableBiometry(biometryID:int, request:Request) -> Dict:
     authorization = request.headers.get("authorization")
     username = getCurrentUserName(authorization)
     user = userDB.read(username)
@@ -100,9 +100,7 @@ async def disableBiometry(id:int, request:Request) -> Dict:
         raise HTTPException(status_code=401,
             detail="O usuario não tem privilegio de administrador.")
 
-    studentID = biometryDB.disable(id)
-  
-    #precisa realizar testes -------------------------------------------------------
+    studentID = biometryDB.disable(biometryID)
     path = createUserImagesPath(studentID)
     removeAllFilesInFolder(path)
 

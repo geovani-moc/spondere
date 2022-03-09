@@ -138,3 +138,30 @@ def delete(id:int):
             connection.close()
 
     return True
+
+def disable(id:int, biometric: Biometrics):
+    sqlQuery = 'update biometrics set active=false where id=%s returning studentid;'
+    studentID:int = 0
+    try:
+        connection = pg.connect(
+            user = DB_USERNAME,
+            password = DB_PASSWORD,
+            host = HOST,
+            port = PORT,
+            database = DB_NAME
+        )
+        cursor = connection.cursor()
+        cursor.execute(sqlQuery, (id, ))
+        studentID = cursor.fetchone()[0]
+        connection.commit()
+
+    except pg.OperationalError as e:
+        logging.exception(e)
+        raise HTTPException(status_code=406,
+            detail="Erro de conexão com o banco de dados.") 
+    finally:
+        if (connection):
+            cursor.close()
+            connection.close()
+
+    return studentID

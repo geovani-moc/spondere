@@ -5,7 +5,8 @@ from fastapi import (
     File, 
     UploadFile,
     Request, 
-    BackgroundTasks)
+    BackgroundTasks, 
+    HTTPException)
 from controller.security import (
     JWTBearer,
     getCurrentUserName)
@@ -16,6 +17,8 @@ from recognition.findFace import findFace
 from recognition.faceRecognition import verifyFace
 from database import biometrics as biometryDB
 from database import frequency as frequencyDB
+from database import user as userDB
+from util.files import createUserImagesPath, removeAllFilesInFolder
 
 router = APIRouter()
 
@@ -80,12 +83,34 @@ async def updateBiometry(id:int, biometry:Biometrics)-> dict:
         "result": "success"
     }
 
-@router.delete("/{id}", dependencies=[Depends(JWTBearer())])
+'''@router.delete("/{id}", dependencies=[Depends(JWTBearer())])
 async def deleteBiometry(id:int) -> dict:
     biometryDB.delete(id)
     return{
          "result": "success"
      }
+'''
+@router.put("/{id}", dependencies=[Depends(JWTBearer())])
+async def disableBiometry(id:int, request:Request) -> Dict:
+    authorization = request.headers.get("authorization")
+    username = getCurrentUserName(authorization)
+    user = userDB.read(username)
+
+    if not user.administrator:
+        raise HTTPException(status_code=401,
+            detail="O usuario não tem privilegio de administrador.")
+
+    studentID = biometryDB.disable(id)
+  
+    #precisa realizar testes -------------------------------------------------------
+    path = createUserImagesPath(studentID)
+    removeAllFilesInFolder(path)
+
+    return{
+        "result": "success"
+    }
+
+
 
 @router.get("/{id}", dependencies=[Depends(JWTBearer())])
 async def getBiometry(id:int) -> dict:

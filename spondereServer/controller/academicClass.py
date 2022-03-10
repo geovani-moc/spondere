@@ -25,8 +25,12 @@ async def createAcademicClass(academicClass:AcademicClass, request:Request) -> d
         "id": id
     }
 
-@router.put("/{id}", dependencies=[Depends(JWTBearer())])
-async def updateAcademicClass(id:int, academicClass:AcademicClass, request:Request)-> dict:
+@router.put("/", dependencies=[Depends(JWTBearer())])
+async def updateAcademicClass(academicClass:AcademicClass, request:Request)-> dict:
+    if academicClass.id < 1:
+        raise HTTPException(status_code=401,
+            detail="Aula inválida.")
+    
     authorization = request.headers.get("authorization")
     username = getCurrentUserName(authorization)
     user = userDB.read(username)
@@ -35,7 +39,11 @@ async def updateAcademicClass(id:int, academicClass:AcademicClass, request:Reque
         raise HTTPException(status_code=401,
             detail="O usuario não tem privilegio de administrador ou professor.")
 
-    classDB.update(id, academicClass)
+    if(academicClass.blockedAttendance):
+        classDB.updateBlocked(academicClass)
+    else:
+        classDB.update(academicClass)
+        
     return{
         "result": "success"
     }

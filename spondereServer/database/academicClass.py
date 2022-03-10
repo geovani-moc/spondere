@@ -58,10 +58,10 @@ def create(academicClass: AcademicClass):
 
     return id
 
-def update(id:int, academicClass: AcademicClass):
+def update(academicClass: AcademicClass):
     sqlQuery = 'update academicclass set groupid=%s, titleclass=%s, descriptionclass=%s,\
         begindate=%s, enddate=%s, longitude=%s, latitude=%s, activevalidation=%s,\
-        validationbyqrcode=%s, validationbyble=%s, validationcode=%s, validationcode=%s \
+        validationbyqrcode=%s, validationbyble=%s, blockedattendance=%s, validationcode=%s \
     where id=%s;'
  
     try:
@@ -86,7 +86,7 @@ def update(id:int, academicClass: AcademicClass):
             academicClass.validationByBLE,
             academicClass.blockedAttendance,
             academicClass.validationCode,
-            id))
+            academicClass.id))
 
         connection.commit()
 
@@ -277,6 +277,36 @@ def blockAttendance(id:int):
         )
         cursor = connection.cursor()
         cursor.execute(sqlQuery, (id,))
+
+        connection.commit()
+
+    except pg.OperationalError as e:
+        logging.exception(e)
+        raise HTTPException(status_code=406,
+            detail="Erro de conexão com o banco de dados.") 
+    finally:
+        if (connection):
+            cursor.close()
+            connection.close()
+
+    return True
+
+def updateBlocked(academicClass: AcademicClass):
+    sqlQuery = 'update academicclass set titleclass=%s, descriptionclass=%s where id=%s;'
+
+    try:
+        connection = pg.connect(
+            user = DB_USERNAME,
+            password = DB_PASSWORD,
+            host = HOST,
+            port = PORT,
+            database = DB_NAME
+        )
+        cursor = connection.cursor()
+        cursor.execute(sqlQuery, 
+            (academicClass.titleClass,
+            academicClass.descriptionClass,
+            academicClass.id))
 
         connection.commit()
 

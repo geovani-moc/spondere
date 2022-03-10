@@ -19,14 +19,18 @@ class AcademicClass(BaseModel):
     class Config:
         schema_extra = {
             "example":{
+                "id": 1,
                 "groupID": 1,
                 "titleClass": "Integral",
                 "descriptionClass": "Aula 2.",
                 "beginDate": "2022-10-19 10:10:00+2",
                 "endDate": "2022-10-19 12:00:00+2",
+                "longitude": 0.0,
+                "latitude": 0.0,
                 "activeValidation": False,
                 "validationByQrCode": False,
                 "validationByBLE": False,
-                "blockedAttendance": False
+                "blockedAttendance": False,
+                "validationCode": "AAABBBCCC1"
             }
         }

@@ -9,7 +9,6 @@ from database import academicClass as classDB
 from database import user as userDB
 from fastapi import HTTPException
 from util.validation import generateValidationCode
-from datetime import datetime
 
 router = APIRouter()
 
@@ -43,10 +42,8 @@ async def startClassAttendance(request:Request, academicClassID:int = Body(...))
 def classAttendanceIsValidToBegin(academicClassID:int) -> bool:
     academicClass = classDB.read(academicClassID)
 
-    if academicClass.activeValidation:
-        if not academicClass.blockedAttendance:
-            classDB.blockAttendance(academicClassID)
-            return False
+    if academicClass.blockedAttendance:
+        return False
     
     if academicClass.endDate == None:
         return False

@@ -265,7 +265,7 @@ def getActiveClassIDByCode(validationCode:str, username:str) -> int:
     return records
 
 def blockAttendance(id:int):
-    sqlQuery = 'update academicclass set blockedattendance=false where id=%s;'
+    sqlQuery = 'update academicclass set blockedattendance=true where id=%s;'
  
     try:
         connection = pg.connect(

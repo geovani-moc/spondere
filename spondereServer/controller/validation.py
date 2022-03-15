@@ -50,8 +50,8 @@ def classAttendanceIsValidToBegin(academicClassID:int) -> bool:
 
     return True
 
-@router.get("/verificar/", dependencies=[Depends(JWTBearer())])
-async def validationCode(code:str, request:Request):
+@router.post("/verificar/", dependencies=[Depends(JWTBearer())])
+async def validationCode( request:Request, code:str = Body(...)):
     authorization = request.headers.get("authorization")
     username = getCurrentUserName(authorization)
 

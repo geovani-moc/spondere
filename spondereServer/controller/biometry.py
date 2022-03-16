@@ -25,7 +25,8 @@ router = APIRouter()
 
 @router.post("/checar/", dependencies=[Depends(JWTBearer())])
 async def checkBiometry(request:Request, studentID:int, classID:int, ble:bool,
-    qrcode:bool, validationCode:str, latitude:float, longitude:float, file: UploadFile = File(...))->Dict:
+    qrcode:bool, validationCode:str, latitude:float, longitude:float,
+    backgroundTasks:BackgroundTasks, file: UploadFile = File(...))->Dict:
     authorization = request.headers.get("authorization")
     username = getCurrentUserName(authorization)
     contents = await file.read()
@@ -40,7 +41,7 @@ async def checkBiometry(request:Request, studentID:int, classID:int, ble:bool,
     frequency.latitude = latitude
     frequency.longitude = longitude
 
-    #BackgroundTasks.add_task(processBiometrics, frequency, username, contents)
+    backgroundTasks.add_task(processBiometrics, frequency, username, contents)
 
     return {"result": "Imagem recebida, em processamento."}
 

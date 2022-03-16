@@ -27,13 +27,15 @@ async def checkBiometry(data:Frequency, request:Request, file: UploadFile = File
     authorization = request.headers.get("authorization")
     username = getCurrentUserName(authorization)
     contents = await file.read()
+
     BackgroundTasks.add_task(processBiometrics, data, username, contents)
 
     return {"result": "Imagem recebida, em processamento."}
 
 def processBiometrics(frequency:Frequency, username:str, contents):
     image = checkUploadedImage(contents)
-
+    frequency.ManualAttendance = False
+    
     if image is None:
         frequency.failure = "Falha na imagem recebida."
         try:

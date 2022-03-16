@@ -3,6 +3,7 @@ from fastapi import (
     APIRouter, 
     Depends,
     File, 
+    Form,
     UploadFile,
     Request, 
     BackgroundTasks, 
@@ -15,7 +16,7 @@ from entity.frequency import Frequency
 from util.image import checkUploadedImage
 from recognition.findFace import findFace
 from recognition.faceRecognition import verifyFace
-from database import biometrics as biometryDB
+from database import biometrics as biometryDB, frequency
 from database import frequency as frequencyDB
 from database import user as userDB
 from util.files import createUserImagesPath, removeAllFilesInFolder
@@ -23,18 +24,28 @@ from util.files import createUserImagesPath, removeAllFilesInFolder
 router = APIRouter()
 
 @router.post("/checar/", dependencies=[Depends(JWTBearer())])
-async def checkBiometry(data:Frequency, request:Request, file: UploadFile = File(...))->Dict:
+async def checkBiometry(request:Request, studentID:int, classID:int, ble:bool,
+    qrcode:bool, validationCode:str, latitude:float, longitude:float, file: UploadFile = File(...))->Dict:
     authorization = request.headers.get("authorization")
     username = getCurrentUserName(authorization)
     contents = await file.read()
 
-    BackgroundTasks.add_task(processBiometrics, data, username, contents)
+    frequency = Frequency()
+    frequency.ManualAttendance = False
+    frequency.academicClassID = classID
+    frequency.studentID = studentID
+    frequency.BLEAttendance = ble
+    frequency.QrCodeAttendance = qrcode
+    frequency.validationCode = validationCode
+    frequency.latitude = latitude
+    frequency.longitude = longitude
+
+    #BackgroundTasks.add_task(processBiometrics, frequency, username, contents)
 
     return {"result": "Imagem recebida, em processamento."}
 
 def processBiometrics(frequency:Frequency, username:str, contents):
     image = checkUploadedImage(contents)
-    frequency.ManualAttendance = False
     
     if image is None:
         frequency.failure = "Falha na imagem recebida."

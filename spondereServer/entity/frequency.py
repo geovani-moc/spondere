@@ -16,8 +16,8 @@ class Frequency(BaseModel):
     QrCodeAttendance:bool = None
     createDate:str = None
     validationCode:str = None
-    latitude:Optional[str] = None
-    longitude:Optional[str] = None
+    latitude:Optional[float] = None
+    longitude:Optional[float] = None
     failure:Optional[str] = None
     photo:List[bytes] = None
 

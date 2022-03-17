@@ -29,8 +29,8 @@ def verifyFace(image, userID):
         labelsUser = loadFullLabels(name)
         settings.LABELS = labelsUser
 
-    if len(labelsUser) != len(features): return False, "caracteristicas e rotulos não coincidem"
-    if len(features) == 0: return False, None
+    if len(labelsUser) != len(features): return False, "Erro: r001"
+    if len(features) == 0: return False, "Erro: r002"
 
     labelEncoder = LabelEncoder()
     labelsUser = labelEncoder.fit_transform(labelsUser)
@@ -45,7 +45,7 @@ def verifyFace(image, userID):
 
     if label[0] == userID: return True, None
 
-    return False, None
+    return False, "Face não reconhecida."
 
 def lettering(features, labelsUser):
     count = 0

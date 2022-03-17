@@ -12,3 +12,5 @@ Em desenvolvimento ...
 |--- | --- | ---|
 |u001| Usuário | Usuário ou senha incorreto.|
 |u002| Usuário | Usuário não tem credencial de administrador.|
+|r001| Reconhecimento| caracteristicas e rotulos não coincidem.|
+|r002| Reconhecimento| Nenhuma caracterista de face encontrada.|

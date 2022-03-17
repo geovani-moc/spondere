@@ -143,7 +143,7 @@ async def isPresent(academicClassID:int, studentID:int) -> Dict:
     except:
         logging.error("Nehuma frequencia encontrada com os dados fornecidos.")
         raise HTTPException(status_code=403,
-                detail="Nehuma frequencia encontrada com os dados fornecidos.")
+                detail="f001")
 
     return {
         "id": id,

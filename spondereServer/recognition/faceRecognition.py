@@ -45,7 +45,7 @@ def verifyFace(image, userID):
 
     if label[0] == userID: return True, None
 
-    return False, "Face não reconhecida."
+    return False, "A face do usuário não foi reconhecida."
 
 def lettering(features, labelsUser):
     count = 0

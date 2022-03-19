@@ -6,21 +6,25 @@ from fastapi import (
     Request)
 from controller.security import (
     JWTBearer, 
-    getCurrentUserName)
+    getCurrentUserName,
+    getCurrentUserType)
 from database import groupProfessor as groupDB
 from entity.groupProfessor import GroupProfessor
-from database import user as userDB
 from fastapi import HTTPException
+from settings import(
+    USER_TYPE_ADMIN,
+    USER_TYPE_PROFESSOR,
+    USER_TYPE_STUDENT
+)
 
 router = APIRouter()
 
 @router.get("/{id}", dependencies=[Depends(JWTBearer())])
 async def readGroupByGroup(request:Request, id:int):
     authorization = request.headers.get("authorization")
-    username = getCurrentUserName(authorization)
-    user = userDB.read(username)
+    userType = getCurrentUserType(authorization)
 
-    if not user.administrator and not user.professor:
+    if userType != USER_TYPE_ADMIN and userType != USER_TYPE_PROFESSOR:
         raise HTTPException(status_code=401,
             detail="O usuario não tem privilegio de administrador ou professor.")
     groups = groupDB.readByGroup(id)
@@ -31,12 +35,16 @@ async def readGroupByGroup(request:Request, id:int):
 @router.get("", dependencies=[Depends(JWTBearer())])
 async def readGroupByProfessor(request:Request, username:Optional[str]=None):
     authorization = request.headers.get("authorization")
-    username = getCurrentUserName(authorization)
-    user = userDB.read(username)
+    currentUsername = getCurrentUserName(authorization)
+    userType = getCurrentUserType(authorization)
 
-    if not user.administrator and not user.professor:
+    if currentUsername != username and userType != USER_TYPE_ADMIN:
+         raise HTTPException(status_code=401,
+            detail="O usuário não tem pode acessar a turma de outro professor.")
+
+    if userType != USER_TYPE_ADMIN and userType != USER_TYPE_PROFESSOR:
         raise HTTPException(status_code=401,
-            detail="O usuario não tem privilegio de administrador ou professor.")
+            detail="O usuário não tem privilegio de administrador ou professor.")
 
     if username == None:
         return {"professor":None}
@@ -48,10 +56,9 @@ async def readGroupByProfessor(request:Request, username:Optional[str]=None):
 @router.post("", dependencies=[Depends(JWTBearer())])
 async def createGroup(group:GroupProfessor, request:Request):
     authorization = request.headers.get("authorization")
-    username = getCurrentUserName(authorization)
-    user = userDB.read(username)
+    userType = getCurrentUserType(authorization)
 
-    if not user.administrator:
+    if userType != USER_TYPE_ADMIN:
         raise HTTPException(status_code=401,
             detail="O usuario não tem privilegio de administrador.")
     
@@ -63,10 +70,9 @@ async def createGroup(group:GroupProfessor, request:Request):
 @router.put("/", dependencies=[Depends(JWTBearer())])
 async def updateGroup(request:Request, group:GroupProfessor, new:GroupProfessor):
     authorization = request.headers.get("authorization")
-    username = getCurrentUserName(authorization)
-    user = userDB.read(username)
+    userType = getCurrentUserType(authorization)
 
-    if not user.administrator:
+    if userType != USER_TYPE_ADMIN:
         raise HTTPException(status_code=401,
             detail="O usuario não tem privilegio de administrador.")
 
@@ -79,10 +85,9 @@ async def updateGroup(request:Request, group:GroupProfessor, new:GroupProfessor)
 @router.delete("/", dependencies=[Depends(JWTBearer())])
 async def deleteGroup(request:Request, id:int = Body(...), professor:str = Body(...)):
     authorization = request.headers.get("authorization")
-    username = getCurrentUserName(authorization)
-    user = userDB.read(username)
+    userType = getCurrentUserType(authorization)
 
-    if not user.administrator:
+    if userType != USER_TYPE_ADMIN:
         raise HTTPException(status_code=401,
             detail="O usuario não tem privilegio de administrador.")
 

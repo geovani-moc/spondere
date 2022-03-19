@@ -5,21 +5,25 @@ from fastapi import (
     Request)
 from controller.security import (
     JWTBearer,
-    getCurrentUserName)
+    getCurrentUserName,
+    getCurrentUserType)
 from database import discipline as disciplineDB
 from entity.discipline import Discipline
-from database import user as userDB
 from fastapi import HTTPException
+from settings import(
+    USER_TYPE_ADMIN,
+    USER_TYPE_PROFESSOR,
+    USER_TYPE_STUDENT
+)
 
 router = APIRouter()
 
 @router.post("/", dependencies=[Depends(JWTBearer())])
 async def createDiscipline(discipline:Discipline, request:Request) -> Dict:
     authorization = request.headers.get("authorization")
-    username = getCurrentUserName(authorization)
-    user = userDB.read(username)
+    userType = getCurrentUserType(authorization)
 
-    if not user.administrator and not user.professor:
+    if userType != USER_TYPE_ADMIN and userType != USER_TYPE_PROFESSOR:
         raise HTTPException(status_code=401,
             detail="O usuario não tem privilegio de administrador ou professor.")
     
@@ -32,10 +36,9 @@ async def createDiscipline(discipline:Discipline, request:Request) -> Dict:
 @router.put("/{id}", dependencies=[Depends(JWTBearer())])
 async def updateDiscipline(id:int, discipline:Discipline, request:Request) -> Dict:
     authorization = request.headers.get("authorization")
-    username = getCurrentUserName(authorization)
-    user = userDB.read(username)
+    userType = getCurrentUserType(authorization)
 
-    if not user.administrator and not user.professor:
+    if userType != USER_TYPE_ADMIN and userType != USER_TYPE_PROFESSOR:
         raise HTTPException(status_code=401,
             detail="O usuario não tem privilegio de administrador ou professor.")
 
@@ -47,10 +50,9 @@ async def updateDiscipline(id:int, discipline:Discipline, request:Request) -> Di
 @router.delete("/{id}", dependencies=[Depends(JWTBearer())])
 async def deleteDiscipline(id:int, request:Request) -> Dict:
     authorization = request.headers.get("authorization")
-    username = getCurrentUserName(authorization)
-    user = userDB.read(username)
+    userType = getCurrentUserType(authorization)
 
-    if not user.administrator and not user.professor:
+    if userType != USER_TYPE_ADMIN and userType != USER_TYPE_PROFESSOR:
         raise HTTPException(status_code=401,
             detail="O usuario não tem privilegio de administrador ou professor.")
     
@@ -70,10 +72,9 @@ async def readDiscipline(id:int) -> Dict:
 async def readActiveDisciplineByProfessor(professorUsername:str, request:Request)-> Dict:
     authorization = request.headers.get("authorization")
     username = getCurrentUserName(authorization)
-    user = userDB.read(username)
-
+    userType = getCurrentUserType(authorization)
     
-    if user.username != professorUsername and not user.administrator:
+    if username != professorUsername and userType != USER_TYPE_ADMIN:
         raise HTTPException(status_code=401,
             detail="O usuario não tem privilegio de administrador ou não é o pofessor.")
 
@@ -88,9 +89,9 @@ async def readActiveDisciplineByProfessor(professorUsername:str, request:Request
 async def readActiveDisciplineByStudent(studentUsername:str, request:Request)-> Dict:
     authorization = request.headers.get("authorization")
     username = getCurrentUserName(authorization)
-    user = userDB.read(username)
+    userType = getCurrentUserType(authorization)
 
-    if user.username != studentUsername and not user.administrator:
+    if username != studentUsername and userType != USER_TYPE_ADMIN:
         raise HTTPException(status_code=401,
             detail="O usuario não tem privilegio de administrador ou não é o pofessor.")
 

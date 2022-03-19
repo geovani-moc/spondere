@@ -9,6 +9,11 @@ from config import(
     HOST,
     PORT
 )
+from settings import(
+    USER_TYPE_ADMIN,
+    USER_TYPE_PROFESSOR,
+    USER_TYPE_STUDENT
+)
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
@@ -131,10 +136,11 @@ def delete(username: str):
 
 def checkUser(username: str, password:str):
     if username is None or password is None:
-        return False
+        return False, -1
 
+    userType = -1
     user = User()
-    sql_query = "select username, \"password\" from users where username = %s;"
+    sql_query = "select username, \"password\", professor, student, administrator from users where username = %s;"
 
     try:
         connection = pg.connect(
@@ -147,7 +153,8 @@ def checkUser(username: str, password:str):
 
         cursor = connection.cursor()
         cursor.execute(sql_query, (username, ))
-        (user.username, user.password) = cursor.fetchone()
+        (user.username, user.password, user.professor, 
+        user.student, user.administrator) = cursor.fetchone()
 
     except:
         raise HTTPException(status_code=406,
@@ -157,10 +164,14 @@ def checkUser(username: str, password:str):
             cursor.close()
             connection.close()
     
+    if user.administrator: userType = USER_TYPE_ADMIN
+    elif user.professor: userType = USER_TYPE_PROFESSOR
+    elif user.student: userType = USER_TYPE_STUDENT
+    
     if user.username == username and verifyPassword(password, user.password):
-       return True
+       return True, userType
 
-    return False
+    return False, userType
 
 def verifyPassword(plain_password, hashed_password):
     return pwd_context.verify(plain_password, hashed_password)

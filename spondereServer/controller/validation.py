@@ -4,21 +4,24 @@ from fastapi import (
     Depends, 
     Request, 
     Body)
-from controller.security import JWTBearer, getCurrentUserName
+from controller.security import JWTBearer, getCurrentUserName, getCurrentUserType
 from database import academicClass as classDB
-from database import user as userDB
 from fastapi import HTTPException
 from util.validation import generateValidationCode
+from settings import(
+    USER_TYPE_ADMIN,
+    USER_TYPE_PROFESSOR,
+    USER_TYPE_STUDENT
+)
 
 router = APIRouter()
 
 @router.post("/criar", dependencies=[Depends(JWTBearer())])
 async def startClassAttendance(request:Request, academicClassID:int = Body(...)):
     authorization = request.headers.get("authorization")
-    username = getCurrentUserName(authorization)
-    user = userDB.read(username)
+    userType = getCurrentUserType(authorization)
 
-    if not user.administrator and not user.professor:
+    if userType != USER_TYPE_ADMIN and userType != USER_TYPE_PROFESSOR:
         raise HTTPException(status_code=401,
             detail="O usuario não tem privilegio de administrador ou professor.")
 

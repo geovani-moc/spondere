@@ -6,11 +6,16 @@ from fastapi import (
     Request)
 from controller.security import (
     JWTBearer, 
-    getCurrentUserName)
+    getCurrentUserType)
 from database import groupStudent as groupDB
 from entity.groupStudent import GroupStudent
-from database import user as userDB
 from fastapi import HTTPException
+from settings import(
+    USER_TYPE_ADMIN,
+    USER_TYPE_PROFESSOR,
+    USER_TYPE_STUDENT
+)
+
 
 router = APIRouter()
 
@@ -33,10 +38,9 @@ async def readGroupByStudent(username:Optional[str]=None):
 @router.post("", dependencies=[Depends(JWTBearer())])
 async def createGroup(group:GroupStudent, request:Request):
     authorization = request.headers.get("authorization")
-    username = getCurrentUserName(authorization)
-    user = userDB.read(username)
+    userType = getCurrentUserType(authorization)
 
-    if not user.administrator:
+    if userType != USER_TYPE_ADMIN:
         raise HTTPException(status_code=401,
             detail="O usuario não tem privilegio de administrador.")
     
@@ -48,10 +52,9 @@ async def createGroup(group:GroupStudent, request:Request):
 @router.put("/", dependencies=[Depends(JWTBearer())])
 async def updateGroup(request:Request, group:GroupStudent, new:GroupStudent):
     authorization = request.headers.get("authorization")
-    username = getCurrentUserName(authorization)
-    user = userDB.read(username)
+    userType = getCurrentUserType(authorization)
 
-    if not user.administrator:
+    if userType != USER_TYPE_ADMIN:
         raise HTTPException(status_code=401,
             detail="O usuario não tem privilegio de administrador.")
 
@@ -64,10 +67,9 @@ async def updateGroup(request:Request, group:GroupStudent, new:GroupStudent):
 @router.delete("/", dependencies=[Depends(JWTBearer())])
 async def deleteGroup(request:Request, id:int = Body(...), student:str = Body(...)):
     authorization = request.headers.get("authorization")
-    username = getCurrentUserName(authorization)
-    user = userDB.read(username)
+    userType = getCurrentUserType(authorization)
 
-    if not user.administrator:
+    if userType != USER_TYPE_ADMIN:
         raise HTTPException(status_code=401,
             detail="O usuario não tem privilegio de administrador.")
 

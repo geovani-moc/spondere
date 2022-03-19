@@ -2,21 +2,24 @@ from fastapi import (
     APIRouter, 
     Depends, 
     Request)
-from controller.security import JWTBearer, getCurrentUserName
+from controller.security import JWTBearer, getCurrentUserType
 from entity.academicClass import AcademicClass
 from database import academicClass as classDB
-from database import user as userDB
 from fastapi import HTTPException
+from settings import(
+    USER_TYPE_ADMIN,
+    USER_TYPE_PROFESSOR,
+    USER_TYPE_STUDENT
+)
 
 router = APIRouter()
  
 @router.post("/", dependencies=[Depends(JWTBearer())])
 async def createAcademicClass(academicClass:AcademicClass, request:Request) -> dict:
     authorization = request.headers.get("authorization")
-    username = getCurrentUserName(authorization)
-    user = userDB.read(username)
+    userType = getCurrentUserType(authorization)
 
-    if not user.administrator and not user.professor:
+    if userType != USER_TYPE_ADMIN and userType != USER_TYPE_PROFESSOR:
         raise HTTPException(status_code=401,
             detail="O usuario não tem privilegio de administrador ou professor.")
 
@@ -32,10 +35,9 @@ async def updateAcademicClass(academicClass:AcademicClass, request:Request)-> di
             detail="Aula inválida.")
     
     authorization = request.headers.get("authorization")
-    username = getCurrentUserName(authorization)
-    user = userDB.read(username)
+    userType = getCurrentUserType(authorization)
 
-    if not user.administrator and not user.professor:
+    if userType != USER_TYPE_ADMIN and userType != USER_TYPE_PROFESSOR:
         raise HTTPException(status_code=401,
             detail="O usuario não tem privilegio de administrador ou professor.")
 
@@ -51,10 +53,9 @@ async def updateAcademicClass(academicClass:AcademicClass, request:Request)-> di
 @router.delete("/{id}", dependencies=[Depends(JWTBearer())])
 async def deleteAcademicClass(id:int, request:Request) -> dict:
     authorization = request.headers.get("authorization")
-    username = getCurrentUserName(authorization)
-    user = userDB.read(username)
+    userType = getCurrentUserType(authorization)
 
-    if not user.administrator and not user.professor:
+    if userType != USER_TYPE_ADMIN and userType != USER_TYPE_PROFESSOR:
         raise HTTPException(status_code=401,
             detail="O usuario não tem privilegio de administrador ou professor.")
 
@@ -72,7 +73,6 @@ async def getAcademicClass(id:int) -> dict:
 
 @router.get("/grupo/", dependencies=[Depends(JWTBearer())])
 async def getClassByGroupID(groupID:int):
-                
     academicClasses = classDB.readByGroupID(groupID)
 
     return {
@@ -82,10 +82,9 @@ async def getClassByGroupID(groupID:int):
 @router.put("/bloquear/", dependencies=[Depends(JWTBearer())])
 async def updateAcademicClass(request:Request, academicClassID:int)-> dict:
     authorization = request.headers.get("authorization")
-    username = getCurrentUserName(authorization)
-    user = userDB.read(username)
+    userType = getCurrentUserType(authorization)
 
-    if not user.administrator and not user.professor:
+    if userType != USER_TYPE_ADMIN and userType != USER_TYPE_PROFESSOR:
         raise HTTPException(status_code=401,
             detail="O usuario não tem privilegio de administrador ou professor.")
 

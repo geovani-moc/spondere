@@ -7,22 +7,25 @@ from fastapi import (
     Body)
 from controller.security import (
     JWTBearer,
-    getCurrentUserName)
+    getCurrentUserType)
 from database import frequency as frequencyDB
 from database import groupStudent as groupStudentDB
 from entity.frequency import Frequency, FrequencyList
-from database import user as userDB
 from fastapi import HTTPException
+from settings import(
+    USER_TYPE_ADMIN,
+    USER_TYPE_PROFESSOR,
+    USER_TYPE_STUDENT
+)
 
 router = APIRouter()
 
 @router.post("/", dependencies=[Depends(JWTBearer())])
 async def createFrequency(frequency:Frequency, request:Request) -> Dict:
     authorization = request.headers.get("authorization")
-    username = getCurrentUserName(authorization)
-    user = userDB.read(username)
+    userType = getCurrentUserType(authorization)
 
-    if not user.administrator:
+    if userType != USER_TYPE_ADMIN:
         raise HTTPException(status_code=401,
             detail="O usuario não tem privilegio de administrador.")
      
@@ -34,10 +37,9 @@ async def createFrequency(frequency:Frequency, request:Request) -> Dict:
 @router.post("/manual", dependencies=[Depends(JWTBearer())])
 async def createManualFrequency(request:Request, academicClassID:int = Body(...), studentID:int = Body(...)) -> Dict:
     authorization = request.headers.get("authorization")
-    username = getCurrentUserName(authorization)
-    user = userDB.read(username)
+    userType = getCurrentUserType(authorization)
 
-    if not user.administrator and not user.professor:
+    if userType != USER_TYPE_ADMIN and userType != USER_TYPE_PROFESSOR:
         raise HTTPException(status_code=401,
             detail="O usuario não tem privilegio de administrador ou professor.")
 
@@ -56,10 +58,9 @@ async def createManualFrequency(request:Request, academicClassID:int = Body(...)
 @router.put("/{id}", dependencies=[Depends(JWTBearer())])
 async def updateFrequency(id:int, frequency:Frequency, request:Request) -> Dict:
     authorization = request.headers.get("authorization")
-    username = getCurrentUserName(authorization)
-    user = userDB.read(username)
+    userType = getCurrentUserType(authorization)
 
-    if not user.administrator:
+    if userType != USER_TYPE_ADMIN:
         raise HTTPException(status_code=401,
             detail="O usuario não tem privilegio de administrador.")
 
@@ -71,10 +72,9 @@ async def updateFrequency(id:int, frequency:Frequency, request:Request) -> Dict:
 @router.delete("/{id}", dependencies=[Depends(JWTBearer())])
 async def deleteFrequency(id:int, request:Request) -> Dict:
     authorization = request.headers.get("authorization")
-    username = getCurrentUserName(authorization)
-    user = userDB.read(username)
+    userType = getCurrentUserType(authorization)
 
-    if not user.administrator and not user.professor:
+    if userType != USER_TYPE_ADMIN and userType != USER_TYPE_PROFESSOR:
         raise HTTPException(status_code=401,
             detail="O usuario não tem privilegio de administrador ou professor.")
     
@@ -93,10 +93,9 @@ async def readFrequency(id:int) -> Dict:
 @router.get("/grupo/", dependencies=[Depends(JWTBearer())])
 async def readFrequencybyGroup(academicClassID:int, groupID:int, request:Request) -> Dict:
     authorization = request.headers.get("authorization")
-    username = getCurrentUserName(authorization)
-    user = userDB.read(username)
+    userType = getCurrentUserType(authorization)
 
-    if not user.administrator and not user.professor:
+    if userType != USER_TYPE_ADMIN and userType != USER_TYPE_PROFESSOR:
         raise HTTPException(status_code=401,
             detail="O usuario não tem privilegio de administrador ou professor.")   
     studentsPresents = frequencyDB.studentsPresents(academicClassID)

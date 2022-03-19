@@ -2,24 +2,28 @@ from typing import Dict
 from fastapi import (
     APIRouter, 
     Depends,
-    File, 
-    Form,
+    File,
     UploadFile,
     Request, 
     BackgroundTasks, 
     HTTPException)
 from controller.security import (
     JWTBearer,
-    getCurrentUserName)
+    getCurrentUserName,
+    getCurrentUserType)
 from entity.biometrics import Biometrics
 from entity.frequency import Frequency
 from util.image import checkUploadedImage
 from recognition.findFace import findFace
 from recognition.faceRecognition import verifyFace
-from database import biometrics as biometryDB, frequency
+from database import biometrics as biometryDB
 from database import frequency as frequencyDB
-from database import user as userDB
 from util.files import createUserImagesPath, removeAllFilesInFolder
+from settings import(
+    USER_TYPE_ADMIN,
+    USER_TYPE_PROFESSOR,
+    USER_TYPE_STUDENT
+)
 
 router = APIRouter()
 
@@ -107,10 +111,9 @@ async def deleteBiometry(id:int) -> dict:
 @router.put("/desabilitar/{biometryID}", dependencies=[Depends(JWTBearer())])
 async def disableBiometry(biometryID:int, request:Request) -> Dict:
     authorization = request.headers.get("authorization")
-    username = getCurrentUserName(authorization)
-    user = userDB.read(username)
+    userType = getCurrentUserType(authorization)
 
-    if not user.administrator:
+    if userType != USER_TYPE_ADMIN:
         raise HTTPException(status_code=401,
             detail="O usuario não tem privilegio de administrador.")
 

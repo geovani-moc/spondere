@@ -6,10 +6,16 @@ from fastapi import (
 from controller.security import (
     JWTBearer,
     getCurrentUserName,
+    getCurrentUserType,
     signJWT)
 from database import user as userDB
 from entity.user import User, UserCredential
 from database.user import checkUser
+from settings import(
+    USER_TYPE_ADMIN,
+    USER_TYPE_PROFESSOR,
+    USER_TYPE_STUDENT
+)
 
 
 router = APIRouter()
@@ -27,10 +33,11 @@ async def createUser(request:Request, newUser:User):
     return {'id': id}
     
 @router.post("/login")
-async def userLogin(user: UserCredential):
+async def userLogin(userCredential: UserCredential):
+    result, userType = checkUser(userCredential.username, userCredential.password)
 
-    if checkUser(user.username, user.password):
-        return signJWT(user.username)
+    if result:
+        return signJWT(userCredential.username, userType)
 
     raise HTTPException(status_code=406,
             detail="u001") 
@@ -46,12 +53,11 @@ async def getCurrentUser(request:Request):
 @router.put("/{id}", dependencies=[Depends(JWTBearer())])
 async def updatePeriod(id:int, newUser:User, request:Request):
     authorization = request.headers.get("authorization")
-    username = getCurrentUserName(authorization)
-    user = userDB.read(username)
+    userType = getCurrentUserType(authorization)
 
-    if not user.administrator:
+    if userType != USER_TYPE_ADMIN:
         raise HTTPException(status_code=401,
-            detail="O usuario não tem privilegio de administrador.")
+            detail="O usuário não tem privilegio de administrador.")
     
     userDB.update(id, newUser)
     return {

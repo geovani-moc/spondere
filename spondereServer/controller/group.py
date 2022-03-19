@@ -4,11 +4,15 @@ from fastapi import (
     Request)
 from controller.security import (
     JWTBearer, 
-    getCurrentUserName)
+    getCurrentUserType)
 from database import group as groupDB
 from entity.group import Group
-from database import user as userDB
 from fastapi import HTTPException
+from settings import(
+    USER_TYPE_ADMIN,
+    USER_TYPE_PROFESSOR,
+    USER_TYPE_STUDENT
+)
 
 router = APIRouter()
 
@@ -22,10 +26,9 @@ async def readGroup(id:int):
 @router.post("", dependencies=[Depends(JWTBearer())])
 async def createGroup(group:Group, request:Request):
     authorization = request.headers.get("authorization")
-    username = getCurrentUserName(authorization)
-    user = userDB.read(username)
+    userType = getCurrentUserType(authorization)
 
-    if not user.administrator:
+    if userType != USER_TYPE_ADMIN:
         raise HTTPException(status_code=401,
             detail="O usuario não tem privilegio de administrador.")
     
@@ -37,10 +40,9 @@ async def createGroup(group:Group, request:Request):
 @router.put("/{id}", dependencies=[Depends(JWTBearer())])
 async def updateGroup(id:int, group:Group, request:Request):
     authorization = request.headers.get("authorization")
-    username = getCurrentUserName(authorization)
-    user = userDB.read(username)
+    userType = getCurrentUserType(authorization)
 
-    if not user.administrator:
+    if userType != USER_TYPE_ADMIN:
         raise HTTPException(status_code=401,
             detail="O usuario não tem privilegio de administrador.")
     groupDB.update(id, group)
@@ -52,10 +54,9 @@ async def updateGroup(id:int, group:Group, request:Request):
 @router.delete("/{id}", dependencies=[Depends(JWTBearer())])
 async def deleteGroup(id:int, request:Request):
     authorization = request.headers.get("authorization")
-    username = getCurrentUserName(authorization)
-    user = userDB.read(username)
+    userType = getCurrentUserType(authorization)
 
-    if not user.administrator:
+    if userType != USER_TYPE_ADMIN:
         raise HTTPException(status_code=401,
             detail="O usuario não tem privilegio de administrador.")
 

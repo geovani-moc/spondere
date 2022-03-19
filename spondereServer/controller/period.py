@@ -4,11 +4,15 @@ from fastapi import (
     Request)
 from controller.security import (
     JWTBearer,
-    getCurrentUserName)
+    getCurrentUserType)
 from database import period as periodDB
 from entity.period import Period 
-from database import user as userDB
 from fastapi import HTTPException
+from settings import(
+    USER_TYPE_ADMIN,
+    USER_TYPE_PROFESSOR,
+    USER_TYPE_STUDENT
+)
 
 router = APIRouter()
 
@@ -22,10 +26,9 @@ async def readPeriod(id:int):
 @router.post("", dependencies=[Depends(JWTBearer())])
 async def createPeriod(period:Period, request:Request):
     authorization = request.headers.get("authorization")
-    username = getCurrentUserName(authorization)
-    user = userDB.read(username)
+    userType = getCurrentUserType(authorization)
 
-    if not user.administrator:
+    if userType != USER_TYPE_ADMIN:
         raise HTTPException(status_code=401,
             detail="O usuario não tem privilegio de administrador.")
     
@@ -38,10 +41,9 @@ async def createPeriod(period:Period, request:Request):
 @router.put("/{id}", dependencies=[Depends(JWTBearer())])
 async def updatePeriod(id:int, period:Period, request:Request):
     authorization = request.headers.get("authorization")
-    username = getCurrentUserName(authorization)
-    user = userDB.read(username)
+    userType = getCurrentUserType(authorization)
 
-    if not user.administrator:
+    if userType != USER_TYPE_ADMIN:
         raise HTTPException(status_code=401,
             detail="O usuario não tem privilegio de administrador.")
     
@@ -53,10 +55,9 @@ async def updatePeriod(id:int, period:Period, request:Request):
 @router.delete("/{id}", dependencies=[Depends(JWTBearer())])
 async def deletePeriod(id:int, request:Request):
     authorization = request.headers.get("authorization")
-    username = getCurrentUserName(authorization)
-    user = userDB.read(username)
+    userType = getCurrentUserType(authorization)
 
-    if not user.administrator:
+    if userType != USER_TYPE_ADMIN:
         raise HTTPException(status_code=401,
             detail="O usuario não tem privilegio de administrador.")
     

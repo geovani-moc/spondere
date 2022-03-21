@@ -138,7 +138,7 @@ def createAttendanceList(groupID:int, presents, groupStudents):
 @router.get("/aluno/", dependencies=[Depends(JWTBearer())])
 async def isPresent(academicClassID:int, studentID:int) -> Dict: 
     try:  
-        (id, failure, validationCode) = frequencyDB.attendancePerStudent(academicClassID, studentID)
+        (id, failure) = frequencyDB.attendancePerStudent(academicClassID, studentID)
     except:
         logging.error("Nehuma frequencia encontrada com os dados fornecidos.")
         raise HTTPException(status_code=403,
@@ -146,6 +146,5 @@ async def isPresent(academicClassID:int, studentID:int) -> Dict:
 
     return {
         "id": id,
-        "failure": failure,
-        "code": validationCode
+        "failure": failure
     }

@@ -175,7 +175,7 @@ def studentsPresents(academicClassID:int):
     return records
 
 def attendancePerStudent(academicClassID:int, studentID:int):
-    sqlQuery = 'select f.id, f.failure, f.validationcode from frequency f \
+    sqlQuery = 'select f.id, f.failure from frequency f \
     where f.academicclassid=%s and f.studentid=%s\
     order by createdate desc limit 1;'
 

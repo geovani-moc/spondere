@@ -13,7 +13,6 @@ class Biometrics(BaseModel):
         schema_extra = {
             "example":{
                 "studentID": 1,
-                "createDate": "2022-10-19 10:23:54+2",
                 "active": True,
                 "invalid": False
             }

@@ -150,3 +150,5 @@ recognition/dataset/*
 *.jpeg
 *.jpg
 *.png
+
+carga/

@@ -1,8 +1,7 @@
 from recognition.findFace import extractFace
-from settings import(
-    PATH_IMAGES
-)
+from settings import(PATH_IMAGES)
 import os
+import glob
 from benchmark import (
     knn, 
     svm, 
@@ -10,8 +9,6 @@ from benchmark import (
     features,
     svm_nonLinear
 )
-
-
 
 def test(classifier, name, extractMethod) -> float:
     count:float = 0
@@ -45,8 +42,10 @@ def testImages(userID, classifier, name, extractMethod, folder):
     for face in faces:
         result, error = classifier(face, userID, name, extractMethod)
         if result: hits += 1
-        count += 1
+        #count += 1
     
+    path = PATH_IMAGES + "/" + str(userID) + "/" + folder
+    count =  len(glob.glob1(path,"*.jpg"))
     return count, hits
 
 

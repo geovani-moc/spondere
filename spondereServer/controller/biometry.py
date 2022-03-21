@@ -106,7 +106,7 @@ async def createBiometry(request:Request, studentID:int, files:List[UploadFile] 
         raise HTTPException(status_code=401,
             detail="O usuário já tem uma biometria válida.")
 
-    userImagesPath:str = PATH_IMAGES + '/' + f'{studentID:010d}'
+    userImagesPath:str = PATH_IMAGES + '/' + f'{studentID}'
     Path(userImagesPath).mkdir(parents=True, exist_ok=True)
 
     for file in files:
@@ -141,7 +141,7 @@ async def updateBiometry(biometryID:int, request:Request, files:List[UploadFile]
         raise HTTPException(status_code=403,
             detail="O usuário só pode adicionar fotos em uma biometria ativa.")
 
-    userImagesPath:str = PATH_IMAGES + '/' + f'{biometry.studentID:010d}'
+    userImagesPath:str = PATH_IMAGES + '/' + f'{biometry.studentID}'
     Path(userImagesPath).mkdir(parents=True, exist_ok=True)
 
     for file in files:

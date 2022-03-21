@@ -1,5 +1,4 @@
 from typing import Any
-from numpy import array
 from sklearn import svm
 from util.recognition import loadFullLabels, loadFullTrain
 from sklearn.preprocessing import LabelEncoder

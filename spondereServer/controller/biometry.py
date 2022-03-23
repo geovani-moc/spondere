@@ -110,7 +110,7 @@ async def createBiometry(request:Request, studentID:int, files:List[UploadFile] 
     Path(userImagesPath).mkdir(parents=True, exist_ok=True)
 
     for file in files:
-        path = userImagesPath + '/' + f'{int(time.time())}' + "_" + file.filename
+        path = userImagesPath + '/' + f'{time.time()}' + "_" + file.filename
         async with aiofiles.open(path, 'wb') as outFile:
             while content := await file.read():  
                 await outFile.write(content)
@@ -145,7 +145,7 @@ async def updateBiometry(biometryID:int, request:Request, files:List[UploadFile]
     Path(userImagesPath).mkdir(parents=True, exist_ok=True)
 
     for file in files:
-        path = userImagesPath + '/' + f'{int(time.time())}' + "_" + file.filename
+        path = userImagesPath + '/' + f'{time.time()}' + "_" + file.filename
         async with aiofiles.open(path, 'wb') as outFile:
             while content := await file.read():  
                 await outFile.write(content)

@@ -6,7 +6,7 @@ from recognition.featureExtraction import extractFeature
 import settings
 
 #svm classificador
-def verifyFace(image, userID):
+def verifyFace(image, userID:int):
     name = 'hog'
     featureMethod = extractFeature
     kernel='linear'
@@ -42,7 +42,7 @@ def verifyFace(image, userID):
     result = model.predict(featuresTest)
     label = labelEncoder.inverse_transform(result)
 
-    if label[0] == userID: return True, None
+    if label[0] == str(userID): return True, None
 
     return False, "A face do usuário não foi reconhecida."
 

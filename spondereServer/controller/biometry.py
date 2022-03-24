@@ -21,6 +21,8 @@ from database import frequency as frequencyDB
 from database import user as userDB
 from util.files import createUserImagesPath, removeAllFilesInFolder
 from settings import(
+    LABELS,
+    SVM_HOG,
     USER_TYPE_ADMIN,
     USER_TYPE_PROFESSOR,
     USER_TYPE_STUDENT,
@@ -29,15 +31,21 @@ from settings import(
 from pathlib import Path
 import aiofiles
 import time
+from util.recognition import(
+    readAllLabels,
+    readAllTrains,
+    updateTrain
+)
+from recognition.featureExtraction import extractFeature
+
 
 router = APIRouter()
 
 @router.post("/checar/", dependencies=[Depends(JWTBearer())])
-async def checkBiometry(request:Request, studentID:int, classID:int, ble:bool,
+async def checkBiometry(studentID:int, classID:int, ble:bool,
     qrcode:bool, validationCode:str, latitude:float, longitude:float,
     backgroundTasks:BackgroundTasks, file: UploadFile = File(...))->Dict:
-    authorization = request.headers.get("authorization")
-    username = getCurrentUserName(authorization)
+       
     contents = await file.read()
 
     frequency = Frequency()
@@ -50,11 +58,11 @@ async def checkBiometry(request:Request, studentID:int, classID:int, ble:bool,
     frequency.latitude = latitude
     frequency.longitude = longitude
 
-    backgroundTasks.add_task(processBiometrics, frequency, username, contents)
+    backgroundTasks.add_task(processBiometrics, frequency, studentID, contents)
 
     return {"result": "Imagem recebida, em processamento."}
 
-def processBiometrics(frequency:Frequency, username:str, contents):
+def processBiometrics(frequency:Frequency, userID:int, contents):
     image = checkUploadedImage(contents)
     
     if image is None:
@@ -77,9 +85,11 @@ def processBiometrics(frequency:Frequency, username:str, contents):
             print(inst.args)
         return
             
-    result, error = verifyFace(face, username)
+    result, error = verifyFace(face, userID)
     if not result: 
         frequency.failure = error
+    else:
+        frequency.photo = contents
         
     try:
          id = frequencyDB.create(frequency)
@@ -91,8 +101,10 @@ def processBiometrics(frequency:Frequency, username:str, contents):
     print("A frequencia com id: " + str(id) + " foi criada")
 
 
-@router.post("{studentID}", dependencies=[Depends(JWTBearer())])
-async def createBiometry(request:Request, studentID:int, files:List[UploadFile] = File(...)) -> dict:
+@router.post("/{studentID}", dependencies=[Depends(JWTBearer())])
+async def createBiometry(backgroundTasks:BackgroundTasks, request:Request, 
+    studentID:int, files:List[UploadFile] = File(...)) -> dict:
+
     authorization = request.headers.get("authorization")
     userType = getCurrentUserType(authorization)
     username = getCurrentUserName(authorization)
@@ -121,12 +133,15 @@ async def createBiometry(request:Request, studentID:int, files:List[UploadFile] 
     biometry.invalid = False
     biometry.failure = None
     id = biometryDB.create(biometry)
+    backgroundTasks.add_task(syncTrain, studentID, id)
     return {
         "id": id
     }
 
 @router.put("/adcionar_fotos/{biometryID}", dependencies=[Depends(JWTBearer())])
-async def updateBiometry(biometryID:int, request:Request, files:List[UploadFile] = File(...))-> dict:
+async def updateBiometry(backgroundTasks:BackgroundTasks, biometryID:int, 
+    request:Request, files:List[UploadFile] = File(...))-> dict:
+
     authorization = request.headers.get("authorization")
     userType = getCurrentUserType(authorization)
     username = getCurrentUserName(authorization)
@@ -149,6 +164,8 @@ async def updateBiometry(biometryID:int, request:Request, files:List[UploadFile]
         async with aiofiles.open(path, 'wb') as outFile:
             while content := await file.read():  
                 await outFile.write(content)
+
+    backgroundTasks.add_task(syncTrain, biometry.studentID, biometry.id)
 
     return{
         "result": "success"
@@ -178,3 +195,13 @@ async def getBiometry(id:int) -> dict:
     return {
         "biometry": biometry
     }
+
+def syncTrain(userID, biometryID):
+    #em caso de erro tranformar a biometria em inválida
+    methodName = 'hog'
+    method = extractFeature
+
+    SVM_HOG = readAllTrains(methodName, method)
+    LABELS = readAllLabels(methodName)
+    #testar se esta salvando no variavel em settings
+    

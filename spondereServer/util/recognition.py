@@ -33,12 +33,47 @@ def loadFullTrain(trainName, method):
                 
     return features, errors
 
+def readAllTrains(trainName, method):
+    path = PATH_DATA_TRAIN
+    features = []
+    errors = []  
+    
+    directories = os.listdir(PATH_IMAGES)
+    for directorie in directories:
+        if os.path.isdir(os.path.join(PATH_IMAGES, directorie)):
+            featuresUser, error = train(PATH_IMAGES, directorie, method, trainName)
+            if error is not None:
+                errors += error
+            if featuresUser is not None:
+                features.append(featuresUser)
+
+    if(not os.path.exists(path)):
+        os.mkdir(path)
+    
+    features = np.array(features, dtype=float)
+    np.save(os.path.join(path, trainName+'.npy'), features)
+                
+    return features, errors
+
 def loadFullLabels(name):
     path = PATH_DATA_TRAIN
     if os.path.exists(os.path.join(path, 'labels.npy')):
         labels = np.load(os.path.join(path, 'labels.npy'))
         return labels
     
+    labels = []
+    directories = os.listdir(PATH_IMAGES)
+    for directorie in directories:
+        if os.path.isdir(os.path.join(PATH_IMAGES, directorie)):
+            if os.path.exists(os.path.join(PATH_IMAGES, directorie, name+'.npy')):
+                labels.append(directorie)
+    
+    np.save(os.path.join(path, 'labels.npy'), labels)
+    
+    return labels
+
+def readAllLabels(name:str):
+    path = PATH_DATA_TRAIN   
     labels = []
     directories = os.listdir(PATH_IMAGES)
     for directorie in directories:
@@ -80,7 +115,6 @@ def normalizeFeatures(features):
     return features
 
 def train(path, userID, method, name="eigen"):
-
     if os.path.exists(path+"/"+userID+'/' + name + '.npy'):
         features = np.load(path+"/"+userID+'/' + name + '.npy')   
         return features, None 

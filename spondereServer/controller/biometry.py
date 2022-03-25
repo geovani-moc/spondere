@@ -34,9 +34,11 @@ import time
 from util.recognition import(
     readAllLabels,
     readAllTrains,
+    train,
     updateTrain
 )
 from recognition.featureExtraction import extractFeature
+#logger = logging.getLogger(__name__)
 
 
 router = APIRouter()
@@ -197,11 +199,18 @@ async def getBiometry(id:int) -> dict:
     }
 
 def syncTrain(userID, biometryID):
-    #em caso de erro tranformar a biometria em inválida
     methodName = 'hog'
     method = extractFeature
 
-    SVM_HOG = readAllTrains(methodName, method)
+    #testar---------------------------------------------------------------------------------------
+    _, error = updateTrain(PATH_IMAGES, userID, method, methodName)
+    if error is not None:
+        if len(error) > 50:
+            error = error[:50]
+            print("conjunto de erro acumulado.[maior que o limite do banco de dados]")
+        biometryDB.invalidate(biometryID, error)
+        return
+
+    SVM_HOG, _ = readAllTrains(methodName, method)
     LABELS = readAllLabels(methodName)
-    #testar se esta salvando no variavel em settings
     

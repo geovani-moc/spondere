@@ -88,14 +88,14 @@ def readAllLabels(name:str):
 def updateTrain(path, userID, methodExtractFeature, name):
     faces, error = extractFace(path, userID)
 
-    if error is not None: return None, [error]
+    if error is not None: return None, error
     if len(faces) < MIN_SIZE_DATASET:
-        return None, ["O usuario não tem imagens sufucientes com a face detectavel."]
+        return None, "r003"
 
     features = methodExtractFeature(faces)
     
     if len(features) < MIN_SIZE_DATASET:
-        return None, "quantidade de caracteristicas insuficiente:" + userID
+        return None, "r004"
 
     features = normalizeFeatures(features)
     features = np.array(features, dtype=float)
@@ -110,7 +110,7 @@ def normalizeFeatures(features):
 
     if len(features) < NUMBER_FEATURES_DATASET:
         for i in range(len(features), NUMBER_FEATURES_DATASET):
-            features = np.concatenate((features, [features[0]])) #checar se fetures tem size = numeber features dataset
+            features = np.concatenate((features, [features[0]]))
 
     return features
 

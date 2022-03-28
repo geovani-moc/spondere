@@ -226,3 +226,30 @@ def invalidate(id:int, failure:str):
             connection.close()
 
     return True
+
+def validate(id:int):
+    sqlQuery = 'update biometrics set invalid=false, failure=null where id=%s;'
+
+    try:
+        connection = pg.connect(
+            user = DB_USERNAME,
+            password = DB_PASSWORD,
+            host = HOST,
+            port = PORT,
+            database = DB_NAME
+        )
+        cursor = connection.cursor()
+        cursor.execute(sqlQuery, (id,))
+
+        connection.commit()
+
+    except pg.OperationalError as e:
+        logging.exception(e)
+        raise HTTPException(status_code=406,
+            detail="Erro de conexão com o banco de dados.") 
+    finally:
+        if (connection):
+            cursor.close()
+            connection.close()
+
+    return True

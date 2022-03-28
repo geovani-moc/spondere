@@ -198,11 +198,10 @@ async def getBiometry(id:int) -> dict:
         "biometry": biometry
     }
 
-def syncTrain(userID, biometryID):
+def syncTrain(userID:int, biometryID:int):
     methodName = 'hog'
     method = extractFeature
 
-    #testar---------------------------------------------------------------------------------------
     _, error = updateTrain(PATH_IMAGES, userID, method, methodName)
     if error is not None:
         if len(error) > 50:
@@ -213,4 +212,4 @@ def syncTrain(userID, biometryID):
 
     SVM_HOG, _ = readAllTrains(methodName, method)
     LABELS = readAllLabels(methodName)
-    
+    biometryDB.validate(biometryID)

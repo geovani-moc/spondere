@@ -85,7 +85,7 @@ def readAllLabels(name:str):
     
     return labels
 
-def updateTrain(path, userID, methodExtractFeature, name):
+def updateTrain(path:str, userID:int, methodExtractFeature, name:str):
     faces, error = extractFace(path, userID)
 
     if error is not None: return None, error
@@ -100,7 +100,7 @@ def updateTrain(path, userID, methodExtractFeature, name):
     features = normalizeFeatures(features)
     features = np.array(features, dtype=float)
 
-    np.save(path + '/' + userID + '/' + name + '.npy', features)
+    np.save(path + '/' + str(userID) + '/' + name + '.npy', features)
 
     return  features, error
 
@@ -114,20 +114,20 @@ def normalizeFeatures(features):
 
     return features
 
-def train(path, userID, method, name="eigen"):
-    if os.path.exists(path+"/"+userID+'/' + name + '.npy'):
-        features = np.load(path+"/"+userID+'/' + name + '.npy')   
+def train(path:str, userID:int, method, name="eigen"):
+    if os.path.exists(path+"/"+str(userID)+'/' + name + '.npy'):
+        features = np.load(path+"/"+str(userID)+'/' + name + '.npy')   
         return features, None 
 
     return updateTrain(path, userID, method, name)
 
-def deleteTrain(name):
+def deleteTrain(name:str):
     dirs = os.listdir(PATH_IMAGES)
     for dir in dirs:
         if os.path.isdir(os.path.join(PATH_IMAGES, dir)):
             if os.path.exists(os.path.join(PATH_IMAGES, dir, name+'.npy')):
                 os.remove(os.path.join(PATH_IMAGES, dir, name+'.npy'))
 
-def deleteFullTrain(name):
+def deleteFullTrain(name:str):
     if os.path.exists(os.path.join(PATH_DATA_TRAIN, name + '.npy')):
         os.remove(os.path.join(PATH_DATA_TRAIN, name + '.npy'))

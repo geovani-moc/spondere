@@ -4,13 +4,13 @@ import glob
 import sys
 import numpy as np
 
-def saveBinaryImagesInDataset(images, pathDataset, userCode):
+def saveBinaryImagesInDataset(images, pathDataset:str, userCode:int):
     count:int = 1
     if(len(images) < 1): return 'Erro nenhuma foi enviada para o dataset.' 
-    Path(pathDataset+ '/'+ userCode +'/' ).mkdir(parents=True, exist_ok=True)
+    Path(pathDataset+ '/'+ str(userCode) +'/' ).mkdir(parents=True, exist_ok=True)
 
     for image in images:
-        path = pathDataset+ '/'+ userCode +'/' + str(count) + '.jpg'
+        path = pathDataset+ '/'+ str(userCode) +'/' + str(count) + '.jpg'
         # with open(path, "wb") as buffer:
         #     shutil.copyfileobj(image, buffer)
         cv.imwrite(path, image)
@@ -26,7 +26,7 @@ def checkUploadedImage(file):
     else:
         return decode_img
 
-def loadImages(path):
+def loadImages(path:str):
     images = []
     pathImages = glob.glob(path+'/*.jpg')
 
@@ -39,10 +39,10 @@ def loadImages(path):
 
     return images
 
-def loadUserDataset(path, userID):
+def loadUserDataset(path:str, userID:int):
     images = []
 
-    pathImages = glob.glob(path+"/"+userID+'/*.jpg')
+    pathImages = glob.glob(path+"/"+str(userID)+'/*.jpg')
 
     for pathImage in pathImages: 
         image = cv.imread(pathImage, cv.IMREAD_GRAYSCALE)

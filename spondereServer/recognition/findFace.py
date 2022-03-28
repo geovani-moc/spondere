@@ -22,7 +22,7 @@ def findFace(image):
 
     return cropFace, None
 
-def extractFace(path, userID):
+def extractFace(path:str, userID:int):
     images = loadUserDataset(path, userID)
     faces = []
 

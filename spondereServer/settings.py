@@ -27,4 +27,4 @@ USER_ACCOUNT_DESACTIVATED = 2
 SVM_HOG = np.array([], float)
 LABELS = np.array([], str)
 
-TIMEZONE_API_SERVER = -3
+TIMEZONE_API_SERVER = "-03:00"

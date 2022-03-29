@@ -4,7 +4,6 @@ from recognition.faceRecognition import createDataFeatures, verifyFace
 import unittest
 from util.image import loadUserDataset
 
-#https://kapeli.com/cheat_sheets/Python_unittest_Assertions.docset/Contents/Resources/Documents/index
 class test_recognition(unittest.TestCase):
     
     def testTrueFaceRecognition(self):

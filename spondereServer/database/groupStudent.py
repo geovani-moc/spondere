@@ -1,5 +1,6 @@
 import logging
 from typing import Dict, List
+from unittest import result
 from entity.groupStudent import GroupStudent
 from fastapi import HTTPException
 import psycopg2 as pg
@@ -181,3 +182,33 @@ def readStudentsIDbyGroup(groupID:int)->Dict:
             connection.close()
 
     return records
+
+def exists(username:str, groupID:int)->bool:
+    sqlQuery = 'select count(*) from group_students gs where gs.studentusername=%s\
+    and gs.groupid=%s;'
+
+    try:
+        connection = pg.connect(
+            user = DB_USERNAME,
+            password = DB_PASSWORD,
+            host = HOST,
+            port = PORT,
+            database = DB_NAME
+        )
+
+        cursor = connection.cursor()
+        cursor.execute(sqlQuery, (username, groupID))
+        records = cursor.fetchall()[0]
+ 
+    except pg.OperationalError as e:
+        logging.exception(e)
+        raise HTTPException(status_code=406,
+            detail="Erro de conexão com o banco de dados.")
+    finally:
+        if (connection):
+            cursor.close()
+            connection.close()
+
+    if result == 0: return False
+
+    return True

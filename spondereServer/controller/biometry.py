@@ -18,7 +18,11 @@ from recognition.findFace import findFace
 from recognition.faceRecognition import verifyFace
 from database import biometrics as biometryDB
 from database import frequency as frequencyDB
+from database import academicClass as academicClassDB
+from database import groupStudent as groupStudentDB
 from database import user as userDB
+from datetime import datetime
+from util.date import isSmaller
 from util.files import createUserImagesPath, removeAllFilesInFolder
 from settings import(
     LABELS,
@@ -26,7 +30,8 @@ from settings import(
     USER_TYPE_ADMIN,
     USER_TYPE_PROFESSOR,
     USER_TYPE_STUDENT,
-    PATH_IMAGES
+    PATH_IMAGES,
+    TIMEZONE_API_SERVER
 )
 from pathlib import Path
 import aiofiles
@@ -44,9 +49,20 @@ from recognition.featureExtraction import extractFeature
 router = APIRouter()
 
 @router.post("/checar/", dependencies=[Depends(JWTBearer())])
-async def checkBiometry(studentID:int, classID:int, ble:bool,
+async def checkBiometry(request:Request, studentID:int, classID:int, ble:bool,
     qrcode:bool, validationCode:str, latitude:float, longitude:float,
     backgroundTasks:BackgroundTasks, file: UploadFile = File(...))->Dict:
+    authorization = request.headers.get("authorization")
+    userType = getCurrentUserType(authorization)
+    username = getCurrentUserName(authorization)
+
+    if userType != USER_TYPE_STUDENT:
+        raise HTTPException(status_code=401,
+            detail="Somente alunos podem checar biomátria.")
+
+    if not isCheckable(username, classID):
+         raise HTTPException(status_code=406,
+            detail="b001")
        
     contents = await file.read()
 
@@ -213,3 +229,17 @@ def syncTrain(userID:int, biometryID:int):
     SVM_HOG, _ = readAllTrains(methodName, method)
     LABELS = readAllLabels(methodName)
     biometryDB.validate(biometryID)
+
+def isCheckable(username:str , classID:int)->bool:
+    date = str(datetime.now())+str(TIMEZONE_API_SERVER)
+    groupID, enddate = academicClassDB.infoCheckable(classID)
+    if not groupStudentDB.exists(username, groupID):
+        return False
+
+    rightNow = datetime.fromisoformat(date)
+
+    if rightNow > enddate:
+        academicClassDB.blockAttendance(classID)
+        return False
+
+    return True

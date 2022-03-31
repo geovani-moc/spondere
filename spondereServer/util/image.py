@@ -42,7 +42,10 @@ def loadImages(path:str):
 def loadUserDataset(path:str, userID:int):
     images = []
 
-    pathImages = glob.glob(path+"/"+str(userID)+'/*.jpg')
+    types = ('/*.jpg', '/*.jpeg')
+    pathImages = []
+    for imagesType in types:
+        pathImages.extend(glob.glob(path+"/"+str(userID)+imagesType))
 
     for pathImage in pathImages: 
         image = cv.imread(pathImage, cv.IMREAD_GRAYSCALE)

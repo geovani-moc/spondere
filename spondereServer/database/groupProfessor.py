@@ -16,7 +16,7 @@ from config import(
 
 def create(groupProfessor:GroupProfessor):
     sqlQuery = 'insert into group_professors (groupid, professorusername) values(%s, %s);'
-    id = None
+    
     try:
         connection = pg.connect(
             user = DB_USERNAME,

@@ -35,18 +35,18 @@ async def readGroupByStudent(username:Optional[str]=None):
         "student": students
     }
 
-@router.post("", dependencies=[Depends(JWTBearer())])
+@router.post("/", dependencies=[Depends(JWTBearer())])
 async def createGroup(group:GroupStudent, request:Request):
     authorization = request.headers.get("authorization")
     userType = getCurrentUserType(authorization)
 
     if userType != USER_TYPE_ADMIN:
         raise HTTPException(status_code=401,
-            detail="O usuario não tem privilegio de administrador.")
+            detail="O usuário não tem privilegio de administrador.")
     
-    id = groupDB.create(group)
+    groupDB.create(group)
     return {
-        "id": id
+        "result": "success"
     }
 
 @router.put("/", dependencies=[Depends(JWTBearer())])

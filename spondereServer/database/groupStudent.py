@@ -15,7 +15,7 @@ from config import(
 
 def create(groupStudent:GroupStudent):
     sqlQuery = 'insert into group_students (groupid, studentusername) values(%s, %s);'
-    id = None
+
     try:
         connection = pg.connect(
             user = DB_USERNAME,
@@ -26,7 +26,6 @@ def create(groupStudent:GroupStudent):
         )
         cursor = connection.cursor()
         cursor.execute(sqlQuery, (groupStudent.groupID, groupStudent.studentUsername))
-
         connection.commit()
 
     except pg.OperationalError as e:

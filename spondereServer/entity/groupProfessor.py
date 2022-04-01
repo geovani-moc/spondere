@@ -8,6 +8,6 @@ class GroupProfessor(BaseModel):
         schema_extra = {
             "example":{
                 "professorUsername": "mari",
-                "group": "1",
+                "groupID": 1
             }
         }

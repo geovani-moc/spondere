@@ -1,4 +1,5 @@
-from util.recognition import deleteFullTrain, deleteTrain, deleteFullTrain
+from util.recognition import deleteFullTrain, deleteTrain
+from benchmark.test import beginTests
 
 if __name__ == '__main__':
     deleteTrain("eigen")
@@ -8,3 +9,5 @@ if __name__ == '__main__':
     deleteFullTrain("eigen")
     deleteFullTrain("lbp")
     deleteFullTrain("hog")
+
+    beginTests()    

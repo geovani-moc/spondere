@@ -3,8 +3,10 @@ from jose import jwt
 from typing import Dict
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from fastapi import Request, HTTPException
+from config import(
+    SECRET_KEY
+)
 
-SECRET_KEY = "002ba35be5e3daadcc1c97d634d5a496bf9524d9d7757eca3f3699f7b0f6b834"
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_SECONDS = 864000 #10 dias em segundos
 

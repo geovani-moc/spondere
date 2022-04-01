@@ -11,3 +11,5 @@ DB_PASSWORD:str = config['postgres']['PASSWORD']
 DB_USERNAME:str = config['postgres']['USERNAME']
 HOST:str = config['postgres']['HOST']
 PORT:str = config['postgres']['PORT']
+
+SECRET_KEY = config['token']['SECRET_KEY']

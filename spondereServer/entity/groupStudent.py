@@ -8,6 +8,6 @@ class GroupStudent(BaseModel):
         schema_extra = {
             "example":{
                 "studentUsername": "Jessica",
-                "group": "1",
+                "groupID": 1,
             }
         }

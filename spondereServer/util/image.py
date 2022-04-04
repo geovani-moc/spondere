@@ -3,6 +3,11 @@ import cv2 as cv
 import glob
 import sys
 import numpy as np
+from io import BytesIO
+import zipfile
+import json
+from settings import noImage
+import zlib
 
 def saveBinaryImagesInDataset(images, pathDataset:str, userCode:int):
     count:int = 1
@@ -17,6 +22,11 @@ def saveBinaryImagesInDataset(images, pathDataset:str, userCode:int):
         count = count+1
 
     return None
+
+def imageResized(image, height, width):
+    dim = (width, height)
+    result = cv.resize(image, (dim), interpolation=cv.INTER_AREA)
+    return result
 
 def checkUploadedImage(file):
     try:
@@ -65,3 +75,31 @@ def printFeature(pcaImage, imageSize, name = 'Teste'):
     cv.imshow(name, norm_image)
     cv.waitKey()
     cv.destroyWindow(name)
+
+def zipPresentStudentsImages(texts, images):
+    isSuccess, bufferNoImage = cv.imencode(".jpg", noImage)
+    if not isSuccess:
+        print("Imagem default não foi carregada.")
+
+    buffer = []
+    jsonTexts = json.dumps(texts).encode()
+    buffer.append(("names.json", jsonTexts))
+
+    for index, image in enumerate(images):
+        path:str = texts[index] + ".jpg"
+        if image is not None:
+            isSuccess, bufferImage = cv.imencode(".jpg", image)
+            buffer.append((path, bufferImage))
+        else:
+            buffer.append((path, bufferNoImage))
+
+    return generateZip(buffer)
+
+def generateZip(files):
+    memoryZip = BytesIO()
+
+    with zipfile.ZipFile(memoryZip, mode="w", compression=zipfile.ZIP_DEFLATED) as zippedFiles:
+        for file in files:
+            zippedFiles.writestr(file[0], file[1])
+
+    return memoryZip.getvalue()

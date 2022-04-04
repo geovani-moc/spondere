@@ -4,7 +4,8 @@ from fastapi import (
     APIRouter,
     Depends, 
     Request, 
-    Body)
+    Body,
+    Response)
 from controller.security import (
     JWTBearer,
     getCurrentUserType)
@@ -17,6 +18,8 @@ from settings import(
     USER_TYPE_PROFESSOR,
     USER_TYPE_STUDENT
 )
+import io
+from starlette.responses import StreamingResponse
 
 router = APIRouter()
 
@@ -148,3 +151,24 @@ async def isPresent(academicClassID:int, studentID:int) -> Dict:
         "id": id,
         "failure": failure
     }
+
+@router.get("/alunos_fotos/", dependencies=[Depends(JWTBearer())])
+async def presentStudentsWithPhoto(request:Request, academicClassID:int) -> Dict: 
+    authorization = request.headers.get("authorization")
+    userType = getCurrentUserType(authorization)
+
+    if userType != USER_TYPE_ADMIN and userType != USER_TYPE_PROFESSOR:
+        raise HTTPException(status_code=401,
+            detail="O usuario não tem privilegio de administrador ou professor.")
+    try:  
+        zipResponse = frequencyDB.studentsPresentsWithPhoto(academicClassID)
+    except:
+        logging.error("Falha ao processar dados de presença.")
+        raise HTTPException(status_code=403,
+                detail="f001")
+
+    response = Response(zipResponse, media_type="application/x-zip-compressed", headers={
+        'Content-Disposition': f'attachment;filename=response.zip'
+    })
+   
+    return response

@@ -11,6 +11,8 @@ from config import(
     PORT
 )
 from settings import TIMEZONE_API_SERVER
+from util.image import checkUploadedImage, imageResized
+from util.image import zipPresentStudentsImages
 
 def create(frequency: Frequency):
     frequency.createDate = str(datetime.now())+str(TIMEZONE_API_SERVER)
@@ -202,3 +204,50 @@ def attendancePerStudent(academicClassID:int, studentID:int):
             connection.close()
 
     return record
+
+def studentsPresentsWithPhoto(academicClassID:int):
+    sqlQuery = 'select u.username, f.photo from frequency f\
+        inner join users u on f.academicclassid = %s\
+        and u.id = f.studentid and failure is null;'
+
+    try:
+        connection = pg.connect(
+            user = DB_USERNAME,
+            password = DB_PASSWORD,
+            host = HOST,
+            port = PORT,
+            database = DB_NAME
+        )
+
+        cursor = connection.cursor()
+        cursor.execute(sqlQuery, (academicClassID,))
+        
+        records = cursor.fetchall()
+
+    except pg.OperationalError as e:
+        logging.exception(e)
+        raise HTTPException(status_code=406,
+            detail="Erro de conexão com o banco de dados.") 
+    finally:
+        if (connection):
+            cursor.close()
+            connection.close()
+
+    return compactPresentStudentsImages(records)
+
+def compactPresentStudentsImages(records):
+    usernames = []
+    images = []
+    for (username, file) in records:
+        image = checkUploadedImage(file)
+        if file != None:
+            scale = 100.0 / image.shape[0]
+            width = int(image.shape[1] * scale)
+            height = int(image.shape[0] * scale)
+            image = imageResized(image, height, width)
+
+        usernames.append(username)
+        images.append(image)
+
+
+    return zipPresentStudentsImages(usernames, images)

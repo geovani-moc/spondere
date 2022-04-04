@@ -147,8 +147,8 @@ recognition/dataset/*
 #certificados para uso de https localmente.
 *.pem 
 *.npy
-*.jpeg
-*.jpg
-*.png
+#*.jpeg
+#*.jpg
+#*.png
 
 carga/

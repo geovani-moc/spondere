@@ -102,7 +102,6 @@ def encodePresentStudentsImages(texts, images):
                 "image": None
             })
 
-    #presents = json.dumps({"presents":buffer})
     presents = {"presents":buffer}
     return presents
 

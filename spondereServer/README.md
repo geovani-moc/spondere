@@ -5,16 +5,31 @@
 
 <h3 align="center">Índice</h3>
 
+* [Requisitos de sistema](#introdução)
 * [Requisitos de sistema](#Requisitos-de-sistema)
 * [Instalação](#Instalação)
 * [Configurando o sistema](#Configurando-o-sistema)
 * [Iniciando o sistema](#Iniciando-o-sistema)
 * [Tabela de erros](#Tabela-de-erros)
 
+<h3 align="center">Introdução</h3>
+...
+Todos os passos descritos são referentes ao sistema operacional Linux com Kernel 5.0 ou superior. 
+...
 
 <h3 align="center">Requisitos de sistema</h3>
-    
-    ...
+Para a utilização do sistema de forma adequada e de acordo com com a sua finalidade é necessária a instalação de uma série de programas ou módulos. Parte desses pacotes é especificada no arquivo "requirements.txt" encontrada na pasta raiz do servidor (pasta nomeada de "spondereServer"). Alguns dos pacotes e/ou módulos podem ser substituídos por outros com finalidade semelhante, mas o uso de tais não garante o correto funcionamento da plataforma. Entre os principais componentes necessários ou não incluídos no arquivo "requirements.txt" estão descritos na tabela 1.
+
+| | Tabela 1: Principais requisitos de sistema ||
+Nome | Descrição | Versão |
+------------ | :-----------: | -----------: |
+OpenCV | ... | ... |
+Codecs| Pré requisito para o funcionamento do OPenCV. ||
+FastAPI | ... | ... |
+Python | ... | 3.9.10|
+
+
+
 <h3 align="center">Instalação </h3>
 
     ...

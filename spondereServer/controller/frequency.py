@@ -161,14 +161,10 @@ async def presentStudentsWithPhoto(request:Request, academicClassID:int) -> Dict
         raise HTTPException(status_code=401,
             detail="O usuario não tem privilegio de administrador ou professor.")
     try:  
-        zipResponse = frequencyDB.studentsPresentsWithPhoto(academicClassID)
+        response = frequencyDB.studentsPresentsWithPhoto(academicClassID)
     except:
         logging.error("Falha ao processar dados de presença.")
         raise HTTPException(status_code=403,
                 detail="f001")
-
-    response = Response(zipResponse, media_type="application/x-zip-compressed", headers={
-        'Content-Disposition': f'attachment;filename=response.zip'
-    })
    
     return response

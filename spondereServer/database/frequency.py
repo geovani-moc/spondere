@@ -206,7 +206,7 @@ def attendancePerStudent(academicClassID:int, studentID:int):
     return record
 
 def studentsPresentsWithPhoto(academicClassID:int):
-    sqlQuery = 'select u.username, f.photo from frequency f\
+    sqlQuery = 'select u.fullname, f.photo from frequency f\
         inner join users u on f.academicclassid = %s\
         and u.id = f.studentid and failure is null;'
 

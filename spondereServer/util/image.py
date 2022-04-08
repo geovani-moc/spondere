@@ -6,8 +6,8 @@ import numpy as np
 from io import BytesIO
 import zipfile
 import json
-from settings import noImage
 import zlib
+import base64
 
 def saveBinaryImagesInDataset(images, pathDataset:str, userCode:int):
     count:int = 1
@@ -77,23 +77,34 @@ def printFeature(pcaImage, imageSize, name = 'Teste'):
     cv.destroyWindow(name)
 
 def zipPresentStudentsImages(texts, images):
-    isSuccess, bufferNoImage = cv.imencode(".jpg", noImage)
-    if not isSuccess:
-        print("Imagem default não foi carregada.")
+
+    if len(texts) != len(images): 
+        raise ValueError("Erro, quantidade de nomes diferente de imagens.")
 
     buffer = []
-    jsonTexts = json.dumps(texts).encode()
-    buffer.append(("names.json", jsonTexts))
 
     for index, image in enumerate(images):
-        path:str = texts[index] + ".jpg"
         if image is not None:
-            isSuccess, bufferImage = cv.imencode(".jpg", image)
-            buffer.append((path, bufferImage))
-        else:
-            buffer.append((path, bufferNoImage))
+            _, bufferImage = cv.imencode(".jpg", image)
+            imageBase64 = (base64.b64encode(bufferImage)).decode("utf-8")
 
-    return generateZip(buffer)
+            buffer.append({
+                "name":texts[index],
+                "biometry":True,
+                "encode":"jpg/base64",
+                "image": imageBase64
+            })
+        else:
+            buffer.append({
+                "name":texts[index],
+                "biometry":False,
+                "encode": None,
+                "image": None
+            })
+
+    presents = json.dumps({"presents":buffer}).encode()
+    
+    return generateZip([("presents.json", presents)])
 
 def generateZip(files):
     memoryZip = BytesIO()

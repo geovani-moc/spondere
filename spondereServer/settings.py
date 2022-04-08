@@ -11,8 +11,6 @@ THRESHOLD = 2200
 
 VALIDATION_CODE_SIZE = 10
 
-noImage = cv.imread("static/image/no_image.jpg")
-
 faceCascade = cv.CascadeClassifier('static/xml/haarcascade_frontalface_default.xml')
 eyeCascade = cv.CascadeClassifier('static/xml/haarcascade_eye.xml')
 PATH_CLASSIFIER_TRAIN ='static/xml/face_classifier.xml'

@@ -76,7 +76,7 @@ def printFeature(pcaImage, imageSize, name = 'Teste'):
     cv.waitKey()
     cv.destroyWindow(name)
 
-def zipPresentStudentsImages(texts, images):
+def encodePresentStudentsImages(texts, images):
 
     if len(texts) != len(images): 
         raise ValueError("Erro, quantidade de nomes diferente de imagens.")
@@ -102,9 +102,9 @@ def zipPresentStudentsImages(texts, images):
                 "image": None
             })
 
-    presents = json.dumps({"presents":buffer}).encode()
+    presents = json.dumps({"presents":buffer})
     
-    return generateZip([("presents.json", presents)])
+    return presents
 
 def generateZip(files):
     memoryZip = BytesIO()

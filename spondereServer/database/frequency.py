@@ -12,7 +12,7 @@ from config import(
 )
 from settings import TIMEZONE_API_SERVER
 from util.image import checkUploadedImage, imageResized
-from util.image import zipPresentStudentsImages
+from util.image import encodePresentStudentsImages
 
 def create(frequency: Frequency):
     frequency.createDate = str(datetime.now())+str(TIMEZONE_API_SERVER)
@@ -250,4 +250,4 @@ def compactPresentStudentsImages(records):
         images.append(image)
 
 
-    return zipPresentStudentsImages(usernames, images)
+    return encodePresentStudentsImages(usernames, images)

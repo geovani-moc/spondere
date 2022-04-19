@@ -253,3 +253,34 @@ def validate(id:int):
             connection.close()
 
     return True
+
+def getValid(studentID:int) -> bool:
+    sqlQuery = 'select id from biometrics where studentID=%s \
+        and active=true and invalid=false;'
+    id = 0
+    
+    try:
+        connection = pg.connect(
+            user = DB_USERNAME,
+            password = DB_PASSWORD,
+            host = HOST,
+            port = PORT,
+            database = DB_NAME
+        )
+
+        cursor = connection.cursor()
+        cursor.execute(sqlQuery, (studentID,))
+        id = cursor.fetchone()[0]
+
+        connection.commit()
+
+    except pg.OperationalError as e:
+        logging.exception(e)
+        raise HTTPException(status_code=406,
+            detail="Erro de conexão com o banco de dados.")
+    finally:
+        if (connection):
+            cursor.close()
+            connection.close()
+
+    return id

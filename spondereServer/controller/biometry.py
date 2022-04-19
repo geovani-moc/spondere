@@ -1,4 +1,5 @@
 from typing import Dict, List
+from unittest import result
 from fastapi import (
     APIRouter, 
     Depends,
@@ -243,3 +244,16 @@ def isCheckable(username:str , classID:int)->bool:
         return False
 
     return True
+
+@router.get("/valida/{userID}", dependencies=[Depends(JWTBearer())])
+async def isValid(userID:int) -> dict:
+    result = 0
+    try:
+        result = biometryDB.getValid(userID)
+    except:
+        raise HTTPException(status_code=406,
+            detail="Dados inválidos.")
+    
+    return {
+        "biometryID": result
+    }

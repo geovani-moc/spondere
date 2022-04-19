@@ -28,7 +28,7 @@ Para a utilização do sistema de forma adequada e de acordo com com a sua final
 Nome | Descrição | Versão |
 ------------ | :-----------: | -----------: |
 <i>OpenCV</i> |O <i>OpenCV</i>(do inglês <i>Open Source Computer Vision Library</i>) é uma biblioteca de software de visão computacional e aprendizado de máquina de código aberto. | 4.5.3 |
-Codecs| Pré requisito para o funcionamento do OPenCV. | --- |
+Codecs(FFmpeg)| FFmpeg é um projeto de software livre e de código aberto que consiste em um conjunto de bibliotecas e programas para lidar com vídeo, áudio e outros arquivos e fluxos multimídia(é um pré requisito para o funcionamento do <i>OPenCV</i>). | 4.4.1 |
 Python-jose | Biblioteca do python para gerar e verificar JWT (do inglês <i>JSON Web Token</i>). | 3.3.0 |
 <i>FastAPI</i> | <i>FastAPI</i> é um framework web moderno e rápido(de alto desempenho) para construir APIs com Python 3.6+. | 0.68.1 |
 Python | Python é uma linguagem de programação de alto nível, interpretada por script, imperativa, orientada a objetos, funcional, de tipagem dinâmica e forte.  | 3.9.10|

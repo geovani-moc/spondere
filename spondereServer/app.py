@@ -18,10 +18,6 @@ async def robotsTxt():
     content = 'User-agent: * Disallow: /'
     return HTMLResponse(content=content)
 
-# @app.on_event("shutdown")
-# async def shutdown_event():
-#     print("Aplicação encerrada.")
-
 @app.get('/')
 async def homePage():
     content = '<center><h1>Sponde API</h1><br>\

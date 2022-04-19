@@ -22,7 +22,9 @@ Neste documento são descritos os passos necessários para que o sistema possa s
 Para a utilização do sistema de forma adequada e de acordo com com a sua finalidade é necessária a instalação de uma série de programas ou módulos. Parte desses pacotes é especificada no arquivo "requirements.txt" encontrada na pasta raiz do servidor (pasta nomeada de "spondereServer"). Alguns dos pacotes e/ou módulos podem ser substituídos por outros com finalidade semelhante, mas o uso de tais não garante o correto funcionamento da plataforma. Entre os principais componentes necessários ou não incluídos no arquivo "requirements.txt" estão descritos na tabela 1.
 
 
-<center><h5><b>Tabela 1: Principais requisitos de sistema</b></h5></center>
+<center>
+<h5><b>Tabela 1: Principais requisitos de sistema</b></h5>
+</center>
 
 
 Nome | Descrição | Versão |
@@ -37,18 +39,51 @@ Numpy | NumPy é uma biblioteca para a linguagem de programação Python, que su
 <i>Scikit-image</i> | O <i>Scikit-image</i> é uma biblioteca de processamento de imagens de código aberto para a linguagem de programação Python. | 0.18.3 |
 
 <h3 align="center">Instalação </h3>
+
+Para a realização da instalação é recomendado a utilizar um gerenciador de ambiente de desenvolvimento, como por exemplo, virtualenv. Com o python e pip devidamente instalados e configurados a instalação do sistema segue as seguintes etapas:
+
+1 - Instalação dos meta-pacotes necessários para compilar software:
+
+    sudo apt install build-essential
+
+2 - Instalação dos codecs necessários para o funcionamento do :
+
+    sudo apt install ffmpeg libsm6 libxext6
+
+3 - Instalação das bibliotecas necessárias:
+
+    pip install -r requeriments.txt
     
-    ...
-
-Recomendase a utilizar um gerenciador de ambiente de desenvovimento, como por exemplo virtualev.
-
-Tambem é recomendado a utilização seguir os passos da instalaçao do docker e dockercompose oficiais. A instalação do docker e docker compose pode ser ignorada caso opte por utilizar o banco de dados de outra forma.
-
-    ...
-
 <h3 align="center">Configurando o sistema </h3>
 
-    ...
+Com o sistema devidamente instalado é necessário realizar as configurações.
+
+Criar um arquivo("config.ini") de configurações para informações do banco de dados e chave secreta:
+
+    touch config.ini
+
+No arquivo de configuração deverá ter informações sobre o banco de dados(suportado apenas postgres) e chave secreta como no exemplo a seguir:
+
+    [postgres]
+    DB_NAME = BD_MY_DATA_BASE
+    PASSWORD = admin
+    USERNAME = admin
+    HOST = 127.0.0.1
+    PORT = 5432
+
+    [token]
+    SECRET_KEY = 9251d7350a113a369b5fb1c6431f7bd91818607b479e98461d0c18474efb1873
+
+
+A chave secreta("SECRET_KEY") é uma chave secreta aleatória segura, para gerar chaves pode-se usar o comando:
+
+    openssl rand -hex 32
+
+Também é necessário realizar a configuração do arquivo "settings.py" nele se encontram os parâmetros de funcionamento do sistema. Existem algumas variáveis que devem ser modificadas como:
+
+- PATH_IMAGES: local onde as imagens de treinamento serão armazenadas para extração de características. O caminho da pasta indicada nesta variável deve existir, caso contrário, podem ocorrer erros na execução do sistema.
+
+- TIMEZONE_API_SERVER: Deve ser informado a zona de tempo do sistema no formato +-HH:MM(Exemplo: +03:00).
 
 <h3 align="center">Iniciando o sistema</h3>
 Com o sistema devidamente instalado e configurado bas executar o seguinte comando:
@@ -68,4 +103,4 @@ Com o sistema devidamente instalado e configurado bas executar o seguinte comand
 |r004| Reconhecimento| quantidade de caracteristicas insuficiente.|
 |r005| Reconhecimento| A face do usuário não foi reconhecida.|
 |f001| Frequência| Nehuma frequência encontrada com os dados fornecidos.|
-|b001| Biométri|Horário de checagem de imagens já foi ultrapassado, ou o aluno não pertence a essa turma.|
+|b001| Biométria|Horário de checagem de imagens já foi ultrapassado, ou o aluno não pertence a essa turma.|

@@ -10,7 +10,8 @@
 * [Manual de uso](#Manual-de-uso)
 
 <h3 align="center">Introdução</h3>
-Spondere é uma proposta de sistema para controle de frequência acadêmica com uso de reconhecimento facial. O repositório é divido em 4 seções principais: [Documentos](/documentos), [Servidor](/spondereServer), [<i>Benchmarking<i>](/benchmarking/) e Protótipo.
+
+Spondere é uma proposta de sistema para controle de frequência acadêmica com uso de reconhecimento facial. O repositório é divido em 4 seções principais: [Documentos](/documentos/), [Servidor](/spondereServer), [<i>Benchmarking<i>](/benchmarking/) e Protótipo.
 A [seção de documentos](/documentos) apresenta os documentos de engenharia de software referentes ao planejamento/desenvolvimento do presente projeto, contendo as Subseções: [Documentos de visão](/documentos/Documento&#32;de&#32;visão), [Casos de uso](/documentos/casos&#32;de&#32;uso) e [Diagrama de implantação](<https://github.com/geovani-moc/spondere/tree/main/documentos/Diagrama%20de%20implanta%C3%A7%C3%A3o>).
 
 A [seção do servidor](/spondereServer/) apresenta o código desenvolvido seguindo o planejamento e documentações presentes na [seção de documentos](/documentos). Nela contém os dados necessários para colocar o sistema em operação. A [seção do Benchmarking](/benchmarking/) apresenta uma avaliação comparativa de algoritmos de reconhecimento facial para justificar a escolha de um método para o sistema, ilustrando o código desenvolvido para a comparação, metodologia e resultados.

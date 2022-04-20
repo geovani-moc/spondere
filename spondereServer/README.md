@@ -90,7 +90,7 @@ Com o sistema devidamente instalado e configurado bas executar o seguinte comand
 
     python main.py
 
-<b>Observação:</b> Caso o sistema esteja sendo iniciado para a relaização de teste, os scripts encontrados na pasta [scripts](/scripts/) cotém dados para a [criação](/scripts/database/) da estrutura do banco de dados relacional(<i>postgres</i>) e [adição](/scripts/populate/) de tuplas fakes para popular o banco de dados criado.
+<b>Observação:</b> Caso o sistema esteja sendo iniciado para a relaização de teste, os scripts encontrados na pasta [scripts](/spondereServer/scripts/) cotém dados para a [criação](/spondereServer/scripts/database/) da estrutura do banco de dados relacional(<i>postgres</i>) e [adição](/spondereServer/scripts/populate/) de tuplas fakes para popular o banco de dados criado.
 
 
 <summary> <h2>Tabela de erros</h2></summary>

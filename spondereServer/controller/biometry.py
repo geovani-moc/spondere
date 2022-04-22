@@ -23,7 +23,7 @@ from database import academicClass as academicClassDB
 from database import groupStudent as groupStudentDB
 from database import user as userDB
 from datetime import datetime
-from util.date import isSmaller
+from util.image import imageContainsFace
 from util.files import createUserImagesPath, removeAllFilesInFolder
 from settings import(
     LABELS,
@@ -119,7 +119,6 @@ def processBiometrics(frequency:Frequency, userID:int, contents):
 
     print("A frequencia com id: " + str(id) + " foi criada")
 
-
 @router.post("/{studentID}", dependencies=[Depends(JWTBearer())])
 async def createBiometry(backgroundTasks:BackgroundTasks, request:Request, 
     studentID:int, files:List[UploadFile] = File(...)) -> dict:
@@ -141,10 +140,11 @@ async def createBiometry(backgroundTasks:BackgroundTasks, request:Request,
     Path(userImagesPath).mkdir(parents=True, exist_ok=True)
 
     for file in files:
-        path = userImagesPath + '/' + f'{time.time()}' + "_" + file.filename
-        async with aiofiles.open(path, 'wb') as outFile:
-            while content := await file.read():  
-                await outFile.write(content)
+        if imageContainsFace(file):
+            path = userImagesPath + '/' + f'{time.time()}' + "_" + file.filename
+            async with aiofiles.open(path, 'wb') as outFile:
+                while content := await file.read():  
+                    await outFile.write(content)
 
     biometry = Biometrics()
     biometry.studentID = studentID
@@ -179,10 +179,11 @@ async def updateBiometry(backgroundTasks:BackgroundTasks, biometryID:int,
     Path(userImagesPath).mkdir(parents=True, exist_ok=True)
 
     for file in files:
-        path = userImagesPath + '/' + f'{time.time()}' + "_" + file.filename
-        async with aiofiles.open(path, 'wb') as outFile:
-            while content := await file.read():  
-                await outFile.write(content)
+        if(imageContainsFace(file)):
+            path = userImagesPath + '/' + f'{time.time()}' + "_" + file.filename
+            async with aiofiles.open(path, 'wb') as outFile:
+                while content := await file.read():  
+                    await outFile.write(content)
 
     backgroundTasks.add_task(syncTrain, biometry.studentID, biometry.id)
 
@@ -254,6 +255,4 @@ async def isValid(userID:int) -> dict:
         raise HTTPException(status_code=406,
             detail="Dados inválidos.")
     
-    return {
-        "biometryID": result
-    }
+    return result

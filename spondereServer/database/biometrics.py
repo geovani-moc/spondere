@@ -1,4 +1,6 @@
 import logging
+from typing import Dict
+from psycopg2.extras import RealDictCursor
 from entity.biometrics import Biometrics
 from fastapi import HTTPException
 import psycopg2 as pg
@@ -254,10 +256,11 @@ def validate(id:int):
 
     return True
 
-def getValid(studentID:int) -> bool:
-    sqlQuery = 'select id from biometrics where studentID=%s \
-        and active=true and invalid=false;'
-    id = 0
+def getValid(studentID:int) -> Dict:
+    sqlQuery = 'select id as "biometryID", failure as "biometryError" \
+    from biometrics where studentID=%s and active=true;'
+    
+    result = None
     
     try:
         connection = pg.connect(
@@ -268,9 +271,9 @@ def getValid(studentID:int) -> bool:
             database = DB_NAME
         )
 
-        cursor = connection.cursor()
+        cursor = connection.cursor(cursor_factory=RealDictCursor)
         cursor.execute(sqlQuery, (studentID,))
-        id = cursor.fetchone()[0]
+        result = cursor.fetchone()
 
         connection.commit()
 
@@ -283,4 +286,4 @@ def getValid(studentID:int) -> bool:
             cursor.close()
             connection.close()
 
-    return id
+    return result

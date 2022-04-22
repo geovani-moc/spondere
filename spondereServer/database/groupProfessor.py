@@ -1,7 +1,5 @@
 import logging
-from typing import Dict, List
-
-from sklearn.feature_extraction import DictVectorizer
+from typing import Dict
 from entity.groupProfessor import GroupProfessor
 from fastapi import HTTPException
 import psycopg2 as pg

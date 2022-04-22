@@ -1,13 +1,13 @@
 from pathlib import Path
+from xmlrpc.client import Boolean
 import cv2 as cv
 import glob
 import sys
 import numpy as np
 from io import BytesIO
 import zipfile
-import json
-import zlib
 import base64
+from settings import faceCascade
 
 def saveBinaryImagesInDataset(images, pathDataset:str, userCode:int):
     count:int = 1
@@ -113,3 +113,19 @@ def generateZip(files):
             zippedFiles.writestr(file[0], file[1])
 
     return memoryZip.getvalue()
+
+def imageContainsFace(file)->Boolean:
+    result = False
+    try:
+        image = cv.imdecode(np.frombuffer(file, np.uint8), -1)
+        facesPositions = faceCascade.detectMultiScale(image)
+
+        if len(facesPositions) > 0:
+            result = True
+        else:
+            result = False
+
+    except:
+        result = False
+    
+    return result

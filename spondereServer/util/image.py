@@ -38,7 +38,11 @@ def checkUploadedImage(file):
 
 def loadImages(path:str):
     images = []
-    pathImages = glob.glob(path+'/*.jpg')
+    types = ('/*.jpg', '/*.jpeg')
+
+    pathImages = []
+    for imagesType in types:
+        pathImages.extend(glob.glob(path+imagesType))
 
     for pathImage in pathImages: 
         image = cv.imread(pathImage, cv.IMREAD_GRAYSCALE)
@@ -129,3 +133,9 @@ def imageContainsFace(file)->Boolean:
         result = False
     
     return result
+
+def imagesInFolder(path)->int:
+    jpgCount:int = len(glob.glob('*.jpg'))
+    jpegCount:int = len(glob.glob('*.jpeg'))
+
+    return jpgCount+jpegCount

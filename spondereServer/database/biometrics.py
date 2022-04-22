@@ -256,7 +256,7 @@ def validate(id:int):
 
     return True
 
-def getValid(studentID:int) -> Dict:
+def isValid(studentID:int) -> Dict:
     sqlQuery = 'select id as "biometryID", failure as "biometryError" \
     from biometrics where studentID=%s and active=true;'
     

@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from fastapi.responses import HTMLResponse
+from numpy import tile
 from controller.user import router as userRouter
 from controller.biometry import router as biometryRouter
 from controller.discipline import router as disciplineRouter
@@ -11,7 +12,21 @@ from controller.groupProfessor import router as groupProfessorRouter
 from controller.validation import router as validationRouter
 from controller.frequency import router as frequencyRouter
 
-app = FastAPI()
+tagsMetadata = [
+    {
+        "name":"Usuário",
+        "description":"Gerenciamento de usuários",
+    },
+]
+
+descriptionApp = "Sistema para controle de frequência acadêmica por meio de verificação biométrica"
+
+app = FastAPI(
+    openapi_tags=tagsMetadata,
+    title="Spondere server",
+    description=descriptionApp,
+    version="0.9.0",
+)
 
 @app.get('/robots.txt')
 async def robotsTxt():

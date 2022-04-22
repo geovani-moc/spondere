@@ -14,7 +14,7 @@ from controller.security import (
     getCurrentUserType)
 from entity.biometrics import Biometrics
 from entity.frequency import Frequency
-from util.image import checkUploadedImage
+from util.image import checkUploadedImage, imagesInFolder
 from recognition.findFace import findFace
 from recognition.faceRecognition import verifyFace
 from database import biometrics as biometryDB
@@ -32,7 +32,8 @@ from settings import(
     USER_TYPE_PROFESSOR,
     USER_TYPE_STUDENT,
     PATH_IMAGES,
-    TIMEZONE_API_SERVER
+    TIMEZONE_API_SERVER,
+    MAX_SIZE_DATASET
 )
 from pathlib import Path
 import aiofiles
@@ -140,6 +141,8 @@ async def createBiometry(backgroundTasks:BackgroundTasks, request:Request,
     Path(userImagesPath).mkdir(parents=True, exist_ok=True)
 
     for file in files:
+        if(imagesInFolder(userImagesPath) > MAX_SIZE_DATASET):
+            break
         if imageContainsFace(file):
             path = userImagesPath + '/' + f'{time.time()}' + "_" + file.filename
             async with aiofiles.open(path, 'wb') as outFile:
@@ -179,6 +182,8 @@ async def updateBiometry(backgroundTasks:BackgroundTasks, biometryID:int,
     Path(userImagesPath).mkdir(parents=True, exist_ok=True)
 
     for file in files:
+        if(imagesInFolder(userImagesPath) > MAX_SIZE_DATASET):
+            break
         if(imageContainsFace(file)):
             path = userImagesPath + '/' + f'{time.time()}' + "_" + file.filename
             async with aiofiles.open(path, 'wb') as outFile:
@@ -247,10 +252,10 @@ def isCheckable(username:str , classID:int)->bool:
     return True
 
 @router.get("/valida/{userID}", dependencies=[Depends(JWTBearer())])
-async def isValid(userID:int) -> dict:
+async def isValidBiometry(userID:int) -> dict:
     result = 0
     try:
-        result = biometryDB.getValid(userID)
+        result = biometryDB.isValid(userID)
     except:
         raise HTTPException(status_code=406,
             detail="Dados inválidos.")

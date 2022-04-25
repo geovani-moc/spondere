@@ -1,42 +1,46 @@
+import face_recognition
+import numpy as np
 from util.recognition import loadFullLabels, loadFullTrain
-from sklearn.preprocessing import LabelEncoder
+import os
+import glob
 
 def verifyFace(image, userID, name, featureMethod, args):
-    kernel='linear'
-    featuresTest = featureMethod([image], args)
-
+    featuresTest = face_recognition.face_encodings(image)[0]
     features, _ = loadFullTrain(name, featureMethod, args)
-    labelsUser = loadFullLabels(name)
+    labels = loadFullLabels(name)
 
-    if len(labelsUser) != len(features): return False, "caracteristicas e rotulos não coincidem"
+    if len(labels) != len(features): return False, "caracteristicas e rotulos não coincidem"
     if len(features) == 0: return False, None
 
-    labelEncoder = LabelEncoder()
-    labelsUser = labelEncoder.fit_transform(labelsUser)
-
-    featuresLettering, labels = lettering(features, labelsUser)
-
     ##classificador
-    model = svm.SVC(kernel=kernel)
-    model.fit(featuresLettering, labels)
+    result = face_recognition.compare_faces(features, featuresTest)
+     
+    label = ""
+    if True in result:
+        firstMatchIndex = result.index(True)
+        label = labels[firstMatchIndex]
 
-    result = model.predict(featuresTest)
-    label = labelEncoder.inverse_transform(result)
-
-    if label[0] == userID: return True, None
+    if  label == userID: return True, None
 
     return False, None
 
-def lettering(features, labelsUser):
-    count = 0
+
+def train(path:str):
+    features = []
     labels = []
-    featuresLettering = []
+    directories = os.listdir(path)
 
-    for featuresUser in features:
-        label = labelsUser[count]
-        for feature in featuresUser:
-            featuresLettering.append(feature)
-            labels.append(label)
-        count += 1    
+    for directorie in directories:
+        filePath = os.path.join(path, directorie)
+        files = os.listdir(filePath)
+        for file in files:
+            if os.path.isfile(os.path.join(filePath, file)):
+                image = face_recognition.load_image_file(os.path.join(filePath, file))
+                feature = face_recognition.face_encodings(image)[0]
+                features.append(feature)
+                labels.append(directorie)
 
-    return featuresLettering, labels
+    if len(labels)!= len(features):
+        raise Exception("Quantidae de caracteristicas e rotulos divergem.")
+
+    return features, labels

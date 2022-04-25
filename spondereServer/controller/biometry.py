@@ -160,7 +160,7 @@ async def createBiometry(backgroundTasks:BackgroundTasks, request:Request,
         "id": id
     }
 
-@router.put("/adcionar_fotos/{biometryID}", dependencies=[Depends(JWTBearer())])
+@router.put("/adicionar_fotos/{biometryID}", dependencies=[Depends(JWTBearer())])
 async def updateBiometry(backgroundTasks:BackgroundTasks, biometryID:int, 
     request:Request, files:List[UploadFile] = File(...))-> dict:
 

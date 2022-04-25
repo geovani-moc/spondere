@@ -143,11 +143,11 @@ async def createBiometry(backgroundTasks:BackgroundTasks, request:Request,
     for file in files:
         if(imagesInFolder(userImagesPath) > MAX_SIZE_DATASET):
             break
-        if imageContainsFace(file):
+        content = await file.read()
+        if imageContainsFace(content):
             path = userImagesPath + '/' + f'{time.time()}' + "_" + file.filename
             async with aiofiles.open(path, 'wb') as outFile:
-                while content := await file.read():  
-                    await outFile.write(content)
+                await outFile.write(content)
 
     biometry = Biometrics()
     biometry.studentID = studentID
@@ -184,11 +184,11 @@ async def updateBiometry(backgroundTasks:BackgroundTasks, biometryID:int,
     for file in files:
         if(imagesInFolder(userImagesPath) > MAX_SIZE_DATASET):
             break
-        if(imageContainsFace(file)):
+        content = await file.read()
+        if(imageContainsFace(content)):
             path = userImagesPath + '/' + f'{time.time()}' + "_" + file.filename
             async with aiofiles.open(path, 'wb') as outFile:
-                while content := await file.read():  
-                    await outFile.write(content)
+                await outFile.write(content)
 
     backgroundTasks.add_task(syncTrain, biometry.studentID, biometry.id)
 

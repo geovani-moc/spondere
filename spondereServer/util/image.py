@@ -129,7 +129,8 @@ def imageContainsFace(file)->Boolean:
         else:
             result = False
 
-    except:
+    except Exception as error:
+        print(error)
         result = False
     
     return result

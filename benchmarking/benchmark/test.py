@@ -29,7 +29,7 @@ def test(classifier, name, extractMethod, *args) -> float:
                 tempCount, tempHits = testImages(directorie, classifier, name, extractMethod, 'true', args)
                 count += tempCount
                 hits += tempHits
-        break
+        #break
     
     if count == 0: return 0
 

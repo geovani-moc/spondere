@@ -1,9 +1,19 @@
-import face_recognition
 import os
 import glob
-from cnn import train
+import cv2 as cv
+import numpy as np
+from settings import(
+    faceCascade,
+    FACE_DIM,
+    PATH_IMAGES
+)
+from benchmark.cnn import (
+    verifyFace,
+    euclidianDistance,
+    knn_1, svm_linear, svm_no_linear
+)
 
-def test(features, labels, path)->float:
+def test(classifier, path=PATH_IMAGES)->float:
     count:float = 0
     hits:float = 0 
     directories = os.listdir(path)
@@ -13,11 +23,11 @@ def test(features, labels, path)->float:
             if (os.path.exists(os.path.join(path, directorie, 'false')) and 
                 os.path.exists(os.path.join(path, directorie, 'true'))):
                 
-                tempCount, tempHits = testImages(os.path.join(path, directorie, 'false'), directorie, features, labels)
+                tempCount, tempHits = testImages(os.path.join(path, directorie, 'false'), directorie, classifier)
                 count = count + tempCount
                 hits = hits + (tempCount - tempHits)
 
-                tempCount, tempHits = testImages(os.path.join(path, directorie, 'true'), directorie, features, labels)
+                tempCount, tempHits = testImages(os.path.join(path, directorie, 'true'), directorie, classifier)
                 count += tempCount
                 hits += tempHits
 
@@ -27,27 +37,54 @@ def test(features, labels, path)->float:
 
     return (hits/count)
 
-def testImages(path, userID, features, labels):
+def testImages(path, userID, classifier):
     directories = os.listdir(path)
     hits:float = 0
 
     for directory in directories:
-        image = face_recognition.load_image_file(os.path.join(path, directory))
-        featureTest = face_recognition.face_encodings(image)[0]
-        matches = face_recognition.compare_faces(features, featureTest)
-        name = ""
-        if True in matches:
-            firstMatchIndex = matches.index(True)
-            name = labels[firstMatchIndex]
-
-            if name == userID: hits += 1
+        image, error = loadFace(os.path.join(path, directory))
+        if error == None:
+            result,_ = verifyFace(image, userID, classifier)
+            if result: hits+=1
+        else:
+            print("A face testada não foi reconhecida")
         
     count:float =  float(len(glob.glob1(path,"*.jp*")))
     return count, hits
 
-if __name__ == '__main__':
-    path = 'dataset'
-    features, labels = train(path)
-    acurracy = test(features, labels, path)
+def loadFace(path):
+    image = cv.imread(path)
+    image = cv.cvtColor(image, cv.COLOR_BGR2RGB)
 
-    print(f'Precisão: {acurracy*100}%')
+    return findFace(image)
+
+def findFace(image):
+    imageGrayScale = cv.cvtColor(image, cv.COLOR_RGB2GRAY)
+    facesPositions = faceCascade.detectMultiScale(imageGrayScale)
+    
+    if len(facesPositions) > 0:
+        column, row, width, height = facesPositions[0]
+    else:
+        return None, 'Erro ao localizar face, não existe faces na imagem. \n'
+
+    for face in facesPositions:
+        if height < face[3]:
+            column, row, width, height = face
+
+    cropFace = image[row: row+height, column:column+width]
+    cropFace = cv.resize(cropFace, (FACE_DIM, FACE_DIM))    
+
+    return np.asarray(cropFace), None
+
+def CNNTests():
+    acurracy = test(euclidianDistance)
+    print(f'Distancia euclidiana: {acurracy*100}%')
+
+    acurracy = test(knn_1)
+    print(f'KNN(k=1): {acurracy*100}%')
+
+    acurracy = test(svm_linear)
+    print(f'SVM(linear): {acurracy*100}%')
+
+    acurracy = test(svm_no_linear)
+    print(f'SVM(não linear): {acurracy*100}%')

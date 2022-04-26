@@ -1,0 +1,28 @@
+A face testada não foi reconhecida
+A face testada não foi reconhecida
+A face testada não foi reconhecida
+A face testada não foi reconhecida
+acertos:492.0
+Quantidade:500.0
+Distancia euclidiana: 98.4%
+A face testada não foi reconhecida
+A face testada não foi reconhecida
+A face testada não foi reconhecida
+A face testada não foi reconhecida
+acertos:492.0
+Quantidade:500.0
+KNN(k=1): 98.4%
+A face testada não foi reconhecida
+A face testada não foi reconhecida
+A face testada não foi reconhecida
+A face testada não foi reconhecida
+acertos:492.0
+Quantidade:500.0
+SVM(linear): 98.4%
+A face testada não foi reconhecida
+A face testada não foi reconhecida
+A face testada não foi reconhecida
+A face testada não foi reconhecida
+acertos:492.0
+Quantidade:500.0
+SVM(não linear): 98.4%

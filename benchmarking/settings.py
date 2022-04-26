@@ -1,7 +1,7 @@
 import cv2 as cv
 import numpy as np
 
-FACE_DIM = 50
+FACE_DIM = 100
 PATH_IMAGES = 'recognition/dataset'
 PATH_DATA_TRAIN = 'static/train'
 EIGENFACES_NUMBER_COMPONENTS = 50

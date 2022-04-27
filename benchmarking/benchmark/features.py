@@ -8,8 +8,9 @@ from settings import EIGENFACES_NUMBER_COMPONENTS
 def extractFeatureLBP(images, args):
     features = []
     for image in images:
-        lbp = local_binary_pattern(image, 8,1.0,method='default')
-        features.append(lbp.flatten())
+        lbp = local_binary_pattern(image, 8, 1.0, method='default')
+        feature = np.histogram(lbp, bins=20, range=(0, 20))[0]
+        features.append(feature)
 
     return np.array(features, dtype=float)
 

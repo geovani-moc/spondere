@@ -58,12 +58,12 @@ def beginTests():
     hog = features.extractFeatureHOG
     lbp = features.extractFeatureLBP
     eigen = features.extractFeatureEigenFaces
-
+    
     print("Distancia euclidiana:")
     euclidianDistance_eigen = test(euclidean, 'eigen', eigen)
     print(" |->Eigenfaces: ", euclidianDistance_eigen)
     euclidianDistance_lbp = test(euclidean, 'lbp', lbp)
-    print(" |->LBP: ", euclidianDistance_lbp) #analisar funcionamento
+    print(" |->LBP: ", euclidianDistance_lbp)
     deleteTrain("hog")
     deleteFullTrain("hog")
     euclidianDistance_hog = test(euclidean, 'hog', hog, 1, 9, (10,10), (1,1))
@@ -82,9 +82,9 @@ def beginTests():
     print(" |->HOG orientations=15, pixels_per_cell=(5, 5), cells_per_block=(2, 2):", euclidianDistance_hog)
 
     print("\n\nKNN - k=1:")
-    knn_lbp = test(KNN, 'lbp', lbp) 
+    knn_lbp = test(KNN, 'lbp', lbp, 1) 
     print(" |->LBP: ", knn_lbp)
-    knn_eigen = test(KNN, 'eigen', eigen)
+    knn_eigen = test(KNN, 'eigen', eigen, 1)
     print(" |->Eigenfaces: ", knn_eigen)
     deleteTrain("hog")
     deleteFullTrain("hog")
@@ -104,7 +104,7 @@ def beginTests():
     print(" |->HOG orientations=15, pixels_per_cell=(5, 5), cells_per_block=(2, 2):", knn_hog)
 
     print("\n\nKNN - k=3:")
-    knn_lbp = test(KNN, 'lbp', lbp) 
+    knn_lbp = test(KNN, 'lbp', lbp, 3) 
     print(" |->LBP: ", knn_lbp)
     deleteTrain("hog")
     deleteFullTrain("hog")
@@ -124,7 +124,7 @@ def beginTests():
     print(" |->HOG orientations=15, pixels_per_cell=(5, 5), cells_per_block=(2, 2):", knn_hog)
 
     print("\n\nKNN - k=5:")
-    knn_lbp = test(KNN, 'lbp', lbp) 
+    knn_lbp = test(KNN, 'lbp', lbp, 5) 
     print(" |->LBP: ", knn_lbp)
     deleteTrain("hog")
     deleteFullTrain("hog")
@@ -144,7 +144,7 @@ def beginTests():
     print(" |->HOG orientations=15, pixels_per_cell=(5, 5), cells_per_block=(2, 2):", knn_hog)
 
     print("\n\nKNN - k=7:")
-    knn_lbp = test(KNN, 'lbp', lbp) 
+    knn_lbp = test(KNN, 'lbp', lbp, 7) 
     print(" |->LBP: ", knn_lbp)
     deleteTrain("hog")
     deleteFullTrain("hog")

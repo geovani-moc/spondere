@@ -3,7 +3,7 @@ from benchmark.test import beginTests
 from benchmark.testCNN import CNNTests
 
 if __name__ == '__main__':
-    '''
+    
     deleteTrain("eigen")
     deleteTrain("lbp")
     deleteTrain("hog")
@@ -13,6 +13,6 @@ if __name__ == '__main__':
     deleteFullTrain("lbp")
     deleteFullTrain("hog")
     deleteFullTrain("cnn")
-    #'''
-    #beginTests()
+   
+    beginTests()
     CNNTests()

@@ -1,0 +1,51 @@
+
+
+KNN - k=1:
+ |->LBP:  0.628
+ |->Eigenfaces:  0.796
+ |->HOG orientations=9, pixels_per_cell=(10, 10), cells_per_block=(1, 1): 0.856
+ |->HOG orientations=15, pixels_per_cell=(10, 10), cells_per_block=(1, 1): 0.866
+ |->HOG orientations=15, pixels_per_cell=(5, 5), cells_per_block=(1, 1): 0.892
+ |->HOG orientations=15, pixels_per_cell=(5, 5), cells_per_block=(2, 2): 0.888
+
+
+KNN - k=3:
+ |->LBP:  0.618
+ |->HOG orientations=9, pixels_per_cell=(10, 10), cells_per_block=(1, 1): 0.8
+ |->HOG orientations=15, pixels_per_cell=(10, 10), cells_per_block=(1, 1): 0.822
+ |->HOG orientations=15, pixels_per_cell=(5, 5), cells_per_block=(1, 1): 0.846
+ |->HOG orientations=15, pixels_per_cell=(5, 5), cells_per_block=(2, 2): 0.84
+
+
+KNN - k=5:
+ |->LBP:  0.622
+ |->HOG orientations=9, pixels_per_cell=(10, 10), cells_per_block=(1, 1): 0.786
+ |->HOG orientations=15, pixels_per_cell=(10, 10), cells_per_block=(1, 1): 0.806
+ |->HOG orientations=15, pixels_per_cell=(5, 5), cells_per_block=(1, 1): 0.826
+ |->HOG orientations=15, pixels_per_cell=(5, 5), cells_per_block=(2, 2): 0.826
+
+
+KNN - k=7:
+ |->LBP:  0.618
+ |->HOG orientations=9, pixels_per_cell=(10, 10), cells_per_block=(1, 1): 0.788
+ |->HOG orientations=15, pixels_per_cell=(10, 10), cells_per_block=(1, 1): 0.798
+ |->HOG orientations=15, pixels_per_cell=(5, 5), cells_per_block=(1, 1): 0.818
+ |->HOG orientations=15, pixels_per_cell=(5, 5), cells_per_block=(2, 2): 0.808
+
+
+SVM(linear):
+ |->LBP:  0.668
+ |->Eigenfaces:  0.796
+ |->HOG orientations=9, pixels_per_cell=(10, 10), cells_per_block=(1, 1): 0.898
+ |->HOG orientations=15, pixels_per_cell=(10, 10), cells_per_block=(1, 1): 0.906
+ |->HOG orientations=15, pixels_per_cell=(5, 5), cells_per_block=(1, 1): 0.898
+ |->HOG orientations=15, pixels_per_cell=(5, 5), cells_per_block=(2, 2): 0.908
+
+
+SVM(não linear)
+ |->LBP:  0.616
+ |->Eigenfaces:  0.538
+ |->HOG orientations=9, pixels_per_cell=(10, 10), cells_per_block=(1, 1): 0.886
+ |->HOG orientations=15, pixels_per_cell=(10, 10), cells_per_block=(1, 1): 0.9
+ |->HOG orientations=15, pixels_per_cell=(5, 5), cells_per_block=(1, 1): 0.898
+ |->HOG orientations=15, pixels_per_cell=(5, 5), cells_per_block=(2, 2): 0.908

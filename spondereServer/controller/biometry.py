@@ -1,5 +1,4 @@
 from typing import Dict, List
-from unittest import result
 from fastapi import (
     APIRouter, 
     Depends,
@@ -26,8 +25,6 @@ from datetime import datetime
 from util.image import imageContainsFace
 from util.files import createUserImagesPath, removeAllFilesInFolder
 from settings import(
-    LABELS,
-    SVM_HOG,
     USER_TYPE_ADMIN,
     USER_TYPE_PROFESSOR,
     USER_TYPE_STUDENT,
@@ -39,12 +36,9 @@ from pathlib import Path
 import aiofiles
 import time
 from util.recognition import(
-    readAllLabels,
-    readAllTrains,
-    train,
     updateTrain
 )
-from recognition.featureExtraction import extractFeature
+
 #logger = logging.getLogger(__name__)
 
 
@@ -222,10 +216,9 @@ async def getBiometry(id:int) -> dict:
     }
 
 def syncTrain(userID:int, biometryID:int):
-    methodName = 'hog'
-    method = extractFeature
+    methodName = 'cnn'
 
-    _, error = updateTrain(PATH_IMAGES, userID, method, methodName)
+    _, error = updateTrain(PATH_IMAGES, userID, methodName)
     if error is not None:
         if len(error) > 50:
             error = error[:50]
@@ -233,8 +226,6 @@ def syncTrain(userID:int, biometryID:int):
         biometryDB.invalidate(biometryID, error)
         return
 
-    SVM_HOG, _ = readAllTrains(methodName, method)
-    LABELS = readAllLabels(methodName)
     biometryDB.validate(biometryID)
 
 def isCheckable(username:str , classID:int)->bool:

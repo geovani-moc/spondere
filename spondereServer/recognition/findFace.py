@@ -1,10 +1,12 @@
 import cv2 as cv
 from settings import FACE_DIM, MIN_SIZE_DATASET, faceCascade
 from util.image import loadUserDataset
+import numpy as np
 
 
 def findFace(image):
-    facesPositions = faceCascade.detectMultiScale(image)
+    imageGrayScale = cv.cvtColor(image, cv.COLOR_RGB2GRAY)
+    facesPositions = faceCascade.detectMultiScale(imageGrayScale)
     
     if len(facesPositions) > 0:
         column, row, width, height = facesPositions[0]
@@ -12,7 +14,7 @@ def findFace(image):
         return None, 'Erro ao localizar face, não existe faces na imagem. \n'
 
     #face(column, row, width, height)
-    #localiza a maior regiao area que é cnsiderada uma face
+    #a regiao com maior area é considerada uma face de interesse
     for face in facesPositions:
         if height < face[3]:
             column, row, width, height = face
@@ -20,7 +22,7 @@ def findFace(image):
     cropFace = image[ row: row+height, column:column+width]
     cropFace = cv.resize(cropFace, (FACE_DIM, FACE_DIM))    
 
-    return cropFace, None
+    return np.asarray(cropFace), None
 
 def extractFace(path:str, userID:int):
     images = loadUserDataset(path, userID)

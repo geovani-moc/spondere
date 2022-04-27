@@ -7,8 +7,9 @@ from settings import(
 import os
 import numpy as np
 from recognition.findFace import extractFace
+from face_recognition import face_encodings
 
-def loadFullTrain(trainName, method):
+def loadFullTrain(trainName):
     path = PATH_DATA_TRAIN
     if os.path.exists(os.path.join(path, trainName+'.npy')):
         features = np.load(os.path.join(path, trainName + '.npy'))
@@ -19,7 +20,7 @@ def loadFullTrain(trainName, method):
     directories = os.listdir(PATH_IMAGES)
     for directorie in directories:
         if os.path.isdir(os.path.join(PATH_IMAGES, directorie)):
-            featuresUser, error = train(PATH_IMAGES, directorie, method, trainName)
+            featuresUser, error = train(PATH_IMAGES, directorie, trainName)
             if error is not None:
                 errors += error
             if featuresUser is not None:
@@ -33,7 +34,7 @@ def loadFullTrain(trainName, method):
                 
     return features, errors
 
-def readAllTrains(trainName, method):
+def readAllTrains(trainName):
     path = PATH_DATA_TRAIN
     features = []
     errors = []  
@@ -41,7 +42,7 @@ def readAllTrains(trainName, method):
     directories = os.listdir(PATH_IMAGES)
     for directorie in directories:
         if os.path.isdir(os.path.join(PATH_IMAGES, directorie)):
-            featuresUser, error = train(PATH_IMAGES, directorie, method, trainName)
+            featuresUser, error = train(PATH_IMAGES, directorie, trainName)
             if error is not None:
                 errors += error
             if featuresUser is not None:
@@ -85,24 +86,21 @@ def readAllLabels(name:str):
     
     return labels
 
-def updateTrain(path:str, userID:int, methodExtractFeature, name:str):
+def updateTrain(path:str, userID:int, name:str):
     faces, error = extractFace(path, userID)
 
     if error is not None: return None, error
     if len(faces) < MIN_SIZE_DATASET:
         return None, "r003"
 
-    features = methodExtractFeature(faces)
-    
-    if len(features) < MIN_SIZE_DATASET:
-        return None, "r004"
+    for face in faces: 
+        features = face_encodings(face, num_jitters=1, model='large')
+        if len(features) != 0:
+            features = features[0]
+            np.save(path + '/' + str(userID) + '/' + name + '.npy', features)
+            return  features, error
 
-    features = normalizeFeatures(features)
-    features = np.array(features, dtype=float)
-
-    np.save(path + '/' + str(userID) + '/' + name + '.npy', features)
-
-    return  features, error
+    return None, "Nenhuma caracteristica encontrada"
 
 def normalizeFeatures(features):
     if len(features) > NUMBER_FEATURES_DATASET:
@@ -114,12 +112,12 @@ def normalizeFeatures(features):
 
     return features
 
-def train(path:str, userID:int, method, name="eigen"):
+def train(path:str, userID:int, name:str):
     if os.path.exists(path+"/"+str(userID)+'/' + name + '.npy'):
         features = np.load(path+"/"+str(userID)+'/' + name + '.npy')   
         return features, None 
 
-    return updateTrain(path, userID, method, name)
+    return updateTrain(path, userID, name)
 
 def deleteTrain(name:str):
     dirs = os.listdir(PATH_IMAGES)

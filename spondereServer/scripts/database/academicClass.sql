@@ -5,6 +5,8 @@ create table academicClass(
     descriptionClass varchar(300) not null,
     beginDate timestamp with time zone,
     endDate timestamp with time zone,
+    createDate timestamp with time zone not null,
+    lastChangeDate timestamp with time zone not null,
     longitude decimal,
     latitude decimal,
     activeValidation boolean default false not null,

@@ -1,61 +1,35 @@
-from typing import Any
-from sklearn import svm
 from util.recognition import loadFullLabels, loadFullTrain
-from sklearn.preprocessing import LabelEncoder
-from recognition.featureExtraction import extractFeature
-import settings
+from face_recognition import face_encodings
+import numpy as np
 
-#svm classificador
-def verifyFace(image, userID:int):
-    name = 'hog'
-    featureMethod = extractFeature
-    kernel='linear'
-    features = Any
-    labelsUser = Any
 
-    featuresTest = featureMethod([image])
+def verifyFace(image, userID:int, name = 'cnn'):
+    
+    featuresTest = face_encodings(image, num_jitters=1, model='large')
+    if len(featuresTest) == 0: 
+        return False, "Falha na codificação da imagem"
+    featuresTest = featuresTest[0]
 
-    if len(settings.SVM_HOG) > 0:
-        features = settings.SVM_HOG
-    else:
-        features, errors = loadFullTrain(name, featureMethod)
-        #if len(errors) > 0: print(errors, file=stderr)
-        settings.SVM_HOG = features
+    features, _ = loadFullTrain(name)
+    labels = loadFullLabels(name)
 
-    if len(settings.LABELS) > 0:
-        labelsUser = settings.LABELS
-    else:
-        labelsUser = loadFullLabels(name)
-        settings.LABELS = labelsUser
+    if labels.shape[0] != features.shape[0]: 
+        return False, "caracteristicas e rotulos não coincidem"
+    if features.shape[0] == 0: return False, "Erro: r002"
 
-    if len(labelsUser) != len(features): return False, "Erro: r001"
-    if len(features) == 0: return False, "Erro: r002"
-
-    labelEncoder = LabelEncoder()
-    labelsUser = labelEncoder.fit_transform(labelsUser)
-
-    featuresLettering, labels = lettering(features, labelsUser)
-
-    model = svm.SVC(kernel=kernel)
-    model.fit(featuresLettering, labels)
-
-    result = model.predict(featuresTest)
-    label = labelEncoder.inverse_transform(result)
-
-    if label[0] == str(userID): return True, None
+    label = euclidianDistance(features, featuresTest, labels)
+     
+    if  label == userID: return True, None
 
     return False, "Erro: r005"
 
-def lettering(features, labelsUser):
-    count = 0
-    labels = []
-    featuresLettering = []
+def euclidianDistance(features, featureTest, labels):
+    tolerance = 0.6
+    distances = np.linalg.norm(features - featureTest, axis=1)
 
-    for featuresUser in features:
-        label = labelsUser[count]
-        for feature in featuresUser:
-            featuresLettering.append(feature)
-            labels.append(label)
-        count += 1    
+    label = None
+    bestResult = distances.argmin()
+    if distances[bestResult] <= tolerance:
+        label = labels[bestResult]
 
-    return featuresLettering, labels
+    return label

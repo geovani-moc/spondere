@@ -4,6 +4,10 @@ from entity.academicClass import AcademicClass
 from fastapi import HTTPException
 import psycopg2 as pg
 from psycopg2.extras import RealDictCursor
+from datetime import datetime
+from settings import (
+    TIMEZONE_API_SERVER
+)
 from config import(
     DB_NAME,
     DB_PASSWORD,
@@ -13,10 +17,13 @@ from config import(
 )
 
 def create(academicClass: AcademicClass):
+    currentDate = str(datetime.now())+str(TIMEZONE_API_SERVER)
+    
     sqlQuery = 'insert into academicclass (groupid, titleclass, descriptionclass,\
-        begindate, enddate, longitude, latitude, activevalidation , validationbyqrcode,\
+        begindate, enddate, createDate, lastChangeDate, longitude, latitude, \
+        activevalidation , validationbyqrcode,\
         validationbyble, blockedAttendance, validationcode) \
-    values (%s, %s, %s,%s, %s, %s, %s, %s, %s, %s, %s, %s) returning id;'
+    values (%s, %s, %s,%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s) returning id;'
     
     id = None
 
@@ -35,6 +42,8 @@ def create(academicClass: AcademicClass):
             academicClass.descriptionClass,
             academicClass.beginDate,
             academicClass.endDate,
+            currentDate,
+            currentDate,
             academicClass.longitude,
             academicClass.latitude,
             academicClass.activeValidation,
@@ -59,8 +68,10 @@ def create(academicClass: AcademicClass):
     return id
 
 def update(academicClass: AcademicClass):
+    currentDate = str(datetime.now())+str(TIMEZONE_API_SERVER)
+
     sqlQuery = 'update academicclass set groupid=%s, titleclass=%s, descriptionclass=%s,\
-        begindate=%s, enddate=%s, longitude=%s, latitude=%s, activevalidation=%s,\
+        begindate=%s, enddate=%s, lastChangeDate=%s, longitude=%s, latitude=%s, activevalidation=%s,\
         validationbyqrcode=%s, validationbyble=%s, blockedattendance=%s, validationcode=%s \
     where id=%s;'
  
@@ -79,6 +90,7 @@ def update(academicClass: AcademicClass):
             academicClass.descriptionClass,
             academicClass.beginDate,
             academicClass.endDate,
+            currentDate,
             academicClass.longitude,
             academicClass.latitude,
             academicClass.activeValidation,
@@ -149,7 +161,7 @@ def readByGroupID(groupID:int) -> Dict:
     sqlQuery = 'select a.id, a.groupid, a.titleclass, a.descriptionclass, a.begindate, \
         a.enddate, a.longitude, a.latitude, a.activevalidation, a.validationbyqrcode, \
         a.validationbyble, a.blockedAttendance, a.validationcode from academicclass a \
-        where a.groupid = %s;'
+        where a.groupid = %s order by lastChangeDate desc;'
     
     try:
         connection = pg.connect(

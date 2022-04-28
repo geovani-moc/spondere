@@ -60,8 +60,14 @@ async def deletePeriod(id:int, request:Request):
     if userType != USER_TYPE_ADMIN:
         raise HTTPException(status_code=401,
             detail="O usuario não tem privilegio de administrador.")
-    
-    periodDB.delete(id)
+    try:
+        periodDB.delete(id)
+    except Exception as e:
+        print(f'Erro ao tentar apagar o periodo com id {id}.')
+        return{
+            "result": "Error: bd001"
+        }
+
     return{
         "result": "success"
     }

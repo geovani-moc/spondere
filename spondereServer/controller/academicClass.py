@@ -59,7 +59,14 @@ async def deleteAcademicClass(id:int, request:Request) -> dict:
         raise HTTPException(status_code=401,
             detail="O usuario não tem privilegio de administrador ou professor.")
 
-    classDB.delete(id)
+    try:    
+        classDB.delete(id)
+    except Exception as e:
+        print(f'Erro ao tentar apagar a aula com id {id}.')
+        return{
+            "result": "Error: bd001"
+        }
+
     return{
          "result": "success"
      }

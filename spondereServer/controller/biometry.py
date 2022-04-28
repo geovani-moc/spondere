@@ -36,11 +36,10 @@ from pathlib import Path
 import aiofiles
 import time
 from util.recognition import(
+    deleteTrain,
+    readAllTrains,
     updateTrain
 )
-
-#logger = logging.getLogger(__name__)
-
 
 router = APIRouter()
 
@@ -83,9 +82,9 @@ def processBiometrics(frequency:Frequency, userID:int, contents):
         frequency.failure = "Falha na imagem recebida."
         try:
             id = frequencyDB.create(frequency=frequency)
-        except Exception as inst:
-            print(type(inst))   
-            print(inst.args)
+        except Exception as e:
+            print(type(e))   
+            print(e.args)
         return
 
     face, error = findFace(image)
@@ -94,9 +93,9 @@ def processBiometrics(frequency:Frequency, userID:int, contents):
         print("Erro no sistema de reconhecimento facial: \n" + error)
         try:
             id = frequencyDB.create(frequency=frequency)
-        except Exception as inst:
-            print(type(inst))   
-            print(inst.args)
+        except Exception as e:
+            print(type(e))   
+            print(e.args)
         return
             
     result, error = verifyFace(face, userID)
@@ -107,12 +106,12 @@ def processBiometrics(frequency:Frequency, userID:int, contents):
         
     try:
          id = frequencyDB.create(frequency)
-    except Exception as inst:
-        print(type(inst))   
-        print(inst.args)
+    except Exception as e:
+        print(type(e))   
+        print(e.args)
         return
 
-    print("A frequencia com id: " + str(id) + " foi criada")
+    print(f'A frequencia com id:{id} foi criada')
 
 @router.post("/{studentID}", dependencies=[Depends(JWTBearer())])
 async def createBiometry(backgroundTasks:BackgroundTasks, request:Request, 
@@ -146,7 +145,7 @@ async def createBiometry(backgroundTasks:BackgroundTasks, request:Request,
     biometry = Biometrics()
     biometry.studentID = studentID
     biometry.active = True
-    biometry.invalid = False
+    biometry.invalid = True
     biometry.failure = None
     id = biometryDB.create(biometry)
     backgroundTasks.add_task(syncTrain, studentID, id)
@@ -199,14 +198,15 @@ async def disableBiometry(biometryID:int, request:Request) -> Dict:
         raise HTTPException(status_code=401,
             detail="O usuario não tem privilegio de administrador.")
 
-    studentID = biometryDB.disable(biometryID)
+    try:studentID = biometryDB.disable(biometryID)
+    except:return{"result": "Error: b002"}
+
     path = createUserImagesPath(studentID)
-    removeAllFilesInFolder(path)
+    
+    try: removeAllFilesInFolder(path)
+    except: return {"result":"Error: b003"}
 
-    return{
-        "result": "success"
-    }
-
+    return{"result": "success"}
 
 @router.get("/{id}", dependencies=[Depends(JWTBearer())])
 async def getBiometry(id:int) -> dict:
@@ -215,10 +215,10 @@ async def getBiometry(id:int) -> dict:
         "biometry": biometry
     }
 
-def syncTrain(userID:int, biometryID:int):
-    methodName = 'cnn'
-
+def syncTrain(userID:int, biometryID:int, methodName = 'cnn'):
     _, error = updateTrain(PATH_IMAGES, userID, methodName)
+    readAllTrains(methodName)
+    
     if error is not None:
         if len(error) > 50:
             error = error[:50]
@@ -252,3 +252,17 @@ async def isValidBiometry(userID:int) -> dict:
             detail="Dados inválidos.")
     
     return result
+
+@router.delete("/treinamento_completo", dependencies=[Depends(JWTBearer())])
+async def deleteAllTrain(request:Request) -> dict:
+    authorization = request.headers.get("authorization")
+    userType = getCurrentUserType(authorization)
+
+    if userType != USER_TYPE_ADMIN:
+        raise HTTPException(status_code=401,
+            detail="O usuario não tem privilegio de administrador.")
+    
+    try: deleteTrain("cnn")
+    except: return{"result":"Error: b004"}
+    
+    return{"result":"success"}

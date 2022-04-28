@@ -52,11 +52,17 @@ async def deleteDiscipline(id:int, request:Request) -> Dict:
     authorization = request.headers.get("authorization")
     userType = getCurrentUserType(authorization)
 
-    if userType != USER_TYPE_ADMIN and userType != USER_TYPE_PROFESSOR:
+    if userType != USER_TYPE_ADMIN:
         raise HTTPException(status_code=401,
-            detail="O usuario não tem privilegio de administrador ou professor.")
-    
-    disciplineDB.delete(id)
+            detail="O usuario não tem privilegio de administrador.")
+
+    try:    
+        disciplineDB.delete(id)
+    except Exception as e:
+        print(f'Erro ao tentar apagar a disciplina com id {id}.')
+        return{
+            "result": "Error: bd001"
+        }
     return{
         "result": "success"
     }

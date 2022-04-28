@@ -18,4 +18,5 @@ def removeAllFilesInFolder(folder:str):
             print('%s -> %s' % (filePath, e))
             raise HTTPException(status_code=401,
                 detail="Falha ao deletar imagem da biometria.")
+    os.rmdir(folder)
             

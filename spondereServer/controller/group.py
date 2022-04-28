@@ -60,7 +60,14 @@ async def deleteGroup(id:int, request:Request):
         raise HTTPException(status_code=401,
             detail="O usuario não tem privilegio de administrador.")
 
-    groupDB.delete(id)
+    try:
+        groupDB.delete(id)
+    except Exception as e:
+        print(f'Erro ao tentar apagar o grupo com id {id}.')
+        return{
+            "result": "Error: bd001"
+        }
+
     return{
         "result": "success"
     }

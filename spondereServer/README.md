@@ -97,12 +97,17 @@ Com o sistema devidamente instalado e configurado bas executar o seguinte comand
 
 |Código do erro | tipo | descrição|
 |--- | --- | ---|
-|u001| Usuário | Usuário ou senha incorreto.|
+|u001| Usuário | Usuário ou senha incorreta.|
 |u002| Usuário | Usuário não tem credencial de administrador.|
-|r001| Reconhecimento| caracteristicas e rotulos não coincidem.|
-|r002| Reconhecimento| Nenhuma caracterista de face encontrada.|
-|r003| Reconhecimento| Imagens insufucientes com a face detectavel.|
-|r004| Reconhecimento| quantidade de caracteristicas insuficiente.|
-|r005| Reconhecimento| A face do usuário não foi reconhecida.|
-|f001| Frequência| Nehuma frequência encontrada com os dados fornecidos.|
-|b001| Biométria|Horário de checagem de imagens já foi ultrapassado, ou o aluno não pertence a essa turma.|
+|r001| Reconhecimento | Quantidade de características e rótulos não coincidem.|
+|r002| Reconhecimento | Nenhuma característica de face encontrada.|
+|r003| Reconhecimento | Imagens insuficientes que tenham a face detectável.|
+|r004| Reconhecimento | A quantidade de características é insuficiente.|
+|r005| Reconhecimento | A face do usuário não foi reconhecida.|
+|r006| Reconhecimento | A extração de características falhou.|
+|f001| Frequência | Nehuma frequência encontrada com os dados fornecidos.|
+|b001| Biométria| Horário de checagem de imagens já foi ultrapassado, ou o aluno não pertence a essa turma.|
+|b002| Biometria| Não foi possível desabilitar a biometria.|
+|b003| Biometria| A biometria foi desabilitada, mas ocorreu um problema ao apagar os arquivos de biometria.|
+|b004| Biometria| Ocorreu algum problema ao tentar remover os aquivos com o cache de treinamento dos dados biometricos.|
+|bd001| Banco de dados | Erro ao apagar este item, caso exista tuplas que utilizam esse item, apague-os primeiro.|

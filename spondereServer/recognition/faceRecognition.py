@@ -7,21 +7,21 @@ def verifyFace(image, userID:int, name = 'cnn'):
     
     featuresTest = face_encodings(image, num_jitters=1, model='large')
     if len(featuresTest) == 0: 
-        return False, "Falha na codificação da imagem"
+        return False, "Error: r006"
     featuresTest = featuresTest[0]
 
     features, _ = loadFullTrain(name)
     labels = loadFullLabels(name)
 
     if labels.shape[0] != features.shape[0]: 
-        return False, "caracteristicas e rotulos não coincidem"
-    if features.shape[0] == 0: return False, "Erro: r002"
+        return False, "Error: r001"
+    if features.shape[0] == 0: return False, "Error: r002"
 
     label = euclidianDistance(features, featuresTest, labels)
      
     if  label == userID: return True, None
 
-    return False, "Erro: r005"
+    return False, "Error: r005"
 
 def euclidianDistance(features, featureTest, labels):
     tolerance = 0.6

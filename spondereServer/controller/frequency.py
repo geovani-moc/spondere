@@ -80,8 +80,14 @@ async def deleteFrequency(id:int, request:Request) -> Dict:
     if userType != USER_TYPE_ADMIN and userType != USER_TYPE_PROFESSOR:
         raise HTTPException(status_code=401,
             detail="O usuario não tem privilegio de administrador ou professor.")
-    
-    frequencyDB.delete(id)
+    try:
+        frequencyDB.delete(id)
+    except Exception as e:
+        print(f'Erro ao tentar apagar a frequência com id {id}.')
+        return{
+            "result": "Error: bd001"
+        }
+
     return{
         "result": "success"
     }

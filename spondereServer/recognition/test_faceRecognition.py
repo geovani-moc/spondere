@@ -9,8 +9,8 @@ def test_recognition(image, user):
     return result
 
 if __name__ == '__main__':
-    image1 = cv.imread(os.path.join(PATH_IMAGES, 's01', '01.jpg'), cv.IMREAD_GRAYSCALE)
-    face, error = findFace(image1)
+    image = cv.imread(os.path.join(PATH_IMAGES, 's01', '01.jpg'))
+    face, error = findFace(image)
     if error is None:
         result = test_recognition(face, 's01')
         print("result:",  result)

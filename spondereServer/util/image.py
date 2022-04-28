@@ -45,11 +45,11 @@ def loadImages(path:str):
         pathImages.extend(glob.glob(path+imagesType))
 
     for pathImage in pathImages: 
-        image = cv.imread(pathImage, cv.IMREAD_GRAYSCALE)
+        image = cv.imread(pathImage)
         if image is None:
             print("Nenhuma imagem carregada do dataset.")
         else:
-            images.append(image)
+            images.append(np.asarray(image))
 
     return images
 
@@ -62,13 +62,12 @@ def loadUserDataset(path:str, userID:int):
         pathImages.extend(glob.glob(path+"/"+str(userID)+imagesType))
 
     for pathImage in pathImages: 
-        image = cv.imread(pathImage, cv.IMREAD_GRAYSCALE)
-        image = cv.equalizeHist(image)
+        image = cv.imread(pathImage)
     
         if image is None:
             print("Erro loaddataset, erro ao carregar imagem.", file=sys.stderr)
         else:
-            images.append(image)
+            images.append(np.asarray(image))
 
     return images
 

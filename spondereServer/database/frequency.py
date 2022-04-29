@@ -1,3 +1,4 @@
+from numpy import record
 from entity.frequency import Frequency
 import logging
 from fastapi import HTTPException
@@ -251,3 +252,34 @@ def compactPresentStudentsImages(records):
 
 
     return encodePresentStudentsImages(usernames, images)
+
+def attendanceRate(classID:int):
+    sqlQuery = 'select count(*) from academicclass a\
+        inner join \"groups\" g on a.id=%s and a.groupid=g.id\
+        inner join group_students gs  on gs.groupid = g.id union\
+        select count(*) from frequency f where academicclassid=%s;'
+
+    try:
+        connection = pg.connect(
+            user = DB_USERNAME,
+            password = DB_PASSWORD,
+            host = HOST,
+            port = PORT,
+            database = DB_NAME
+        )
+
+        cursor = connection.cursor()
+        cursor.execute(sqlQuery, (classID, classID,))
+        
+        records = cursor.fetchall()
+
+    except pg.OperationalError as e:
+        logging.exception(e)
+        raise HTTPException(status_code=406,
+            detail="Erro de conexão com o banco de dados.") 
+    finally:
+        if (connection):
+            cursor.close()
+            connection.close()
+
+    return records[0][0], records[1][0]

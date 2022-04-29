@@ -18,8 +18,6 @@ from settings import(
     USER_TYPE_PROFESSOR,
     USER_TYPE_STUDENT
 )
-import io
-from starlette.responses import StreamingResponse
 
 router = APIRouter()
 
@@ -174,3 +172,23 @@ async def presentStudentsWithPhoto(request:Request, academicClassID:int) -> Dict
                 detail="f001")
    
     return response
+
+@router.get("/taxa_presenca/{classID}", dependencies=[Depends(JWTBearer())])
+async def attendanceRate(request:Request, classID:int)-> Dict:
+    authorization = request.headers.get("authorization")
+    userType = getCurrentUserType(authorization)
+
+    if userType != USER_TYPE_ADMIN and userType != USER_TYPE_PROFESSOR:
+        raise HTTPException(status_code=401,
+            detail="O usuario não tem privilegio de administrador ou professor.")
+    try:  
+        presents, numberStudents = frequencyDB.attendanceRate(classID)
+    except:
+        logging.error("Falha ao processar dados de presença.")
+        raise HTTPException(status_code=403,
+                detail="f001")
+   
+    return {
+        "students": numberStudents,
+        "presents": presents
+    }

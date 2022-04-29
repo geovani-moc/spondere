@@ -33,7 +33,7 @@ class UserCredential(BaseModel):
     class Config:
         schema_extra = {
             "example": {
-                "username" : "geo",
+                "username" : "user",
                 "password": "123"
             }
         }

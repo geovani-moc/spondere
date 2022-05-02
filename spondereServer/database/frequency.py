@@ -257,7 +257,7 @@ def attendanceRate(classID:int):
     sqlQuery = 'select count(*) from academicclass a\
         inner join \"groups\" g on a.id=%s and a.groupid=g.id\
         inner join group_students gs  on gs.groupid = g.id union\
-        select count(*) from frequency f where academicclassid=%s and failure=null;'
+        select count(*) from frequency f where academicclassid=%s and failure is null;'
 
     try:
         connection = pg.connect(

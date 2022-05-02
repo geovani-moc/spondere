@@ -283,3 +283,32 @@ def attendanceRate(classID:int):
             connection.close()
 
     return records[0][0], records[1][0]
+
+def existValid(userID:int, classID:int) -> bool:
+    sqlQuery = 'select count(*) from frequency f where academicclassid=%s \
+        and f.studentid=%s and failure is null;'
+
+    try:
+        connection = pg.connect(
+            user = DB_USERNAME,
+            password = DB_PASSWORD,
+            host = HOST,
+            port = PORT,
+            database = DB_NAME
+        )
+
+        cursor = connection.cursor()
+        cursor.execute(sqlQuery, (userID, classID,))
+        
+        validFrequency = cursor.fetchone()[0]
+
+    except pg.OperationalError as e:
+        logging.exception(e)
+        raise HTTPException(status_code=406,
+            detail="Erro de conexão com o banco de dados.") 
+    finally:
+        if (connection):
+            cursor.close()
+            connection.close()
+
+    return validFrequency > 0

@@ -37,6 +37,7 @@ import aiofiles
 import time
 from util.recognition import(
     deleteTrain,
+    readAllLabels,
     readAllTrains,
     updateTrain
 )
@@ -218,7 +219,8 @@ async def getBiometry(id:int) -> dict:
 def syncTrain(userID:int, biometryID:int, methodName = 'cnn'):
     _, error = updateTrain(PATH_IMAGES, userID, methodName)
     readAllTrains(methodName)
-    
+    readAllLabels(methodName)
+
     if error is not None:
         if len(error) > 50:
             error = error[:50]

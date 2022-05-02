@@ -8,7 +8,7 @@ import numpy as np
 from recognition.findFace import extractFace
 from face_recognition import face_encodings
 
-def loadFullTrain(trainName):
+def loadFullTrain(trainName:str):
     path = PATH_DATA_TRAIN
     if os.path.exists(os.path.join(path, trainName+'.npy')):
         features = np.load(os.path.join(path, trainName + '.npy'))
@@ -16,7 +16,7 @@ def loadFullTrain(trainName):
     
     return readAllTrains(trainName)
 
-def readAllTrains(trainName):
+def readAllTrains(trainName:str):
     path = PATH_DATA_TRAIN
     features = []
     errors = []  
@@ -38,7 +38,7 @@ def readAllTrains(trainName):
                 
     return features, errors
 
-def loadFullLabels(name):
+def loadFullLabels(name:str):
     path = PATH_DATA_TRAIN
     if os.path.exists(os.path.join(path, 'labels.npy')):
         labels = np.load(os.path.join(path, 'labels.npy'))
@@ -55,6 +55,7 @@ def readAllLabels(name:str):
             if os.path.exists(os.path.join(PATH_IMAGES, directorie, name+'.npy')):
                 labels.append(directorie)
     
+    labels = np.asarray(labels)
     np.save(os.path.join(path, 'labels.npy'), labels)
     
     return labels

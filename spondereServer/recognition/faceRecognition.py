@@ -19,7 +19,7 @@ def verifyFace(image, userID:int, name = 'cnn'):
 
     label = euclidianDistance(features, featuresTest, labels)
      
-    if  label == userID: return True, None
+    if  label == str(userID): return True, None
 
     return False, "Error: r005"
 

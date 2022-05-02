@@ -48,6 +48,7 @@ router = APIRouter()
 async def checkBiometry(request:Request, studentID:int, classID:int, ble:bool,
     qrcode:bool, validationCode:str, latitude:float, longitude:float,
     backgroundTasks:BackgroundTasks, file: UploadFile = File(...))->Dict:
+    
     authorization = request.headers.get("authorization")
     userType = getCurrentUserType(authorization)
     username = getCurrentUserName(authorization)

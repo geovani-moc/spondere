@@ -298,7 +298,7 @@ def existValid(userID:int, classID:int) -> bool:
         )
 
         cursor = connection.cursor()
-        cursor.execute(sqlQuery, (userID, classID,))
+        cursor.execute(sqlQuery, (classID, userID))
         
         validFrequency = cursor.fetchone()[0]
 

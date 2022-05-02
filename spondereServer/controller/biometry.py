@@ -57,13 +57,16 @@ async def checkBiometry(request:Request, studentID:int, classID:int, ble:bool,
         raise HTTPException(status_code=401,
             detail="Somente alunos podem checar biomátria.")
 
-    if not isCheckable(studentID, classID):
-         raise HTTPException(status_code=406,
+    if not isCheckable(username, classID):
+        raise HTTPException(status_code=406,
             detail="b001")
+    try:
+        if frequencyDB.existValid(studentID, classID):
+            return {"result": "Já existe uma presença válida."}
+    except:
+        raise HTTPException(status_code=406,
+            detail="f002")
 
-    if frequencyDB.existValid(studentID, classID):
-        return {"result": "Já existe uma presença válida."}
-       
     contents = await file.read()
 
     frequency = Frequency()

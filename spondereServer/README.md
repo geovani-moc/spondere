@@ -106,6 +106,7 @@ Com o sistema devidamente instalado e configurado bas executar o seguinte comand
 |r005| Reconhecimento | A face do usuário não foi reconhecida.|
 |r006| Reconhecimento | A extração de características falhou.|
 |f001| Frequência | Nehuma frequência encontrada com os dados fornecidos.|
+|f002| Frequência | Falha ao verificar se já existe frequência válida.|
 |b001| Biométria| Horário de checagem de imagens já foi ultrapassado, ou o aluno não pertence a essa turma.|
 |b002| Biometria| Não foi possível desabilitar a biometria.|
 |b003| Biometria| A biometria foi desabilitada, mas ocorreu um problema ao apagar os arquivos de biometria.|

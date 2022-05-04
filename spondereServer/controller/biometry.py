@@ -275,3 +275,23 @@ async def deleteAllTrain(request:Request) -> dict:
     except: return{"result":"Error: b004"}
     
     return{"result":"success"}
+
+@router.post("/refazer_treinamento_completo/", dependencies=[Depends(JWTBearer())])
+async def redoTraining(backgroundTasks:BackgroundTasks, request:Request) -> Dict:
+    methodName = 'cnn'
+    authorization = request.headers.get("authorization")
+    userType = getCurrentUserType(authorization)
+
+    if userType != USER_TYPE_ADMIN:
+        raise HTTPException(status_code=401,
+            detail="O usuario não tem privilegio de administrador.")
+
+    backgroundTasks.add_task(clearAndTrain, methodName)
+        
+    return{"result":"Processing request"}
+
+def clearAndTrain(methodName):
+    try:
+        readAllTrains(methodName)
+        readAllLabels(methodName)
+    except: print(f'result:Error: b004')

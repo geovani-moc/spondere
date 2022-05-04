@@ -84,6 +84,9 @@ def train(path:str, userID:int, name:str):
     return updateTrain(path, userID, name)
 
 def deleteTrain(name:str):
+    if os.path.exists(os.path.join(PATH_DATA_TRAIN, 'labels.npy')):
+        os.remove(os.path.join(PATH_DATA_TRAIN, 'labels.npy'))
+
     if os.path.exists(os.path.join(PATH_DATA_TRAIN, name + '.npy')):
         os.remove(os.path.join(PATH_DATA_TRAIN, name + '.npy'))
 

@@ -287,3 +287,33 @@ def isValid(studentID:int) -> Dict:
             connection.close()
 
     return result
+
+def readIDByUsername(username:str)->int:
+    sqlQuery = 'select b.id from biometrics b inner join users u\
+    on u.username = %s and u.id = b.studentid and b.active = true;'
+    
+    try:
+        connection = pg.connect(
+            user = DB_USERNAME,
+            password = DB_PASSWORD,
+            host = HOST,
+            port = PORT,
+            database = DB_NAME
+        )
+
+        cursor = connection.cursor()
+        cursor.execute(sqlQuery, (username,))
+        id = cursor.fetchone()[0]
+
+        connection.commit()
+
+    except pg.OperationalError as e:
+        logging.exception(e)
+        raise HTTPException(status_code=406,
+            detail="Erro de conexão com o banco de dados.")
+    finally:
+        if (connection):
+            cursor.close()
+            connection.close()
+
+    return id

@@ -58,8 +58,12 @@ async def validationCode( request:Request, code:str = Body(...)):
     authorization = request.headers.get("authorization")
     username = getCurrentUserName(authorization)
 
-    classID:int = classDB.getActiveClassIDByCode(code, username)
-    
+    try: 
+        classID:int = classDB.getActiveClassIDByCode(code, username)
+    except:  
+        raise HTTPException(status_code=406,
+            detail="Código não existe ou não é válido.")
+
     if classID > 0:
         logging.info("Codigo de aula verificado com sucesso: " + code)
     else:

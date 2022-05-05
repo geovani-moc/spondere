@@ -41,6 +41,7 @@ from util.recognition import(
     readAllTrains,
     updateTrain
 )
+import time
 
 router = APIRouter()
 
@@ -48,7 +49,7 @@ router = APIRouter()
 async def checkBiometry(request:Request, studentID:int, classID:int, ble:bool,
     qrcode:bool, validationCode:str, latitude:float, longitude:float,
     backgroundTasks:BackgroundTasks, file: UploadFile = File(...))->Dict:
-    
+
     authorization = request.headers.get("authorization")
     userType = getCurrentUserType(authorization)
     username = getCurrentUserName(authorization)
@@ -84,6 +85,7 @@ async def checkBiometry(request:Request, studentID:int, classID:int, ble:bool,
     return {"result": "Imagem recebida, em processamento."}
 
 def processBiometrics(frequency:Frequency, userID:int, contents):
+    start = time.time()
     image = checkUploadedImage(contents)
     
     if image is None:
@@ -118,8 +120,8 @@ def processBiometrics(frequency:Frequency, userID:int, contents):
         print(type(e))   
         print(e.args)
         return
-
-    print(f'A frequencia com id:{id} foi criada')
+    end = time.time()
+    print(f'A frequencia com id:{id} foi criada. Tempo para verificação biometrica:{end-start}')
 
 @router.post("/{studentID}", dependencies=[Depends(JWTBearer())])
 async def createBiometry(backgroundTasks:BackgroundTasks, request:Request, 
@@ -224,6 +226,7 @@ async def getBiometry(id:int) -> dict:
     }
 
 def syncTrain(userID:int, biometryID:int, methodName = 'cnn'):
+    start = time.time()
     _, error = updateTrain(PATH_IMAGES, userID, methodName)
     readAllTrains(methodName)
     readAllLabels(methodName)
@@ -236,6 +239,8 @@ def syncTrain(userID:int, biometryID:int, methodName = 'cnn'):
         return
 
     biometryDB.validate(biometryID)
+    end = time.time()
+    print(f'Tempo para sicronizar treino (biometria ID: {biometryID})):{end-start}')
 
 def isCheckable(username:str , classID:int)->bool:
     date = str(datetime.now())+str(TIMEZONE_API_SERVER)
@@ -295,3 +300,28 @@ def clearAndTrain(methodName):
         readAllTrains(methodName)
         readAllLabels(methodName)
     except: print(f'result:Error: b004')
+
+@router.delete("/remover_dados_sensiveis/{username}", dependencies=[Depends(JWTBearer())])
+async def removeAllSensitiveData(request:Request, username:str)->Dict:
+    authorization = request.headers.get("authorization")
+    userType = getCurrentUserType(authorization)
+    errors = []
+
+    if userType != USER_TYPE_ADMIN:
+        raise HTTPException(status_code=401,
+            detail="O usuario não tem privilegio de administrador.")
+    
+    try: 
+        biometryID = biometryDB.readIDByUsername(username)
+        studentID = biometryDB.disable(biometryID)
+        path = createUserImagesPath(studentID)
+        removeAllFilesInFolder(path)
+        
+    except: errors.append("Error: b003")
+
+    try: frequencyDB.deleteAllFromUser(studentID)
+    except: errors.append("não foi possivel apagar as frequências.")
+
+    if len(errors) > 0: return {"result": errors}
+
+    return{"result":"success"}

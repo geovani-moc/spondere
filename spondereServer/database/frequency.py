@@ -312,3 +312,31 @@ def existValid(userID:int, classID:int) -> bool:
             connection.close()
 
     return validFrequency > 0
+
+def deleteAllFromUser(studentID:int):
+    sqlQuery = 'delete from frequency where studentid=%s;'
+
+    try:
+        connection = pg.connect(
+            user = DB_USERNAME,
+            password = DB_PASSWORD,
+            host = HOST,
+            port = PORT,
+            database = DB_NAME
+        )
+
+        cursor = connection.cursor()
+        cursor.execute(sqlQuery, (studentID, ))
+        
+        validFrequency = cursor.fetchone()[0]
+
+    except pg.OperationalError as e:
+        logging.exception(e)
+        raise HTTPException(status_code=406,
+            detail="Erro de conexão com o banco de dados.") 
+    finally:
+        if (connection):
+            cursor.close()
+            connection.close()
+
+    return True

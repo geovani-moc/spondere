@@ -7,7 +7,7 @@ class GroupProfessor(BaseModel):
     class Config:
         schema_extra = {
             "example":{
-                "professorUsername": "mari",
+                "professorUsername": "prof01",
                 "groupID": 1
             }
         }

@@ -317,10 +317,10 @@ async def removeAllSensitiveData(request:Request, username:str)->Dict:
         path = createUserImagesPath(studentID)
         removeAllFilesInFolder(path)
         
-    except: errors.append("Error: b003")
+    except: errors.append("Verificar se existe cadastro biometrico")
 
-    try: frequencyDB.deleteAllFromUser(studentID)
-    except: errors.append("não foi possivel apagar as frequências.")
+    try: frequencyDB.deleteAllFromUser(username)
+    except: errors.append("Verificar se existe frequência.")
 
     if len(errors) > 0: return {"result": errors}
 

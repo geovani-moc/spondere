@@ -313,8 +313,9 @@ def existValid(userID:int, classID:int) -> bool:
 
     return validFrequency > 0
 
-def deleteAllFromUser(studentID:int):
-    sqlQuery = 'delete from frequency where studentid=%s;'
+def deleteAllFromUser(username:str):
+    sqlQuery = 'delete from frequency f where f.studentid=\
+    (select id from users u where username=%s);'
 
     try:
         connection = pg.connect(
@@ -326,10 +327,8 @@ def deleteAllFromUser(studentID:int):
         )
 
         cursor = connection.cursor()
-        cursor.execute(sqlQuery, (studentID, ))
-        
-        validFrequency = cursor.fetchone()[0]
-
+        cursor.execute(sqlQuery, (username, ))
+    
     except pg.OperationalError as e:
         logging.exception(e)
         raise HTTPException(status_code=406,

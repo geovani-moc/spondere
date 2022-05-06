@@ -21,7 +21,7 @@ class AcademicClass(BaseModel):
             "example":{
                 "id": 1,
                 "groupID": 1,
-                "titleClass": "Integral",
+                "titleClass": "Disciplina 01a",
                 "descriptionClass": "Aula 2.",
                 "beginDate": "2022-10-19 10:10:00+2",
                 "endDate": "2022-10-19 12:00:00+2",

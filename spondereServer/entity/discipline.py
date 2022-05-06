@@ -10,7 +10,7 @@ class Discipline(BaseModel):
         schema_extra = {
             "example": {
                 "code": "BCC20A",
-                "name": "Introdução a tecnicas de Planilha.",
-                "description": "Historia e estudo do uso da planilha."
+                "name": "Nome de uma disciplina.",
+                "description": "Descrição de uma disciplina."
             }
         }

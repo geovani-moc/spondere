@@ -15,10 +15,10 @@ class User(BaseModel):
     class Config:
         schema_extra = {
             "example": {
-                "username" : "geo",
+                "username" : "user",
                 "password": "$2a$12$XeC9hXg2D4PHXPaVyGy5FuNjU9SqblGpN073r./4NIiYXzdyZey42",
-                "email": "geo@facu.gov.br",
-                "fullName": "Geovani Souza",
+                "email": "user@facu.gov.br",
+                "fullName": "User 01",
                 "disabled": False,
                 "professor": True,
                 "student": False,
@@ -34,6 +34,6 @@ class UserCredential(BaseModel):
         schema_extra = {
             "example": {
                 "username" : "user",
-                "password": "123"
+                "password": "pass"
             }
         }

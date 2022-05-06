@@ -10,7 +10,7 @@ class Group(BaseModel):
     class Config:
         schema_extra = {
             "example":{
-                "code":"calculo2022A1",
+                "code":"codDiscplina001",
                 "semesterID":1,
                 "active": "true",
                 "disciplineID":1

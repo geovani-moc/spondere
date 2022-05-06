@@ -290,7 +290,7 @@ def isValid(studentID:int) -> Dict:
 
 def readIDByUsername(username:str)->int:
     sqlQuery = 'select b.id from biometrics b inner join users u\
-    on u.username = %s and u.id = b.studentid and b.active = true;'
+    on u.username=%s and u.id = b.studentid and b.active = true;'
     
     try:
         connection = pg.connect(

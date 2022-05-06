@@ -37,6 +37,7 @@ Python | Python é uma linguagem de programação de alto nível, interpretada p
 Numpy | NumPy é uma biblioteca para a linguagem de programação Python, que suporta o processamento de grandes, multidimensionais arranjos e matrizes, juntamente com uma grande coleção de funções matemáticas de alto nível para operar sobre estas matrizes. | 1.21.2 |
 <i>Scikit-Learn</i> | O <i>scikit-learn</i> é uma biblioteca de aprendizado de máquina de código aberto para a linguagem de programação Python. | 1.0.1 |
 <i>Scikit-image</i> | O <i>Scikit-image</i> é uma biblioteca de processamento de imagens de código aberto para a linguagem de programação Python. | 0.18.3 |
+|Dblib| -- | -- |
 
 <h3 align="center">Instalação </h3>
 

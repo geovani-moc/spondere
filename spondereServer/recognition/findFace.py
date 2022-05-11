@@ -34,6 +34,6 @@ def extractFace(path:str, userID:int):
             faces.append(face)
     
     if len(faces) < MIN_SIZE_DATASET:
-        return None, "quantidade pequena de imagens no dataset"
+        return None, "Error: r003"
 
     return faces, None

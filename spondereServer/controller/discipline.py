@@ -23,9 +23,9 @@ async def createDiscipline(discipline:Discipline, request:Request) -> Dict:
     authorization = request.headers.get("authorization")
     userType = getCurrentUserType(authorization)
 
-    if userType != USER_TYPE_ADMIN and userType != USER_TYPE_PROFESSOR:
+    if userType != USER_TYPE_ADMIN:
         raise HTTPException(status_code=401,
-            detail="O usuario não tem privilegio de administrador ou professor.")
+            detail="O usuario não tem privilegio de administrador.")
     
     id = disciplineDB.create(discipline)
 
@@ -38,9 +38,9 @@ async def updateDiscipline(id:int, discipline:Discipline, request:Request) -> Di
     authorization = request.headers.get("authorization")
     userType = getCurrentUserType(authorization)
 
-    if userType != USER_TYPE_ADMIN and userType != USER_TYPE_PROFESSOR:
+    if userType != USER_TYPE_ADMIN:
         raise HTTPException(status_code=401,
-            detail="O usuario não tem privilegio de administrador ou professor.")
+            detail="O usuario não tem privilegio de administrador.")
 
     disciplineDB.update(id, discipline)
     return {
@@ -99,7 +99,7 @@ async def readActiveDisciplineByStudent(studentUsername:str, request:Request)-> 
 
     if username != studentUsername and userType != USER_TYPE_ADMIN:
         raise HTTPException(status_code=401,
-            detail="O usuario não tem privilegio de administrador ou não é o pofessor.")
+            detail="O usuario não tem privilegio de administrador ou não é o discente.")
 
     disciplines, groups = disciplineDB.readActiveByStudent(studentUsername)
 

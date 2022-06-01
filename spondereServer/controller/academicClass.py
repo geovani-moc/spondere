@@ -87,7 +87,7 @@ async def getClassByGroupID(groupID:int):
     }
 
 @router.put("/bloquear/", dependencies=[Depends(JWTBearer())])
-async def updateAcademicClass(request:Request, academicClassID:int)-> dict:
+async def updateBlockedAcademicClass(request:Request, academicClassID:int)-> dict:
     authorization = request.headers.get("authorization")
     userType = getCurrentUserType(authorization)
 

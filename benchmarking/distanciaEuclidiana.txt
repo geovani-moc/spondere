@@ -1,7 +1,0 @@
-Distancia euclidiana:
- |->Eigenfaces:  0.796
- |->LBP:  0.58
- |->HOG orientations=9, pixels_per_cell=(10, 10), cells_per_block=(1, 1): 0.774
- |->HOG orientations=15, pixels_per_cell=(10, 10), cells_per_block=(1, 1): 0.792
- |->HOG orientations=15, pixels_per_cell=(5, 5), cells_per_block=(1, 1): 0.836
- |->HOG orientations=15, pixels_per_cell=(5, 5), cells_per_block=(2, 2): 0.828

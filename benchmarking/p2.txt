@@ -1,0 +1,97 @@
+Distancia euclidiana:
+Positivo:149 | Negativo:249.0 | Falso-positivo:1 | Falso-negativo:101.0
+ |->Eigenfaces:  0.796
+Positivo:46 | Negativo:244.0 | Falso-positivo:6 | Falso-negativo:204.0
+ |->LBP:  0.58
+Positivo:139 | Negativo:248.0 | Falso-positivo:2 | Falso-negativo:111.0
+ |->HOG orientations=9, pixels_per_cell=(10, 10), cells_per_block=(1, 1): 0.774
+Positivo:146 | Negativo:250.0 | Falso-positivo:0 | Falso-negativo:104.0
+ |->HOG orientations=15, pixels_per_cell=(10, 10), cells_per_block=(1, 1): 0.792
+Positivo:168 | Negativo:250.0 | Falso-positivo:0 | Falso-negativo:82.0
+ |->HOG orientations=15, pixels_per_cell=(5, 5), cells_per_block=(1, 1): 0.836
+Positivo:164 | Negativo:250.0 | Falso-positivo:0 | Falso-negativo:86.0
+ |->HOG orientations=15, pixels_per_cell=(5, 5), cells_per_block=(2, 2): 0.828
+
+
+KNN - k=1:
+Positivo:65 | Negativo:249.0 | Falso-positivo:1 | Falso-negativo:185.0
+ |->LBP:  0.628
+Positivo:149 | Negativo:249.0 | Falso-positivo:1 | Falso-negativo:101.0
+ |->Eigenfaces:  0.796
+Positivo:178 | Negativo:250.0 | Falso-positivo:0 | Falso-negativo:72.0
+ |->HOG orientations=9, pixels_per_cell=(10, 10), cells_per_block=(1, 1): 0.856
+Positivo:183 | Negativo:250.0 | Falso-positivo:0 | Falso-negativo:67.0
+ |->HOG orientations=15, pixels_per_cell=(10, 10), cells_per_block=(1, 1): 0.866
+Positivo:196 | Negativo:250.0 | Falso-positivo:0 | Falso-negativo:54.0
+ |->HOG orientations=15, pixels_per_cell=(5, 5), cells_per_block=(1, 1): 0.892
+Positivo:194 | Negativo:250.0 | Falso-positivo:0 | Falso-negativo:56.0
+ |->HOG orientations=15, pixels_per_cell=(5, 5), cells_per_block=(2, 2): 0.888
+
+
+KNN - k=3:
+Positivo:61 | Negativo:248.0 | Falso-positivo:2 | Falso-negativo:189.0
+ |->LBP:  0.618
+Positivo:151 | Negativo:249.0 | Falso-positivo:1 | Falso-negativo:99.0
+ |->HOG orientations=9, pixels_per_cell=(10, 10), cells_per_block=(1, 1): 0.8
+Positivo:162 | Negativo:249.0 | Falso-positivo:1 | Falso-negativo:88.0
+ |->HOG orientations=15, pixels_per_cell=(10, 10), cells_per_block=(1, 1): 0.822
+Positivo:174 | Negativo:249.0 | Falso-positivo:1 | Falso-negativo:76.0
+ |->HOG orientations=15, pixels_per_cell=(5, 5), cells_per_block=(1, 1): 0.846
+Positivo:171 | Negativo:249.0 | Falso-positivo:1 | Falso-negativo:79.0
+ |->HOG orientations=15, pixels_per_cell=(5, 5), cells_per_block=(2, 2): 0.84
+
+
+KNN - k=5:
+Positivo:64 | Negativo:247.0 | Falso-positivo:3 | Falso-negativo:186.0
+ |->LBP:  0.622
+Positivo:144 | Negativo:249.0 | Falso-positivo:1 | Falso-negativo:106.0
+ |->HOG orientations=9, pixels_per_cell=(10, 10), cells_per_block=(1, 1): 0.786
+Positivo:154 | Negativo:249.0 | Falso-positivo:1 | Falso-negativo:96.0
+ |->HOG orientations=15, pixels_per_cell=(10, 10), cells_per_block=(1, 1): 0.806
+Positivo:164 | Negativo:249.0 | Falso-positivo:1 | Falso-negativo:86.0
+ |->HOG orientations=15, pixels_per_cell=(5, 5), cells_per_block=(1, 1): 0.826
+Positivo:164 | Negativo:249.0 | Falso-positivo:1 | Falso-negativo:86.0
+ |->HOG orientations=15, pixels_per_cell=(5, 5), cells_per_block=(2, 2): 0.826
+
+
+KNN - k=7:
+Positivo:64 | Negativo:245.0 | Falso-positivo:5 | Falso-negativo:186.0
+ |->LBP:  0.618
+Positivo:146 | Negativo:248.0 | Falso-positivo:2 | Falso-negativo:104.0
+ |->HOG orientations=9, pixels_per_cell=(10, 10), cells_per_block=(1, 1): 0.788
+Positivo:151 | Negativo:248.0 | Falso-positivo:2 | Falso-negativo:99.0
+ |->HOG orientations=15, pixels_per_cell=(10, 10), cells_per_block=(1, 1): 0.798
+Positivo:160 | Negativo:249.0 | Falso-positivo:1 | Falso-negativo:90.0
+ |->HOG orientations=15, pixels_per_cell=(5, 5), cells_per_block=(1, 1): 0.818
+Positivo:155 | Negativo:249.0 | Falso-positivo:1 | Falso-negativo:95.0
+ |->HOG orientations=15, pixels_per_cell=(5, 5), cells_per_block=(2, 2): 0.808
+
+
+SVM(linear):
+Positivo:85 | Negativo:249.0 | Falso-positivo:1 | Falso-negativo:165.0
+ |->LBP:  0.668
+Positivo:149 | Negativo:249.0 | Falso-positivo:1 | Falso-negativo:101.0
+ |->Eigenfaces:  0.796
+Positivo:199 | Negativo:250.0 | Falso-positivo:0 | Falso-negativo:51.0
+ |->HOG orientations=9, pixels_per_cell=(10, 10), cells_per_block=(1, 1): 0.898
+Positivo:203 | Negativo:250.0 | Falso-positivo:0 | Falso-negativo:47.0
+ |->HOG orientations=15, pixels_per_cell=(10, 10), cells_per_block=(1, 1): 0.906
+Positivo:199 | Negativo:250.0 | Falso-positivo:0 | Falso-negativo:51.0
+ |->HOG orientations=15, pixels_per_cell=(5, 5), cells_per_block=(1, 1): 0.898
+Positivo:204 | Negativo:250.0 | Falso-positivo:0 | Falso-negativo:46.0
+ |->HOG orientations=15, pixels_per_cell=(5, 5), cells_per_block=(2, 2): 0.908
+
+
+SVM(não linear)
+Positivo:59 | Negativo:249.0 | Falso-positivo:1 | Falso-negativo:191.0
+ |->LBP:  0.616
+Positivo:24 | Negativo:245.0 | Falso-positivo:5 | Falso-negativo:226.0
+ |->Eigenfaces:  0.538
+Positivo:193 | Negativo:250.0 | Falso-positivo:0 | Falso-negativo:57.0
+ |->HOG orientations=9, pixels_per_cell=(10, 10), cells_per_block=(1, 1): 0.886
+Positivo:200 | Negativo:250.0 | Falso-positivo:0 | Falso-negativo:50.0
+ |->HOG orientations=15, pixels_per_cell=(10, 10), cells_per_block=(1, 1): 0.9
+Positivo:199 | Negativo:250.0 | Falso-positivo:0 | Falso-negativo:51.0
+ |->HOG orientations=15, pixels_per_cell=(5, 5), cells_per_block=(1, 1): 0.898
+Positivo:204 | Negativo:250.0 | Falso-positivo:0 | Falso-negativo:46.0
+ |->HOG orientations=15, pixels_per_cell=(5, 5), cells_per_block=(2, 2): 0.908

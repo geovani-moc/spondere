@@ -88,7 +88,7 @@ def read(id:int):
 
 def update(id:int, frequency: Frequency):
     sqlQuery = 'update frequency set studentID=%s, academicClassID=%s, manualAttendance=%s,\
-    BLEAttendance=%s, QrCodeAttendance=%s, createDate=%s, validationCode=%s,\
+    BLEAttendance=%s, QrCodeAttendance=%s, validationCode=%s,\
     latitude=%s, longitude=%s, failure=%s, photo=%s where id=%s;'
     
     try:
@@ -103,7 +103,7 @@ def update(id:int, frequency: Frequency):
         cursor = connection.cursor()
         cursor.execute(sqlQuery, 
             ((frequency.studentID, frequency.academicClassID, frequency.ManualAttendance,
-            frequency.BLEAttendance, frequency.QrCodeAttendance, frequency.createDate, 
+            frequency.BLEAttendance, frequency.QrCodeAttendance, 
             frequency.validationCode, frequency.latitude, frequency.longitude, frequency.failure, 
             frequency.photo, id)))
         connection.commit()

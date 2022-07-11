@@ -68,6 +68,7 @@ def loadFullLabels(name):
             if os.path.exists(os.path.join(PATH_IMAGES, directorie, name+'.npy')):
                 labels.append(directorie)
     
+    labels = np.asarray(labels)
     np.save(os.path.join(path, 'labels.npy'), labels)
     
     return labels

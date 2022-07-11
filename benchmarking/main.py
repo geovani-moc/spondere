@@ -15,4 +15,4 @@ if __name__ == '__main__':
     deleteFullTrain("cnn")
    
     beginTests()
-    CNNTests()
+    #CNNTests()

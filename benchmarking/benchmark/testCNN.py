@@ -17,6 +17,10 @@ def test(classifier, path=PATH_IMAGES)->float:
     count:float = 0
     hits:float = 0 
     directories = os.listdir(path)
+    falsePositive = 0
+    falseNegative = 0
+    truePositive = 0
+    trueNegative = 0
 
     for directorie in directories:
         if os.path.isdir(os.path.join(path, directorie)):
@@ -26,15 +30,18 @@ def test(classifier, path=PATH_IMAGES)->float:
                 tempCount, tempHits = testImages(os.path.join(path, directorie, 'false'), directorie, classifier)
                 count = count + tempCount
                 hits = hits + (tempCount - tempHits)
-
+                falsePositive += tempHits
+                trueNegative += (tempCount - tempHits)
+                
                 tempCount, tempHits = testImages(os.path.join(path, directorie, 'true'), directorie, classifier)
                 count += tempCount
                 hits += tempHits
+                falseNegative += (tempCount - tempHits)
+                truePositive += tempHits
 
+    print(f'Positivo:{truePositive} | Negativo:{trueNegative} | Falso-positivo:{falsePositive} | Falso-negativo:{falseNegative}')
+    
     if count == 0: return 0.0
-
-    print(f'acertos:{hits}\nQuantidade:{count}')
-
     return (hits/count)
 
 def testImages(path, userID, classifier):
@@ -46,8 +53,8 @@ def testImages(path, userID, classifier):
         if error == None:
             result,_ = verifyFace(image, userID, classifier)
             if result: hits+=1
-        else:
-            print("A face testada não foi reconhecida")
+        #else:
+        #    print("A face testada não foi reconhecida")
         
     count:float =  float(len(glob.glob1(path,"*.jp*")))
     return count, hits

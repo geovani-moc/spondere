@@ -1,0 +1,272 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ClassManager">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/topAppBar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            app:layout_scrollFlags="scroll|enterAlways|snap"
+            app:title="Gerenciar"
+            app:titleTextColor="?attr/colorOnPrimary"
+            app:menu="@menu/menu_top_app_bar"
+            android:background="?attr/colorPrimary"/>
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <!-- Scrollable content -->
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_weight="1">
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    style="@style/Widget.Material3.TextInputEditText.FilledBox">
+                    <EditText
+                        android:id="@+id/editText_className"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:maxLength="50"
+                        android:hint="Aula"/>
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    style="@style/Widget.Material3.TextInputEditText.FilledBox">
+                    <EditText
+                        android:id="@+id/editText_description"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:maxLength="300"
+                        android:inputType="textMultiLine"
+                        android:hint="Descrição"/>
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_margin="11dp">
+
+                    <com.google.android.material.card.MaterialCardView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="4dp"
+                        android:layout_weight="1"
+                        style="@style/Widget.Material3.CardView.Filled">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical">
+
+                            <com.google.android.material.card.MaterialCardView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:minHeight="40dp"
+                                android:layout_margin="4dp"
+                                style="@style/Widget.Material3.CardView.Elevated"
+                                android:onClick="setDate">
+
+                                <TextView
+                                    android:id="@+id/textView_date"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="8dp"
+                                    android:focusable="true"
+                                    android:focusableInTouchMode="true"
+                                    android:text=""
+                                    android:gravity="center"/>
+
+                            </com.google.android.material.card.MaterialCardView>
+
+                            <Button
+                                android:id="@+id/button_date"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:onClick="setDate"
+                                style="@style/Widget.Material3.Button.ElevatedButton"
+                                android:text="Data"
+                                android:layout_margin="4dp"/>
+                        </LinearLayout>
+                    </com.google.android.material.card.MaterialCardView>
+
+                    <com.google.android.material.card.MaterialCardView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="4dp"
+                        android:layout_weight="1"
+                        style="@style/Widget.Material3.CardView.Filled">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical">
+
+                            <com.google.android.material.card.MaterialCardView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:minHeight="40dp"
+                                android:layout_margin="4dp"
+                                style="@style/Widget.Material3.CardView.Elevated"
+                                android:onClick="getTimeBegin">
+                                <TextView
+                                    android:id="@+id/textView_timeBegin"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="8dp"
+                                    android:focusable="true"
+                                    android:focusableInTouchMode="true"
+                                    android:text=""
+                                    android:gravity="center"/>
+                            </com.google.android.material.card.MaterialCardView>
+                            <Button
+                                android:id="@+id/button_timeBegin"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="Início"
+                                style="@style/Widget.Material3.Button.ElevatedButton"
+                                android:onClick="getTimeBegin"
+                                android:layout_margin="4dp"/>
+                        </LinearLayout>
+                    </com.google.android.material.card.MaterialCardView>
+
+                    <com.google.android.material.card.MaterialCardView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="4dp"
+                        android:layout_weight="1"
+                        style="@style/Widget.Material3.CardView.Filled">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical">
+
+                            <com.google.android.material.card.MaterialCardView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:minHeight="40dp"
+                                android:layout_margin="4dp"
+                                style="@style/Widget.Material3.CardView.Elevated"
+                                android:onClick="getTimeEnd">
+                                <TextView
+                                    android:id="@+id/textView_timeEnd"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="8dp"
+                                    android:focusable="true"
+                                    android:focusableInTouchMode="true"
+                                    android:text=""
+                                    android:gravity="center"/>
+                            </com.google.android.material.card.MaterialCardView>
+                            <Button
+                                android:id="@+id/button_timeEnd"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="Fim"
+                                style="@style/Widget.Material3.Button.ElevatedButton"
+                                android:onClick="getTimeEnd"
+                                android:layout_margin="4dp"/>
+                        </LinearLayout>
+
+                    </com.google.android.material.card.MaterialCardView>
+
+                </LinearLayout>
+
+                <RadioGroup
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_margin="15dp"
+                    android:orientation="horizontal">
+
+                    <RadioButton
+                        android:id="@+id/radioMethodBLE"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:onClick="onRadioButtonClicked"
+                        android:text="Bluetooth" />
+
+                    <RadioButton
+                        android:id="@+id/radioMethodQRCode"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:enabled="false"
+                        android:onClick="onRadioButtonClicked"
+                        android:text="QR Code" />
+                </RadioGroup>
+
+                <Button
+                    android:id="@+id/button_studentsList"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="15dp"
+                    android:text="Lista de presentes"
+                    android:onClick="studentList"
+                    style="@style/Widget.Material3.Button.OutlinedButton"
+                    />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_margin="10dp">
+
+                    <Button
+                        android:id="@+id/button_status"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Status"
+                        android:layout_margin="5dp"
+                        android:onClick="statusFrequency"
+                        android:enabled="false"/>
+                    <Button
+                        android:id="@+id/button_saveClassInfo"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="5dp"
+                        android:layout_weight="1"
+                        android:text="Salvar"
+                        android:onClick="saveClass"/>
+                    <Button
+                        android:id="@+id/button_beginAttendance"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_margin="5dp"
+                        android:text="Iniciar"
+                        android:onClick="beginFrequency"/>
+                </LinearLayout>
+            </LinearLayout>
+        </ScrollView>
+
+    </androidx.core.widget.NestedScrollView>
+
+
+
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

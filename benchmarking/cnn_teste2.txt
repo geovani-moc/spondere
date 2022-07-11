@@ -1,0 +1,8 @@
+Positivo:492.0 | Negativo:500.0 | Falso-positivo:0 | Falso-negativo:8.0
+Distancia euclidiana: 98.4%
+Positivo:492.0 | Negativo:500.0 | Falso-positivo:0 | Falso-negativo:8.0
+KNN(k=1): 98.4%
+Positivo:492.0 | Negativo:500.0 | Falso-positivo:0 | Falso-negativo:8.0
+SVM(linear): 98.4%
+Positivo:492.0 | Negativo:500.0 | Falso-positivo:0 | Falso-negativo:8.0
+SVM(não linear): 98.4%

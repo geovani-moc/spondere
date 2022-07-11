@@ -28,7 +28,7 @@ async def createFrequency(frequency:Frequency, request:Request) -> Dict:
 
     if userType != USER_TYPE_ADMIN:
         raise HTTPException(status_code=401,
-            detail="O usuario não tem privilegio de administrador.")
+            detail="O usuário não tem privilégio de administrador.")
      
     id = frequencyDB.create(frequency)
     return {

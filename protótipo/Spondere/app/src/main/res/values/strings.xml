@@ -1,0 +1,35 @@
+<resources>
+    <string name="app_name">Spondere</string>
+    <string name="login_login">Usuário</string>
+    <string name="login_password">Senha</string>
+    <string name="login_entry">Entrar</string>
+
+    <!-- Strings used for fragments for navigation -->
+    <string name="first_fragment_label">First Fragment</string>
+    <string name="second_fragment_label">Second Fragment</string>
+    <string name="next">Next</string>
+    <string name="previous">Previous</string>
+
+    <string name="password">password</string>
+    <string name="user_name">username</string>
+    <string name="token">token</string>
+    <string name="expires">"expires"</string>
+    <string name="attempts">attempts</string>
+    <string name="settings_login">spondere_login</string>
+    <!--string name="url_base">http://10.0.2.2:8000</string-->
+    <string name="url_base">http://200.131.242.39:8000</string>
+
+    <string name="user_preference">user_preference</string>
+    <string name="group">group</string>
+    <string name="discipline">discipline</string>
+    <string name="academic_class">academicClass</string>
+    <string name="academicClassCode">academic_class_code</string>
+    <string name="validatioCode">validation_code</string>
+    <string name="method">method</string>
+    <string name="qrCode">qr_code</string>
+    <string name="bluetooth">bluetooth</string>
+    <string name="uuid">00002594-0000-1000-8000-00805f9b34fb</string>
+    <string name="error_connect">Sem conexão com a internet.</string>
+    <string name="disciplines">disciplines</string>
+    <string name="groups">groups</string>
+</resources>

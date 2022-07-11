@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content" >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Após a realização do cadastro biométrico, ele só pode ser removido pelo administrador.
+\nPara garantir um cadastro correto siga as 8 dicas a seguir:"
+            android:textColor="?attr/colorError"
+            android:layout_margin="15dp"/>
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:src="@drawable/tutorial_op1"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="15dp"
+            android:text="1 - Não use acessórios como óculos e/ou chapéus;
+            \n2 - Mantenha o rosto alinhado e centralizado;
+            \n3 - Mantenha um fundo homogêneo, como uma parede branca;
+            \n4 - Seu rosto deve aparecer em foco na foto, como na imagem de exemplo acima;
+            \n5 - Mantenha um semblante neutro no momento do registro da foto;
+            \n6 - Não cubra o seu rosto;
+            \n7 - Evite uma iluminação ruim, seu rosto deve ficar bem definido na foto;
+            \n8 - Apenas uma foto seguindo os passos anteriores é suficiente para o cadastro."
+            />
+    </LinearLayout>
+
+</ScrollView>

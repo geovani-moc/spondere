@@ -14,6 +14,10 @@ from util.recognition import deleteFullTrain, deleteTrain
 def test(classifier, name, extractMethod, *args) -> float:
     count:float = 0
     hits:float = 0 
+    falsePositive = 0
+    falseNegative = 0
+    truePositive = 0
+    trueNegative = 0
 
     directories = os.listdir(PATH_IMAGES)
 
@@ -25,12 +29,18 @@ def test(classifier, name, extractMethod, *args) -> float:
                 tempCount, tempHits = testImages(directorie, classifier, name, extractMethod, 'false', args)
                 count = count + tempCount
                 hits = hits + (tempCount - tempHits)
+                falsePositive += tempHits
+                trueNegative += (tempCount - tempHits)
 
                 tempCount, tempHits = testImages(directorie, classifier, name, extractMethod, 'true', args)
                 count += tempCount
                 hits += tempHits
+                falseNegative += (tempCount - tempHits)
+                truePositive += tempHits
         #break
     
+    print(f'Positivo:{truePositive} | Negativo:{trueNegative} | Falso-positivo:{falsePositive} | Falso-negativo:{falseNegative}')
+
     if count == 0: return 0
 
     return (hits/count)

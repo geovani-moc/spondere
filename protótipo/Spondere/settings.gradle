@@ -1,0 +1,2 @@
+rootProject.name = "Spondere"
+include ':app'
